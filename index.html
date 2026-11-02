@@ -35,8 +35,8 @@
             <button onclick="switchTab('interactions')" id="tab-interactions" class="px-3 py-1 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
                 <i class="fa-solid fa-shield-halved mr-1"></i> Tương tác
             </button>
-            <button onclick="switchTab('admin')" id="tab-admin" class="px-3 py-1 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
-                <i class="fa-solid fa-database mr-1"></i> Admin
+            <button onclick="openAdminAuthModal()" id="tab-admin" class="px-3 py-1 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
+                <i class="fa-solid fa-lock mr-1"></i> Admin
             </button>
         </nav>
     </header>
@@ -81,7 +81,7 @@
                         </div>
                     </div>
 
-                    <!-- Creatinine máu & Đơn vị (Mặc định umol/L và giá trị tương ứng 100 umol/L) -->
+                    <!-- Creatinine máu & Đơn vị (Mặc định µmol/L) -->
                     <div class="grid grid-cols-2 gap-2 pt-1 border-t">
                         <div>
                             <label class="block font-bold text-slate-700 mb-0.5">Creatinine máu</label>
@@ -161,7 +161,6 @@
                         <label class="block text-xs font-bold text-slate-700 mb-1">
                             <i class="fa-solid fa-search mr-1 text-emerald-600"></i> Tra cứu & Chọn Kháng sinh:
                         </label>
-                        <!-- Ô input gõ tên thuốc với placeholder in nghiêng, xám mờ -->
                         <div class="relative">
                             <input type="text" id="drugSearchInput" oninput="handleDrugSearchInput(this.value)" placeholder="-- Gõ tên thuốc để lọc hoặc bấm xem danh sách A-Z --" class="w-full p-2.5 text-xs border-2 border-emerald-500 rounded-lg bg-emerald-50/50 text-slate-900 font-semibold focus:ring-2 focus:ring-emerald-600 placeholder:italic placeholder:text-slate-400 placeholder:font-normal">
                             <div class="absolute right-3 top-3 text-emerald-700 pointer-events-none">
@@ -214,14 +213,14 @@
             </div>
         </div>
 
-        <!-- TAB 4: ADMIN -->
+        <!-- TAB 4: ADMIN (Chỉ xem được khi đã xác thực mật khẩu) -->
         <div id="content-admin" class="space-y-4 h-full overflow-y-auto hidden">
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-4">
                 <div class="flex justify-between items-center">
                     <h2 class="text-sm font-bold text-slate-800">Quản lý Dữ liệu (Admin) - Tổng: <span id="abCount">0</span> thuốc</h2>
                     <div class="space-x-2">
-                        <button onclick="exportJSONData()" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs">Xuất JSON</button>
-                        <button onclick="resetDefaultData()" class="bg-rose-600 text-white px-3 py-1.5 rounded-lg text-xs">Khôi phục Gốc</button>
+                        <button onclick="exportJSONData()" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Xuất JSON</button>
+                        <button onclick="resetDefaultData()" class="bg-rose-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Khôi phục Gốc</button>
                     </div>
                 </div>
                 <div id="adminAntibioticList" class="space-y-2 text-xs max-h-96 overflow-y-auto"></div>
@@ -229,6 +228,31 @@
         </div>
 
     </main>
+
+    <!-- Hộp thoại nhập Mật khẩu Admin (Modal) -->
+    <div id="adminModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl border max-w-sm w-full p-5 space-y-4">
+            <div class="flex items-center space-x-3 text-emerald-700">
+                <div class="bg-emerald-100 p-2.5 rounded-xl">
+                    <i class="fa-solid fa-user-shield text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-900 text-sm">Yêu cầu Quyền Admin</h3>
+                    <p class="text-[11px] text-slate-500">Nhập mật khẩu quản trị để tiếp tục</p>
+                </div>
+            </div>
+
+            <div>
+                <input type="password" id="adminPasswordInput" placeholder="Nhập mật khẩu..." class="w-full p-2.5 text-xs border-2 border-slate-300 rounded-xl focus:border-emerald-600 focus:outline-none font-semibold">
+                <p id="adminAuthError" class="text-[11px] text-red-600 font-bold mt-1 hidden"><i class="fa-solid fa-circle-exclamation mr-1"></i>Mật khẩu không chính xác!</p>
+            </div>
+
+            <div class="flex space-x-2 pt-1">
+                <button onclick="closeAdminAuthModal()" class="w-1/2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Hủy</button>
+                <button onclick="verifyAdminPassword()" class="w-1/2 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-md">Xác nhận</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-white border-t py-1.5 px-4 text-center text-xs text-slate-500 shrink-0">
@@ -280,6 +304,7 @@
 
         let db = JSON.parse(localStorage.getItem('renal_rx_db')) || defaultDatabase;
         let selectedAntibioticIds = [];
+        let isAdminAuthenticated = false;
 
         function saveDB() {
             localStorage.setItem('renal_rx_db', JSON.stringify(db));
@@ -287,6 +312,31 @@
 
         function sortAntibioticsAlphabetically() {
             db.antibiotics.sort((a, b) => a.name.localeCompare(b.name, 'vi', { sensitivity: 'base' }));
+        }
+
+        function openAdminAuthModal() {
+            if (isAdminAuthenticated) {
+                switchTab('admin');
+            } else {
+                document.getElementById('adminPasswordInput').value = '';
+                document.getElementById('adminAuthError').classList.add('hidden');
+                document.getElementById('adminModal').classList.remove('hidden');
+            }
+        }
+
+        function closeAdminAuthModal() {
+            document.getElementById('adminModal').classList.add('hidden');
+        }
+
+        function verifyAdminPassword() {
+            const pwd = document.getElementById('adminPasswordInput').value;
+            if (pwd === "123456") {
+                isAdminAuthenticated = true;
+                closeAdminAuthModal();
+                switchTab('admin');
+            } else {
+                document.getElementById('adminAuthError').classList.remove('hidden');
+            }
         }
 
         function switchTab(tabId) {
@@ -329,7 +379,6 @@
             const isAdult = age >= 18;
             let scr = parseFloat(document.getElementById('scr').value);
             const scrUnit = document.getElementById('scrUnit').value;
-            // Nếu đơn vị là umol/L, quy đổi sang mg/dL để tính toán chuẩn xác
             if (scrUnit === 'umol') scr = scr / 88.4;
 
             let gfrVal = 0;
