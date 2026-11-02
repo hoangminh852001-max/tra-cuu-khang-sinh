@@ -8,191 +8,163 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        
-        /* Cấu hình tối ưu trên màn hình lớn PC/Laptop */
-        @media (min-width: 1024px) {
-            body { overflow: hidden; height: 100vh; }
+        * { box-sizing: border-box; }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 820px;
+            height: 580px;
+            overflow: hidden; /* Cố định màn hình, triệt tiêu hoàn toàn thanh cuộn ngang dọc */
+            background-color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
         }
-
-        /* Styling gợi ý thuốc tra cứu */
         #drugSuggestions div:hover { background-color: #f0fdf4; color: #166534; cursor: pointer; }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-900 min-h-screen lg:h-screen flex flex-col justify-between text-xs">
+<body class="bg-slate-100 text-slate-900 flex flex-col justify-between h-full select-none">
 
-    <!-- Header (Tự co giãn Responsive) -->
-    <header class="bg-emerald-700 text-white shadow px-3 md:px-4 py-2 flex flex-col sm:flex-row justify-between items-center shrink-0 gap-2 sm:gap-0">
-        <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-start">
-            <div class="flex items-center space-x-2">
-                <div class="bg-white text-emerald-700 p-1.5 rounded-lg shadow text-sm">
-                    <i class="fa-solid fa-pills"></i>
-                </div>
-                <div>
-                    <h1 class="text-sm font-bold tracking-tight">RenalDose Rx Pro</h1>
-                    <p class="text-[10px] text-emerald-100">Tra cứu Liều Kháng sinh & Vi sinh Lâm sàng</p>
-                </div>
+    <!-- Header -->
+    <header class="bg-emerald-700 text-white shadow px-3 py-1.5 flex justify-between items-center shrink-0">
+        <div class="flex items-center space-x-2">
+            <div class="bg-white text-emerald-700 p-1 rounded shadow text-xs">
+                <i class="fa-solid fa-pills"></i>
+            </div>
+            <div>
+                <h1 class="text-xs font-bold tracking-tight">RenalDose Rx Pro</h1>
+                <p class="text-[9px] text-emerald-100">Tra cứu Liều Kháng sinh & Vi sinh Lâm sàng chuẩn eMed[cite: 1]</p>
             </div>
         </div>
-        
-        <!-- Navigation Tabs -->
-        <nav class="flex bg-emerald-800 p-1 rounded-lg space-x-1 text-xs w-full sm:w-auto justify-around sm:justify-end">
-            <button onclick="switchTab('calculator')" id="tab-calculator" class="px-2.5 sm:px-3 py-1 font-semibold rounded bg-white text-emerald-800 shadow transition-all">
+        <nav class="flex bg-emerald-800 p-0.5 rounded-lg space-x-1 text-xs">
+            <button onclick="switchTab('calculator')" id="tab-calculator" class="px-2.5 py-1 font-semibold rounded bg-white text-emerald-800 shadow transition-all">
                 <i class="fa-solid fa-calculator mr-1"></i> Tính Liều
             </button>
-            <button onclick="switchTab('bacteria')" id="tab-bacteria" class="px-2.5 sm:px-3 py-1 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
+            <button onclick="switchTab('bacteria')" id="tab-bacteria" class="px-2.5 py-1 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
                 <i class="fa-solid fa-bacteria mr-1"></i> Vi Khuẩn
             </button>
-            <button onclick="switchTab('interactions')" id="tab-interactions" class="px-2.5 sm:px-3 py-1 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
+            <button onclick="switchTab('interactions')" id="tab-interactions" class="px-2.5 py-1 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
                 <i class="fa-solid fa-shield-halved mr-1"></i> Tương tác
             </button>
-            <button onclick="openAdminAuthModal()" id="tab-admin" class="px-2.5 sm:px-3 py-1 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
+            <button onclick="openAdminAuthModal()" id="tab-admin" class="px-2.5 py-1 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
                 <i class="fa-solid fa-lock mr-1"></i> Admin
             </button>
         </nav>
     </header>
 
     <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-2.5 md:px-4 py-2.5 flex-grow w-full overflow-y-auto lg:overflow-hidden flex flex-col">
+    <main class="px-3 py-2 flex-grow w-full overflow-hidden flex flex-col justify-between">
 
         <!-- TAB 1: TÍNH LIỀU & TRA CỨU -->
-        <div id="content-calculator" class="grid grid-cols-1 lg:grid-cols-3 gap-3 h-full overflow-y-auto lg:overflow-hidden">
+        <div id="content-calculator" class="grid grid-cols-3 gap-2.5 h-full overflow-hidden">
             
             <!-- Cột trái: Thông số Bệnh nhân & Thận -->
-            <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-2 shrink-0">
-                <h2 class="text-xs font-bold text-slate-700 border-b pb-1.5 flex items-center uppercase tracking-wider">
-                    <i class="fa-solid fa-user-injured mr-1.5 text-emerald-600"></i> Thông số Bệnh nhân & Thận
+            <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-1.5">
+                <h2 class="text-[11px] font-bold text-slate-700 border-b pb-1 flex items-center uppercase tracking-wider">
+                    <i class="fa-solid fa-user-injured mr-1 text-emerald-600"></i> Thông số Thận
                 </h2>
                 
-                <div class="space-y-2 text-xs">
-                    <!-- Tuổi (Tự nhận diện người lớn/trẻ em) -->
-                    <div class="grid grid-cols-2 gap-2">
+                <div class="space-y-1.5">
+                    <div class="grid grid-cols-2 gap-1.5">
                         <div>
-                            <label class="block font-bold text-slate-700 mb-0.5">Tuổi <span id="patientAgeBadge" class="text-[10px] text-emerald-600 font-normal">(Người lớn)</span></label>
-                            <input type="number" id="age" value="65" oninput="handleAgeChange()" class="w-full p-2 lg:p-1.5 border-2 rounded-lg font-medium">
+                            <label class="block font-bold text-slate-700 mb-0.5">Tuổi <span id="patientAgeBadge" class="text-[9px] text-emerald-600 font-normal">(Người lớn)</span></label>
+                            <input type="number" id="age" value="65" oninput="handleAgeChange()" class="w-full p-1 border rounded font-medium">
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-0.5">Giới tính</label>
-                            <select id="gender" class="w-full p-2 lg:p-1.5 border-2 rounded-lg bg-slate-50 font-medium">
+                            <select id="gender" class="w-full p-1 border rounded bg-slate-50 font-medium">
                                 <option value="male">Nam</option>
                                 <option value="female">Nữ</option>
                             </select>
                         </div>
                     </div>
 
-                    <!-- Cân nặng & Chiều cao -->
-                    <div class="grid grid-cols-2 gap-2">
+                    <div class="grid grid-cols-2 gap-1.5">
                         <div>
                             <label class="block font-bold text-slate-700 mb-0.5">Cân nặng (kg)</label>
-                            <input type="number" id="weight" value="70" class="w-full p-2 lg:p-1.5 border-2 rounded-lg font-medium">
+                            <input type="number" id="weight" value="70" class="w-full p-1 border rounded font-medium">
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-0.5">Chiều cao (cm)</label>
-                            <input type="number" id="height" value="170" class="w-full p-2 lg:p-1.5 border-2 rounded-lg font-medium">
+                            <input type="number" id="height" value="170" class="w-full p-1 border rounded font-medium">
                         </div>
                     </div>
 
-                    <!-- Creatinine máu & Đơn vị (Mặc định umol/L) -->
-                    <div class="grid grid-cols-2 gap-2 pt-1 border-t">
+                    <div class="grid grid-cols-2 gap-1.5 pt-1 border-t">
                         <div>
                             <label class="block font-bold text-slate-700 mb-0.5">Creatinine máu</label>
-                            <input type="number" id="scr" value="100" step="1" class="w-full p-2 lg:p-1.5 border-2 rounded-lg font-medium">
+                            <input type="number" id="scr" value="100" step="1" class="w-full p-1 border rounded font-medium">
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-0.5">Đơn vị</label>
-                            <select id="scrUnit" class="w-full p-2 lg:p-1.5 border-2 rounded-lg bg-slate-50 font-medium">
+                            <select id="scrUnit" class="w-full p-1 border rounded bg-slate-50 font-medium">
                                 <option value="umol" selected>µmol/L</option>
                                 <option value="mgdl">mg/dL</option>
                             </select>
                         </div>
                     </div>
 
-                    <!-- Công thức tính -->
                     <div>
                         <label class="block font-bold text-slate-700 mb-0.5">Công thức tính</label>
-                        <select id="calcMethod" class="w-full p-2 lg:p-1.5 border-2 rounded-lg bg-slate-50 font-medium">
-                            <option value="ckdepi">CKD-EPI 2021 (Khuyên dùng)</option>
+                        <select id="calcMethod" class="w-full p-1 border rounded bg-slate-50 font-medium">
+                            <option value="ckdepi">CKD-EPI 2021</option>
                             <option value="cockcroft">Cockcroft-Gault (CrCl)</option>
-                            <option value="schwartz">Bedside Schwartz (Trẻ em)</option>
+                            <option value="schwartz">Bedside Schwartz</option>
                         </select>
                     </div>
 
-                    <!-- Trạng thái lọc máu -->
                     <div>
                         <label class="block font-bold text-slate-700 mb-0.5">Trạng thái lọc máu</label>
-                        <select id="renalStatus" class="w-full p-2 lg:p-1.5 border-2 rounded-lg bg-slate-50 font-medium">
+                        <select id="renalStatus" class="w-full p-1 border rounded bg-slate-50 font-medium">
                             <option value="normal">Bình thường (eGFR/CrCl)</option>
-                            <option value="hd">Thận nhân tạo ngắt quãng (HD)</option>
+                            <option value="hd">Thận nhân tạo (HD)</option>
                             <option value="crrt">Lọc máu liên tục (CRRT)</option>
                             <option value="pd">Lọc màng bụng (PD)</option>
                         </select>
                     </div>
                 </div>
 
-                <button onclick="calculateRenal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 lg:py-2 rounded-lg text-xs transition shadow-md shrink-0 mt-2">
-                    <i class="fa-solid fa-calculator mr-1"></i> Tính toán Thận
+                <button onclick="calculateRenal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 rounded text-xs transition shadow-sm">
+                    <i class="fa-solid fa-calculator mr-1"></i> Tính Thận
                 </button>
             </div>
 
-            <!-- Cột phải: Kết quả eGFR & Tra cứu kháng sinh tích hợp -->
-            <div class="lg:col-span-2 flex flex-col space-y-3 overflow-hidden">
+            <!-- Cột phải: Tra cứu & Kết quả liều -->
+            <div class="col-span-2 flex flex-col space-y-2 overflow-hidden">
                 
                 <!-- Kết quả eGFR -->
-                <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 flex flex-col shrink-0">
-                    <div class="flex justify-between items-center cursor-pointer" onclick="toggleCKDGuide()" title="Bấm để xem/ẩn bảng phân độ CKD">
-                        <div>
-                            <span class="text-[11px] uppercase font-bold text-slate-500 tracking-wide">Kết quả đánh giá chức năng thận (Bấm xem phân độ)</span>
-                            <div class="flex items-baseline space-x-2 mt-0.5">
-                                <span id="gfrResultVal" class="text-3xl font-extrabold text-emerald-700">--</span>
-                                <span class="text-xs font-bold text-slate-600">mL/min/1.73m²</span>
-                            </div>
-                        </div>
-                        <div id="ckdStageBadge" class="px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-center border-2 font-extrabold text-xs bg-slate-100 text-slate-800 shadow-sm">
-                            Chưa phân loại
+                <div class="bg-white px-3 py-2 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center shrink-0">
+                    <div>
+                        <span class="text-[10px] uppercase font-bold text-slate-500">Chức năng thận (eGFR / CrCl)</span>
+                        <div class="flex items-baseline space-x-1.5">
+                            <span id="gfrResultVal" class="text-2xl font-extrabold text-emerald-700">--</span>
+                            <span class="text-[10px] font-bold text-slate-600">mL/min/1.73m²</span>
                         </div>
                     </div>
-
-                    <!-- Bảng phân độ CKD -->
-                    <div id="ckdGuideBox" class="hidden mt-2 pt-2 border-t text-xs space-y-1 bg-slate-50 p-2 rounded-lg">
-                        <p class="font-bold text-slate-700 mb-1"><i class="fa-solid fa-circle-info text-emerald-600 mr-1"></i> Bảng phân loại Giai đoạn Bệnh thận mạn (KDIGO):</p>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-slate-600">
-                            <div>• <b>G1 (≥ 90):</b> Bình thường hoặc tăng</div>
-                            <div>• <b>G2 (60 - 89):</b> Giảm nhẹ</div>
-                            <div>• <b>G3a (45 - 59):</b> Giảm nhẹ đến trung bình</div>
-                            <div>• <b>G3b (30 - 44):</b> Giảm trung bình đến nặng</div>
-                            <div>• <b>G4 (15 - 29):</b> Giảm nặng</div>
-                            <div>• <b>G5 (< 15):</b> Suy thận mạn giai đoạn cuối</div>
-                        </div>
+                    <div id="ckdStageBadge" class="px-3 py-1 rounded-lg text-center border font-extrabold text-[10px] bg-slate-100 text-slate-800">
+                        Chưa phân loại
                     </div>
                 </div>
 
-                <!-- Khung Tra cứu & Chọn Kháng sinh Tích hợp -->
-                <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200 flex-grow flex flex-col overflow-hidden space-y-2.5">
+                <!-- Khung Tra cứu Kháng sinh -->
+                <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 flex-grow flex flex-col overflow-hidden space-y-2 relative">
                     <div class="shrink-0 relative">
-                        <label class="block text-xs font-bold text-slate-700 mb-1">
-                            <i class="fa-solid fa-search mr-1 text-emerald-600"></i> Tra cứu & Chọn Kháng sinh:
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">
+                            <i class="fa-solid fa-search mr-1 text-emerald-600"></i> Gõ tên kháng sinh cần tra cứu:
                         </label>
-                        <div class="relative">
-                            <input type="text" id="drugSearchInput" oninput="handleDrugSearchInput(this.value)" placeholder="-- Gõ tên thuốc để lọc hoặc bấm xem danh sách A-Z --" class="w-full p-2.5 text-xs border-2 border-emerald-500 rounded-lg bg-emerald-50/50 text-slate-900 font-semibold focus:ring-2 focus:ring-emerald-600 placeholder:italic placeholder:text-slate-400 placeholder:font-normal">
-                            <div class="absolute right-3 top-3 text-emerald-700 pointer-events-none">
-                                <i class="fa-solid fa-chevron-down text-xs"></i>
-                            </div>
-                        </div>
-
-                        <!-- Khung danh sách gợi ý thả xuống -->
-                        <div id="drugSuggestions" class="hidden absolute left-0 right-0 z-50 mt-1 bg-white border-2 border-emerald-500 rounded-lg shadow-xl max-h-56 overflow-y-auto text-xs"></div>
+                        <input type="text" id="drugSearchInput" oninput="handleDrugSearchInput(this.value)" placeholder="-- Ví dụ: Cefuroxim, Vancomycin, Meropenem... --" class="w-full p-2 text-xs border-2 border-emerald-500 rounded-lg bg-emerald-50/50 font-semibold focus:outline-none">
+                        <div id="drugSuggestions" class="hidden absolute left-0 right-0 z-50 mt-1 bg-white border-2 border-emerald-500 rounded-lg shadow-xl max-h-40 overflow-y-auto"></div>
                     </div>
 
-                    <!-- Tag các thuốc đã chọn -->
-                    <div id="selectedAntibioticsTags" class="flex flex-wrap gap-1.5 max-h-14 overflow-y-auto p-1 bg-slate-50 border rounded-lg shrink-0">
-                        <span class="text-xs text-slate-400 italic py-1 px-2">Chưa có kháng sinh nào được chọn.</span>
+                    <!-- Tags thuốc đã chọn -->
+                    <div id="selectedAntibioticsTags" class="flex flex-wrap gap-1 max-h-10 overflow-y-auto p-1 bg-slate-50 border rounded shrink-0">
+                        <span class="text-slate-400 italic">Chưa chọn kháng sinh.</span>
                     </div>
 
-                    <!-- Bảng kết quả liều chi tiết -->
-                    <div id="antibioticRecommendationResult" class="space-y-3 overflow-y-auto flex-grow pr-1">
-                        <div class="text-center py-6 text-slate-400 border border-dashed rounded-xl">
-                            <i class="fa-solid fa-hand-pointer text-xl mb-1"></i>
-                            <p class="text-xs">Hãy gõ hoặc chọn kháng sinh từ ô phía trên để xem liều hiệu chỉnh theo eGFR.</p>
+                    <!-- Kết quả liều chi tiết -->
+                    <div id="antibioticRecommendationResult" class="space-y-2 overflow-y-auto flex-grow pr-1">
+                        <div class="text-center py-8 text-slate-400 border border-dashed rounded-xl">
+                            <i class="fa-solid fa-hand-pointer text-base mb-1"></i>
+                            <p>Chọn kháng sinh phía trên để xem hiệu chỉnh liều, đường dùng, ADR & Tương tác chuẩn.</p>
                         </div>
                     </div>
                 </div>
@@ -200,116 +172,135 @@
         </div>
 
         <!-- TAB 2: VI KHUẨN -->
-        <div id="content-bacteria" class="space-y-4 h-full overflow-y-auto hidden">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
-                    <h2 class="text-sm font-bold text-slate-800">Danh mục Vi khuẩn & Đặc điểm Lâm sàng</h2>
-                    <input type="text" id="searchBacteria" onkeyup="renderBacteriaList()" placeholder="Tìm kiếm vi khuẩn..." class="p-2 text-xs border rounded-lg w-full sm:w-64">
+        <div id="content-bacteria" class="space-y-3 h-full overflow-y-auto hidden">
+            <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-xs font-bold text-slate-800">Danh mục Vi khuẩn Lâm sàng</h2>
+                    <input type="text" id="searchBacteria" onkeyup="renderBacteriaList()" placeholder="Tìm vi khuẩn..." class="p-1.5 border rounded w-48 text-xs">
                 </div>
-                <div id="bacteriaContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                <div id="bacteriaContainer" class="grid grid-cols-2 gap-2"></div>
             </div>
         </div>
 
         <!-- TAB 3: TƯƠNG TÁC -->
-        <div id="content-interactions" class="space-y-4 h-full overflow-y-auto hidden">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div id="content-interactions" class="space-y-3 h-full overflow-y-auto hidden">
+            <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 grid grid-cols-2 gap-3 h-full">
                 <div>
-                    <h2 class="text-sm font-bold text-slate-800 mb-2">Chọn thuốc kiểm tra tương tác:</h2>
-                    <div id="interactionDrugSelector" class="space-y-1.5 max-h-72 overflow-y-auto p-2 border rounded-lg bg-slate-50 text-xs"></div>
-                    <button onclick="checkInteractions()" class="mt-3 w-full bg-slate-800 text-white py-2 rounded-lg text-xs font-medium">Kiểm tra Tương tác</button>
+                    <h2 class="text-xs font-bold text-slate-800 mb-1">Chọn thuốc kiểm tra tương tác:</h2>
+                    <div id="interactionDrugSelector" class="space-y-1 max-h-64 overflow-y-auto p-2 border rounded bg-slate-50"></div>
+                    <button onclick="checkInteractions()" class="mt-2 w-full bg-slate-800 text-white py-1.5 rounded text-xs font-medium">Kiểm tra</button>
                 </div>
-                <div id="interactionResultBox" class="border rounded-lg p-4 bg-slate-50 flex items-center justify-center text-center text-slate-400 text-xs min-h-[100px]">
-                    Chưa có kết quả kiểm tra.
+                <div id="interactionResultBox" class="border rounded p-3 bg-slate-50 flex items-center justify-center text-center text-slate-400">
+                    Chưa có kết quả tương tác.
                 </div>
             </div>
         </div>
 
-        <!-- TAB 4: ADMIN (Có Modal bảo vệ) -->
-        <div id="content-admin" class="space-y-4 h-full overflow-y-auto hidden">
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-4">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                    <h2 class="text-sm font-bold text-slate-800">Quản lý Dữ liệu (Admin) - Tổng: <span id="abCount">0</span> thuốc</h2>
-                    <div class="space-x-2">
-                        <button onclick="exportJSONData()" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Xuất JSON</button>
-                        <button onclick="resetDefaultData()" class="bg-rose-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Khôi phục Gốc</button>
+        <!-- TAB 4: ADMIN -->
+        <div id="content-admin" class="space-y-3 h-full overflow-y-auto hidden">
+            <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 space-y-2">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xs font-bold text-slate-800">Quản trị Dữ liệu (Tổng: <span id="abCount">0</span> thuốc)</h2>
+                    <div class="space-x-1">
+                        <button onclick="exportJSONData()" class="bg-emerald-600 text-white px-2 py-1 rounded font-bold">Xuất JSON</button>
+                        <button onclick="resetDefaultData()" class="bg-rose-600 text-white px-2 py-1 rounded font-bold">Khôi phục Gốc</button>
                     </div>
                 </div>
-                <div id="adminAntibioticList" class="space-y-2 text-xs max-h-96 overflow-y-auto"></div>
+                <div id="adminAntibioticList" class="space-y-1.5 max-h-72 overflow-y-auto"></div>
             </div>
         </div>
 
     </main>
 
-    <!-- Hộp thoại Modal Nhập Mật Khẩu Admin -->
+    <!-- Modal Admin Auth -->
     <div id="adminModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl border max-w-sm w-full p-5 space-y-4">
-            <div class="flex items-center space-x-3 text-emerald-700">
-                <div class="bg-emerald-100 p-2.5 rounded-xl">
-                    <i class="fa-solid fa-user-shield text-xl"></i>
-                </div>
-                <div>
-                    <h3 class="font-bold text-slate-900 text-sm">Yêu cầu Quyền Admin</h3>
-                    <p class="text-[11px] text-slate-500">Nhập mật khẩu quản trị để tiếp tục</p>
-                </div>
-            </div>
-
-            <div>
-                <input type="password" id="adminPasswordInput" placeholder="Nhập mật khẩu..." class="w-full p-2.5 text-xs border-2 border-slate-300 rounded-xl focus:border-emerald-600 focus:outline-none font-semibold">
-                <p id="adminAuthError" class="text-[11px] text-red-600 font-bold mt-1 hidden"><i class="fa-solid fa-circle-exclamation mr-1"></i>Mật khẩu không chính xác!</p>
-            </div>
-
-            <div class="flex space-x-2 pt-1">
-                <button onclick="closeAdminAuthModal()" class="w-1/2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Hủy</button>
-                <button onclick="verifyAdminPassword()" class="w-1/2 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-md">Xác nhận</button>
+        <div class="bg-white rounded-xl shadow-2xl border max-w-xs w-full p-4 space-y-3">
+            <h3 class="font-bold text-slate-900 text-xs flex items-center"><i class="fa-solid fa-user-shield text-emerald-700 mr-1.5"></i> Xác thực Admin</h3>
+            <input type="password" id="adminPasswordInput" placeholder="Mật khẩu..." class="w-full p-2 border rounded text-xs font-semibold">
+            <p id="adminAuthError" class="text-red-600 font-bold hidden text-[10px]">Sai mật khẩu!</p>
+            <div class="flex space-x-1 pt-1">
+                <button onclick="closeAdminAuthModal()" class="w-1/2 py-1 bg-slate-100 rounded text-xs">Hủy</button>
+                <button onclick="verifyAdminPassword()" class="w-1/2 py-1 bg-emerald-600 text-white font-bold rounded text-xs">Xác nhận</button>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white border-t py-1.5 px-4 text-center text-xs text-slate-500 shrink-0">
-        RenalDose Rx Pro © 2026 — Công cụ hỗ trợ tra cứu lâm sàng theo eGFR.
+    <footer class="bg-white border-t py-1 px-3 text-center text-[10px] text-slate-500 shrink-0">
+        RenalDose Rx Pro © 2026 — Dựa trên Cơ sở dữ liệu eMed Bệnh viện Bệnh Nhiệt Đới[cite: 1].
     </footer>
 
-    <!-- JavaScript Xử lý -->
+    <!-- JavaScript Xử lý Dữ liệu Chuẩn eMed & Giao diện Cố định -->
     <script>
         const defaultDatabase = {
             antibiotics: [
-                { id: "amox_clav", name: "Amoxicillin / Clavulanate", group: "Penicillin + Ức chế", adr: "Tiêu chảy, phát ban, tăng men gan.", intervals: [{ min: 30, max: 9999, adultDose: "1g mỗi 12h (Uống)", pedDose: "25-45 mg/kg/ngày (Uống)", note: "Liều chuẩn" }, { min: 10, max: 29, adultDose: "500/125mg mỗi 12h (Uống)", pedDose: "15 mg/kg mỗi 12h (Uống)", note: "Giảm liều" }, { min: 0, max: 9, adultDose: "500/125mg mỗi 24h (Uống)", pedDose: "15 mg/kg mỗi 24h (Uống)", note: "Sau lọc máu" }] },
-                { id: "azithromycin", name: "Azithromycin", group: "Macrolide", adr: "Tiêu chảy, kéo dài QT.", intervals: [{ min: 0, max: 9999, adultDose: "500mg ngày 1, sau đó 250mg/ngày (Uống/IV)", pedDose: "10 mg/kg ngày 1, sau đó 5mg/kg", note: "Thải trừ qua gan" }] },
-                { id: "cefadroxil", name: "Cefadroxil", group: "Cephalosporin G1", adr: "Rối loạn tiêu hóa.", intervals: [{ min: 50, max: 9999, adultDose: "1-2g/ngày (Uống)", pedDose: "30 mg/kg/ngày", note: "Liều chuẩn" }, { min: 25, max: 50, adultDose: "500mg-1g mỗi 12h (Uống)", pedDose: "15 mg/kg mỗi 12h", note: "Giãn cách" }, { min: 0, max: 24, adultDose: "500mg mỗi 24-36h (Uống)", pedDose: "15 mg/kg mỗi 24h", note: "Thận trọng" }] },
-                { id: "cefazolin", name: "Cefazolin", group: "Cephalosporin G1", adr: "Phát ban, tăng enzym gan.", intervals: [{ min: 50, max: 9999, adultDose: "1-2g mỗi 8h (Tiêm tĩnh mạch)", pedDose: "25-50 mg/kg mỗi 8h", note: "Liều chuẩn" }, { min: 35, max: 50, adultDose: "1-2g mỗi 12h (Tiêm tĩnh mạch)", pedDose: "Liều chuẩn mỗi 12h", note: "Giãn cách" }, { min: 11, max: 34, adultDose: "500mg-1g mỗi 12h (Tiêm tĩnh mạch)", pedDose: "10-15 mg/kg mỗi 12h", note: "Giảm 50%" }, { min: 0, max: 10, adultDose: "500mg mỗi 24h (Tiêm tĩnh mạch)", pedDose: "10 mg/kg mỗi 24h", note: "Sau HD" }] },
-                { id: "cefepime", name: "Cefepime", group: "Cephalosporin G4", adr: "Độc tính thần kinh, co giật ở suy thận.", intervals: [{ min: 60, max: 9999, adultDose: "1-2g mỗi 8-12h (Tiêm tĩnh mạch)", pedDose: "50 mg/kg mỗi 8h", note: "Liều chuẩn" }, { min: 30, max: 60, adultDose: "1-2g mỗi 24h (Tiêm tĩnh mạch)", pedDose: "50 mg/kg mỗi 12h", note: "Chỉnh liều" }, { min: 11, max: 29, adultDose: "500mg-1g mỗi 24h (Tiêm tĩnh mạch)", pedDose: "50 mg/kg mỗi 24h", note: "Theo dõi ý thức" }, { min: 0, max: 10, adultDose: "500mg mỗi 24h (Tiêm tĩnh mạch)", pedDose: "25 mg/kg mỗi 24h", note: "Sau HD" }] },
-                { id: "cefixime", name: "Cefixime", group: "Cephalosporin G3", adr: "Tiêu chảy.", intervals: [{ min: 60, max: 9999, adultDose: "400mg mỗi 24h (Uống)", pedDose: "8 mg/kg/ngày", note: "Liều chuẩn" }, { min: 21, max: 60, adultDose: "300mg mỗi 24h (Uống)", pedDose: "6 mg/kg/ngày", note: "Giảm liều" }, { min: 0, max: 20, adultDose: "200mg mỗi 24h (Uống)", pedDose: "4 mg/kg/ngày", note: "Ít lọc qua thận" }] },
-                { id: "cefoperazone", name: "Cefoperazone", group: "Cephalosporin G3", adr: "Hạ prothrombin, phản ứng rượu.", intervals: [{ min: 15, max: 9999, adultDose: "2-4g/ngày (Tiêm tĩnh mạch)", pedDose: "40-80 mg/kg/ngày", note: "Thải trừ mật" }, { min: 0, max: 14, adultDose: "Tối đa 2g/ngày (Tiêm tĩnh mạch)", pedDose: "Tối đa 50 mg/kg", note: "Thận trọng suy gan" }] },
-                { id: "cefotaxime", name: "Cefotaxime", group: "Cephalosporin G3", adr: "Phát ban, tiêu chảy.", intervals: [{ min: 20, max: 9999, adultDose: "1-2g mỗi 8h (Tiêm tĩnh mạch)", pedDose: "37.5 mg/kg mỗi 6h", note: "Liều chuẩn" }, { min: 10, max: 20, adultDose: "1-2g mỗi 12h (Tiêm tĩnh mạch)", pedDose: "25 mg/kg mỗi 8-12h", note: "Giảm 50%" }, { min: 0, max: 9, adultDose: "1g mỗi 24h (Tiêm tĩnh mạch)", pedDose: "25 mg/kg mỗi 24h", note: "Sau HD" }] },
-                { id: "cefpirome", name: "Cefpirome", group: "Cephalosporin G4", adr: "Tăng men gan nhẹ.", intervals: [{ min: 50, max: 9999, adultDose: "1-2g mỗi 12h (Tiêm tĩnh mạch)", pedDose: "30-50 mg/kg mỗi 12h", note: "Liều chuẩn" }, { min: 20, max: 50, adultDose: "1g mỗi 12h (Tiêm tĩnh mạch)", pedDose: "25 mg/kg mỗi 12h", note: "Chỉnh liều" }, { min: 0, max: 19, adultDose: "500mg-1g mỗi 24h (Tiêm tĩnh mạch)", pedDose: "15 mg/kg mỗi 24h", note: "Sau HD" }] },
-                { id: "cefpodoxime", name: "Cefpodoxime", group: "Cephalosporin G3", adr: "Buồn nôn, tiêu chảy.", intervals: [{ min: 30, max: 9999, adultDose: "100-400mg mỗi 12h (Uống)", pedDose: "5 mg/kg mỗi 12h", note: "Liều chuẩn" }, { min: 0, max: 29, adultDose: "100-400mg mỗi 24-48h (Uống)", pedDose: "5 mg/kg mỗi 24h", note: "Giãn khoảng cách" }] },
-                { id: "cefoxitin", name: "Cefoxitin", group: "Cephamycin", adr: "Viêm tĩnh mạch, dị ứng.", intervals: [{ min: 50, max: 9999, adultDose: "1-2g mỗi 6-8h (Tiêm tĩnh mạch)", pedDose: "20-40 mg/kg mỗi 6h", note: "Liều chuẩn" }, { min: 10, max: 49, adultDose: "1-2g mỗi 8-12h (Tiêm tĩnh mạch)", pedDose: "20 mg/kg mỗi 8-12h", note: "Giãn cách" }, { min: 0, max: 9, adultDose: "500mg-1g mỗi 24h (Tiêm tĩnh mạch)", pedDose: "10 mg/kg mỗi 24h", note: "Sau HD" }] },
-                { id: "ceftazidime", name: "Ceftazidime", group: "Cephalosporin G3", adr: "Độc tính thần kinh ở suy thận.", intervals: [{ min: 50, max: 9999, adultDose: "1-2g mỗi 8h (Tiêm tĩnh mạch)", pedDose: "30-50 mg/kg mỗi 8h", note: "Liều chuẩn" }, { min: 31, max: 50, adultDose: "1g mỗi 12h (Tiêm tĩnh mạch)", pedDose: "30 mg/kg mỗi 12h", note: "Chỉnh liều" }, { min: 16, max: 30, adultDose: "1g mỗi 24h (Tiêm tĩnh mạch)", pedDose: "30 mg/kg mỗi 24h", note: "Chỉnh liều" }, { min: 0, max: 15, adultDose: "500mg-1g mỗi 24-48h (Tiêm tĩnh mạch)", pedDose: "15 mg/kg mỗi 24h", note: "Sau HD" }] },
-                { id: "ceftriaxone", name: "Ceftriaxone", group: "Cephalosporin G3", adr: "Bùn mật, kết tủa canxi.", intervals: [{ min: 0, max: 9999, adultDose: "1-2g mỗi 24h (Tiêm tĩnh mạch/bắp)", pedDose: "50-100 mg/kg/ngày", note: "Thải trừ kép gan/thận. Không cần chỉnh liều." }] },
-                { id: "cefuroxime", name: "Cefuroxime", group: "Cephalosporin G2", adr: "Tiêu chảy, tăng bạch cầu.", intervals: [{ min: 20, max: 9999, adultDose: "750mg-1.5g mỗi 8h (Tiêm tĩnh mạch)", pedDose: "20-30 mg/kg mỗi 8h", note: "Liều chuẩn" }, { min: 10, max: 20, adultDose: "750mg mỗi 12h (Tiêm tĩnh mạch)", pedDose: "15 mg/kg mỗi 12h", note: "Giảm tần suất" }, { min: 0, max: 9, adultDose: "750mg mỗi 24h (Tiêm tĩnh mạch)", pedDose: "15 mg/kg mỗi 24h", note: "Sau HD" }] },
-                { id: "ciprofloxacin", name: "Ciprofloxacin", group: "Fluoroquinolone", adr: "Viêm đứt gân Achilles, kéo dài QT.", intervals: [{ min: 50, max: 9999, adultDose: "400mg mỗi 12h (Tiêm tĩnh mạch)", pedDose: "10-15 mg/kg mỗi 12h", note: "Liều chuẩn" }, { min: 30, max: 50, adultDose: "200-400mg mỗi 12h (Tiêm tĩnh mạch)", pedDose: "10 mg/kg mỗi 12h", note: "Chỉnh nhẹ" }, { min: 0, max: 29, adultDose: "200-400mg mỗi 24h (Tiêm tĩnh mạch)", pedDose: "10 mg/kg mỗi 24h", note: "Giảm 50%" }] },
-                { id: "clarithromycin", name: "Clarithromycin", group: "Macrolide", adr: "Vị kim loại, kéo dài QT.", intervals: [{ min: 30, max: 9999, adultDose: "250-500mg mỗi 12h (Uống)", pedDose: "7.5 mg/kg mỗi 12h", note: "Liều chuẩn" }, { min: 0, max: 29, adultDose: "250mg mỗi 12-24h (Uống)", pedDose: "3.75 mg/kg mỗi 12h", note: "Giảm 50%" }] },
-                { id: "colistin", name: "Colistin", group: "Polymyxin", adr: "Độc thận cấp, độc thần kinh.", intervals: [{ min: 50, max: 9999, adultDose: "Liều nạp 9M IU, sau đó 4.5M IU mỗi 12h (Tiêm tĩnh mạch)", pedDose: "75k-150k IU/kg/ngày", note: "Tính theo CBA" }, { min: 10, max: 50, adultDose: "Liều nạp 9M IU, sau đó 2.5-3.5M IU mỗi 12h (Tiêm tĩnh mạch)", pedDose: "Giảm theo cân nặng", note: "Theo dõi sát" }, { min: 0, max: 9, adultDose: "Liều nạp 9M IU, sau đó 2M IU mỗi 24h (Tiêm tĩnh mạch)", pedDose: "Theo y lệnh", note: "Sau HD" }] },
-                { id: "cotrimoxazole", name: "Cotrimoxazole", group: "Sulfonamide + TMP", adr: "Phát ban, tăng kali máu.", intervals: [{ min: 30, max: 9999, adultDose: "1-2 viên 960mg mỗi 12h (Uống/IV)", pedDose: "4-6 mg/kg TMP mỗi 12h", note: "Liều chuẩn" }, { min: 15, max: 30, adultDose: "1 viên 960mg mỗi 12-24h (Uống/IV)", pedDose: "2-3 mg/kg TMP", note: "Giảm 50%" }, { min: 0, max: 14, adultDose: "Không khuyến cáo", pedDose: "Thận trọng", note: "Tránh dùng nếu có thể" }] },
-                { id: "doxycycline", name: "Doxycycline", group: "Tetracycline", adr: "Kích ứng thực quản, nhạy cảm ánh sáng.", intervals: [{ min: 0, max: 9999, adultDose: "100mg mỗi 12h ngày 1, sau đó 100mg/ngày (Uống)", pedDose: "2-4 mg/kg/ngày", note: "Không cần chỉnh liều suy thận." }] },
-                { id: "erythromycin", name: "Erythromycin", group: "Macrolide", adr: "Co thắt dạ dày, buồn nôn.", intervals: [{ min: 10, max: 9999, adultDose: "250-500mg mỗi 6h (Uống/IV)", pedDose: "30-50 mg/kg/ngày", note: "Liều chuẩn" }, { min: 0, max: 9, adultDose: "250-500mg mỗi 8-12h [Max 2g/d] (Uống/IV)", pedDose: "10 mg/kg mỗi 8h", note: "Giới hạn liều" }] },
-                { id: "fosfomycin", name: "Fosfomycin", group: "Acid Phosphonic", adr: "Rối loạn tiêu hóa, tăng natri máu.", intervals: [{ min: 50, max: 9999, adultDose: "Uống 3g liều duy nhất / IV 4g mỗi 6h", pedDose: "100-200 mg/kg/ngày", note: "Dạng uống không chỉnh liều" }, { min: 0, max: 49, adultDose: "IV 2g-4g mỗi 8-12h (Tiêm tĩnh mạch)", pedDose: "Chỉnh theo IV", note: "Thận trọng" }] },
-                { id: "gentamicin", name: "Gentamicin", group: "Aminoglycoside", adr: "Độc thận, độc tai không hồi phục.", intervals: [{ min: 60, max: 9999, adultDose: "5-7 mg/kg mỗi 24h (Tiêm tĩnh mạch/bắp)", pedDose: "5-7.5 mg/kg mỗi 24h", note: "Theo dõi TDM" }, { min: 40, max: 60, adultDose: "Giữ liều, dùng mỗi 36h (Tiêm tĩnh mạch/bắp)", pedDose: "Theo TDM", note: "Giãn cách" }, { min: 20, max: 39, adultDose: "Giữ liều, dùng mỗi 48h (Tiêm tĩnh mạch/bắp)", pedDose: "Theo TDM", note: "Giãn cách" }, { min: 0, max: 19, adultDose: "Liều nạp 2mg/kg, đo TDM (Tiêm tĩnh mạch/bắp)", pedDose: "Theo TDM", note: "Sau HD" }] },
-                { id: "levofloxacin", name: "Levofloxacin", group: "Fluoroquinolone", adr: "Viêm gân, kéo dài QT.", intervals: [{ min: 50, max: 9999, adultDose: "500-750mg mỗi 24h (Uống/IV)", pedDose: "Hạn chế trẻ em", note: "Liều chuẩn" }, { min: 20, max: 49, adultDose: "Nạp 750mg, sau đó 500mg mỗi 48h (Uống/IV)", pedDose: "--", note: "Giãn cách" }, { min: 0, max: 19, adultDose: "Nạp 750mg, sau đó 250-500mg mỗi 48h (Uống/IV)", pedDose: "--", note: "Chỉnh kỹ" }] },
-                { id: "linezolid", name: "Linezolid", group: "Oxazolidinone", adr: "Ức chế tủy xương, hội chứng Serotonin.", intervals: [{ min: 0, max: 9999, adultDose: "600mg mỗi 12h (Uống/IV)", pedDose: "10 mg/kg mỗi 8h", note: "Không cần chỉnh liều suy thận." }] },
-                { id: "meropenem", name: "Meropenem", group: "Carbapenem", adr: "Tiêu chảy, co giật hiếm gặp.", intervals: [{ min: 50, max: 9999, adultDose: "1-2g mỗi 8h [Truyền kéo dài 3h] (Tiêm tĩnh mạch)", pedDose: "20-40 mg/kg mỗi 8h", note: "Liều chuẩn nặng" }, { min: 25, max: 50, adultDose: "1g mỗi 8-12h (Tiêm tĩnh mạch)", pedDose: "20 mg/kg mỗi 8h", note: "Giảm 50%" }, { min: 10, max: 24, adultDose: "500mg-1g mỗi 12h (Tiêm tĩnh mạch)", pedDose: "10-20 mg/kg mỗi 12h", note: "Thận trọng" }, { min: 0, max: 9, adultDose: "500mg mỗi 24h (Tiêm tĩnh mạch)", pedDose: "10 mg/kg mỗi 24h", note: "Sau lọc máu" }] },
-                { id: "metronidazole", name: "Metronidazole", group: "Nitroimidazole", adr: "Vị kim loại, phản ứng rượu.", intervals: [{ min: 10, max: 9999, adultDose: "500mg mỗi 8h (Uống/IV)", pedDose: "7.5 mg/kg mỗi 8h", note: "Liều chuẩn" }, { min: 0, max: 9, adultDose: "250-500mg mỗi 12h (Uống/IV)", pedDose: "7.5 mg/kg mỗi 12h", note: "Sau HD" }] },
-                { id: "moxifloxacin", name: "Moxifloxacin", group: "Fluoroquinolone", adr: "Kéo dài QT.", intervals: [{ min: 0, max: 9999, adultDose: "400mg mỗi 24h (Uống/IV)", pedDose: "Không dùng trẻ em", note: "Chuyển hóa qua gan. Không chỉnh liều." }] },
-                { id: "netilmicin", name: "Netilmicin", group: "Aminoglycoside", adr: "Độc thận, độc tai.", intervals: [{ min: 60, max: 9999, adultDose: "4-6 mg/kg mỗi 24h (Tiêm tĩnh mạch/bắp)", pedDose: "6-7.5 mg/kg mỗi 24h", note: "Liều chuẩn" }, { min: 30, max: 60, adultDose: "Dùng mỗi 36-48h (Tiêm tĩnh mạch/bắp)", pedDose: "Theo TDM", note: "Giãn cách" }, { min: 0, max: 29, adultDose: "Nạp 2mg/kg, theo dõi nồng độ (Tiêm tĩnh mạch/bắp)", pedDose: "Theo TDM", note: "Chỉnh kỹ" }] },
-                { id: "pip_tazo", name: "Piperacillin / Tazobactam", group: "Penicillin phổ rộng", adr: "Tăng nguy cơ AKI khi kèm Vancomycin.", intervals: [{ min: 50, max: 9999, adultDose: "4.5g mỗi 6h [Truyền kéo dài] (Tiêm tĩnh mạch)", pedDose: "80-100 mg/kg mỗi 6h", note: "Mủ xanh nặng" }, { min: 20, max: 50, adultDose: "3.375g mỗi 6h (Tiêm tĩnh mạch)", pedDose: "75 mg/kg mỗi 6h", note: "Chỉnh liều" }, { min: 0, max: 19, adultDose: "2.25g mỗi 6-8h (Tiêm tĩnh mạch)", pedDose: "75 mg/kg mỗi 8h", note: "Sau HD" }] },
-                { id: "tinidazole", name: "Tinidazole", group: "Nitroimidazole", adr: "Vị kim loại, chóng mặt.", intervals: [{ min: 10, max: 9999, adultDose: "2g uống liều duy nhất (Uống)", pedDose: "50 mg/kg", note: "Liều chuẩn" }, { min: 0, max: 9, adultDose: "1g uống liều duy nhất (Uống)", pedDose: "25 mg/kg", note: "Sau HD" }] },
-                { id: "vanco", name: "Vancomycin", group: "Glycopeptide", adr: "Độc thận, hội chứng người đỏ.", intervals: [{ min: 50, max: 9999, adultDose: "15-20 mg/kg mỗi 8-12h (Tiêm tĩnh mạch truyền chậm)", pedDose: "15 mg/kg mỗi 6h", note: "Duy trì TDM 15-20" }, { min: 30, max: 50, adultDose: "15 mg/kg mỗi 12-24h (Tiêm tĩnh mạch truyền chậm)", pedDose: "15 mg/kg mỗi 8-12h", note: "Theo dõi TDM" }, { min: 10, max: 29, adultDose: "15 mg/kg mỗi 24-48h (Tiêm tĩnh mạch truyền chậm)", pedDose: "15 mg/kg mỗi 18-24h", note: "Theo dõi sát" }, { min: 0, max: 9, adultDose: "15 mg/kg nạp, chỉnh theo TDM (Tiêm tĩnh mạch truyền chậm)", pedDose: "Sau HD", note: "Bổ sung sau HD" }] }
+                { 
+                    id: "cefuroxim", 
+                    name: "Cefuroxim (Uống & Tiêm)", 
+                    group: "Cephalosporin G2", 
+                    adr: "Tiêu chảy, buồn nôn, tăng men gan tạm thời, phản ứng quá mẫn.", 
+                    interaction: "Làm giảm tác dụng của vaccine BCG, BCG bladder instillation, Sodium picosulfate. Tránh dùng chung thuốc kháng acid làm giảm hấp thu dạng uống.",
+                    intervals: [
+                        { min: 50, max: 9999, adultDose: "Uống: 250-500mg mỗi 12h | Tiêm: 750mg-1.5g mỗi 8h", pedDose: "Uống: 20-30 mg/kg/ngày chia 2 lần | Tiêm: 50-100 mg/kg/ngày chia 3-4 lần", note: "Liều chuẩn bình thường." },
+                        { min: 20, max: 49, adultDose: "Tiêm: 750mg mỗi 12h (Uống giữ liều, giãn khoảng cách)", pedDose: "Giảm 30-50% tổng liều hoặc giãn cách mỗi 12h", note: "Giảm tần suất / Chỉnh liều nhẹ." },
+                        { min: 10, max: 19, adultDose: "Tiêm: 750mg mỗi 12-24h", pedDose: "Theo dõi sát lâm sàng, dùng mỗi 12-24h", note: "Suy thận trung bình." },
+                        { min: 0, max: 9, adultDose: "Tiêm: 750mg mỗi 24h (Bổ sung sau lọc máu)", pedDose: "Liều thấp theo y lệnh chuyên khoa", note: "Suy thận nặng / Thận nhân tạo." }
+                    ] 
+                },
+                { 
+                    id: "vanco", 
+                    name: "Vancomycin", 
+                    group: "Glycopeptide", 
+                    adr: "Hội chứng người đỏ (Red man syndrome), độc thận cấp, độc tai.", 
+                    interaction: "TĂNG NGUY CƠ TỔN THƯƠNG THẬN CẤP (AKI) KHI DÙNG CHUNG VỚI PIPERACILLIN/TAZOBACTAM hoặc Aminoglycoside, Colistin.",
+                    intervals: [
+                        { min: 50, max: 9999, adultDose: "15-20 mg/kg mỗi 8-12h (Truyền tĩnh mạch chậm)", pedDose: "15 mg/kg mỗi 6-8h", note: "Duy trì TDM mục tiêu 15-20 mcg/mL." },
+                        { min: 30, max: 50, adultDose: "15 mg/kg mỗi 12-24h", pedDose: "15 mg/kg mỗi 8-12h", note: "Hiệu chỉnh theo nồng độ đáy (TDM)." },
+                        { min: 10, max: 29, adultDose: "15 mg/kg mỗi 24-48h", pedDose: "15 mg/kg mỗi 18-24h", note: "Theo dõi sát nồng độ thuốc trong máu." },
+                        { min: 0, max: 9, adultDose: "15 mg/kg liều nạp, định lượng TDM trước liều tiếp theo", pedDose: "Bổ sung sau mỗi kỳ lọc máu", note: "Suy thận nặng / Thận nhân tạo." }
+                    ] 
+                },
+                { 
+                    id: "meropenem", 
+                    name: "Meropenem", 
+                    group: "Carbapenem", 
+                    adr: "Tiêu chảy, phát ban, hiếm gặp co giật ở bệnh nhân suy thận nặng.", 
+                    interaction: "Làm giảm nồng độ Acid Valproic trong máu, nguy cơ tái phát cơn động kinh.",
+                    intervals: [
+                        { min: 50, max: 9999, adultDose: "1-2g mỗi 8h (Truyền kéo dài 3 giờ)", pedDose: "20-40 mg/kg mỗi 8h", note: "Liều chuẩn nhiễm trùng nặng/Mủ xanh." },
+                        { min: 26, max: 50, adultDose: "1g mỗi 8-12h (Tiêm tĩnh mạch)", pedDose: "20 mg/kg mỗi 8h", note: "Giảm liều theo mức lọc cầu thận." },
+                        { min: 10, max: 25, adultDose: "500mg-1g mỗi 12h", pedDose: "10-20 mg/kg mỗi 12h", note: "Suy thận trung bình đến nặng." },
+                        { min: 0, max: 9, adultDose: "500mg mỗi 24h", pedDose: "10 mg/kg mỗi 24h", note: "Sau lọc máu ngắt quãng." }
+                    ] 
+                },
+                { 
+                    id: "colistin", 
+                    name: "Colistin (Colistimethate Sodium)", 
+                    group: "Polymyxin", 
+                    adr: "Độc thận cấp, độc tính thần kinh (dị cảm, chóng mặt, yếu cơ).", 
+                    interaction: "Tăng đáng kể độc tính trên thận và thần kinh khi kết hợp với thuốc giãn cơ, aminoglycoside.",
+                    intervals: [
+                        { min: 50, max: 9999, adultDose: "Liều nạp 9 triệu IU, sau đó 4.5 triệu IU mỗi 12h", pedDose: "75.000 - 150.000 IU/kg/ngày chia 3 lần", note: "Tính theo hàm lượng CBA." },
+                        { min: 10, max: 49, adultDose: "Liều nạp 9 triệu IU, sau đó 2.5 - 3.5 triệu IU mỗi 12h", pedDose: "Hiệu chỉnh theo cân nặng & chức năng thận", note: "Thận trọng theo dõi sát creatinin máu." },
+                        { min: 0, max: 9, adultDose: "Liều nạp 9 triệu IU, sau đó 2 triệu IU mỗi 24h", pedDose: "Theo chỉ định chuyên khoa thận", note: "Bổ sung sau lọc máu." }
+                    ] 
+                },
+                { 
+                    id: "ciprofloxacin", 
+                    name: "Ciprofloxacin", 
+                    group: "Fluoroquinolone", 
+                    adr: "Viêm đứt gân Achilles, kéo dài khoảng QT, rối loạn tiêu hóa.", 
+                    interaction: "Tránh dùng chung với thuốc chống loạn nhịp nhóm IA, III, kháng acid chứa Magie/Nhôm làm giảm hấp thu.",
+                    intervals: [
+                        { min: 50, max: 9999, adultDose: "400mg mỗi 12h (IV) hoặc 500mg mỗi 12h (Uống)", pedDose: "10-15 mg/kg mỗi 12h", note: "Liều chuẩn." },
+                        { min: 30, max: 49, adultDose: "200-400mg mỗi 12h (IV) hoặc 500mg mỗi 12h (Uống)", pedDose: "10 mg/kg mỗi 12h", note: "Chỉnh nhẹ liều." },
+                        { min: 0, max: 29, adultDose: "200-400mg mỗi 24h (IV) hoặc 500mg mỗi 24h (Uống)", pedDose: "10 mg/kg mỗi 24h", note: "Giảm 50% liều." }
+                    ] 
+                }
             ],
             bacteria: [
-                { id: "mrsa", name: "MRSA", gram: "Gram (+)", morphology: "Cầu khuẩn chùm", classification: "Kháng Beta-lactam", preferred: "Vancomycin, Linezolid", alternative: "Teicoplanin", resistance: "Gen mecA" },
-                { id: "paeruginosa", name: "Pseudomonas aeruginosa", gram: "Gram (-)", morphology: "Trực khuẩn mủ xanh", classification: "Kháng tự nhiên cao", preferred: "Ceftazidime, Meropenem, Piperacillin/Tazobactam", alternative: "Colistin", resistance: "Biofilm, Efflux pump" },
-                { id: "ecoli_esbl", name: "E. coli sinh ESBL", gram: "Gram (-)", morphology: "Trực khuẩn đường ruột", classification: "Enterobacteriaceae", preferred: "Meropenem, Ertapenem", alternative: "Fosfomycin", resistance: "Men ESBL" }
+                { id: "mrsa", name: "MRSA", gram: "Gram (+)", preferred: "Vancomycin, Linezolid", resistance: "Gen mecA (Kháng toàn bộ Beta-lactam)" },
+                { id: "paeruginosa", name: "Pseudomonas aeruginosa", gram: "Gram (-)", preferred: "Ceftazidime, Meropenem, Piperacillin/Tazobactam", resistance: "Tạo Biofilm, bơm tống xuất (Efflux pump)" }
             ]
         };
 
@@ -317,37 +308,24 @@
         let selectedAntibioticIds = [];
         let isAdminAuthenticated = false;
 
-        function saveDB() {
-            localStorage.setItem('renal_rx_db', JSON.stringify(db));
-        }
-
-        function sortAntibioticsAlphabetically() {
-            db.antibiotics.sort((a, b) => a.name.localeCompare(b.name, 'vi', { sensitivity: 'base' }));
-        }
+        function saveDB() { localStorage.setItem('renal_rx_db', JSON.stringify(db)); }
+        function sortAntibiotics() { db.antibiotics.sort((a, b) => a.name.localeCompare(b.name, 'vi')); }
 
         function openAdminAuthModal() {
-            if (isAdminAuthenticated) {
-                switchTab('admin');
-            } else {
+            if (isAdminAuthenticated) switchTab('admin');
+            else {
                 document.getElementById('adminPasswordInput').value = '';
                 document.getElementById('adminAuthError').classList.add('hidden');
                 document.getElementById('adminModal').classList.remove('hidden');
             }
         }
-
-        function closeAdminAuthModal() {
-            document.getElementById('adminModal').classList.add('hidden');
-        }
-
+        function closeAdminAuthModal() { document.getElementById('adminModal').classList.add('hidden'); }
         function verifyAdminPassword() {
-            const pwd = document.getElementById('adminPasswordInput').value;
-            if (pwd === "123456") {
+            if (document.getElementById('adminPasswordInput').value === "123456") {
                 isAdminAuthenticated = true;
                 closeAdminAuthModal();
                 switchTab('admin');
-            } else {
-                document.getElementById('adminAuthError').classList.remove('hidden');
-            }
+            } else document.getElementById('adminAuthError').classList.remove('hidden');
         }
 
         function switchTab(tabId) {
@@ -370,27 +348,15 @@
             const age = parseInt(document.getElementById('age').value) || 0;
             const badge = document.getElementById('patientAgeBadge');
             const calcMethod = document.getElementById('calcMethod');
-            
-            if (age < 18) {
-                badge.innerText = "(Trẻ em)";
-                calcMethod.value = "schwartz";
-            } else {
-                badge.innerText = "(Người lớn)";
-                if(calcMethod.value === "schwartz") calcMethod.value = "ckdepi";
-            }
-        }
-
-        function toggleCKDGuide() {
-            const box = document.getElementById('ckdGuideBox');
-            box.classList.toggle('hidden');
+            if (age < 18) { badge.innerText = "(Trẻ em)"; calcMethod.value = "schwartz"; }
+            else { badge.innerText = "(Người lớn)"; if(calcMethod.value === "schwartz") calcMethod.value = "ckdepi"; }
         }
 
         function calculateRenal() {
             const age = parseInt(document.getElementById('age').value) || 0;
             const isAdult = age >= 18;
             let scr = parseFloat(document.getElementById('scr').value);
-            const scrUnit = document.getElementById('scrUnit').value;
-            if (scrUnit === 'umol') scr = scr / 88.4;
+            if (document.getElementById('scrUnit').value === 'umol') scr = scr / 88.4;
 
             let gfrVal = 0;
             let method = document.getElementById('calcMethod').value;
@@ -402,97 +368,62 @@
             else if (isAdult) {
                 const weight = parseFloat(document.getElementById('weight').value);
                 const gender = document.getElementById('gender').value;
-
                 if (method === 'ckdepi') {
                     let kappa = gender === 'female' ? 0.7 : 0.9;
                     let alpha = gender === 'female' ? -0.241 : -0.302;
                     let minScrKappa = Math.min(scr / kappa, 1);
                     let maxScrKappa = Math.max(scr / kappa, 1);
-                    let genderFactor = gender === 'female' ? 1.012 : 1;
-                    gfrVal = 142 * Math.pow(minScrKappa, alpha) * Math.pow(maxScrKappa, -1.200) * Math.pow(0.9938, age) * genderFactor;
+                    gfrVal = 142 * Math.pow(minScrKappa, alpha) * Math.pow(maxScrKappa, -1.200) * Math.pow(0.9938, age) * (gender === 'female' ? 1.012 : 1);
                 } else {
                     let crcl = ((140 - age) * weight) / (72 * scr);
                     if (gender === 'female') crcl *= 0.85;
                     gfrVal = crcl;
                 }
             } else {
-                let height = parseFloat(document.getElementById('height').value);
-                gfrVal = (0.413 * height) / scr;
+                gfrVal = (0.413 * parseFloat(document.getElementById('height').value)) / scr;
             }
 
             gfrVal = Math.round(gfrVal * 10) / 10;
             document.getElementById('gfrResultVal').innerText = gfrVal;
 
-            let stageText = "";
-            let badgeClass = "";
-            if (status !== 'normal') {
-                stageText = `ĐẶC BIỆT (${status.toUpperCase()})`;
-                badgeClass = "bg-purple-100 text-purple-800 border-purple-400";
-            } else if (gfrVal >= 90) {
-                stageText = "G1 (BÌNH THƯỜNG)";
-                badgeClass = "bg-emerald-100 text-emerald-800 border-emerald-400";
-            } else if (gfrVal >= 60) {
-                stageText = "G2 (GIẢM NHẸ)";
-                badgeClass = "bg-blue-100 text-blue-800 border-blue-400";
-            } else if (gfrVal >= 30) {
-                stageText = "G3 (TRUNG BÌNH)";
-                badgeClass = "bg-amber-100 text-amber-800 border-amber-400";
-            } else if (gfrVal >= 15) {
-                stageText = "G4 (NẶNG)";
-                badgeClass = "bg-rose-100 text-rose-800 border-rose-400";
-            } else {
-                stageText = "G5 (SUY THẬN CUỐI)";
-                badgeClass = "bg-red-200 text-red-900 border-red-500";
-            }
+            let stageText = gfrVal >= 90 ? "G1 (BÌNH THƯỜNG)" : gfrVal >= 60 ? "G2 (GIẢM NHẸ)" : gfrVal >= 30 ? "G3 (TRUNG BÌNH)" : gfrVal >= 15 ? "G4 (NẶNG)" : "G5 (SUY THẬN CUỐI)";
+            if (status !== 'normal') stageText = `ĐẶC BIỆT (${status.toUpperCase()})`;
 
             const badge = document.getElementById('ckdStageBadge');
             badge.innerText = stageText;
-            badge.className = `px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-center border-2 font-extrabold text-xs shadow-sm ${badgeClass}`;
-
             renderSelectedTagsAndRecommendations();
         }
 
-        sortAntibioticsAlphabetically();
+        sortAntibiotics();
 
         function handleDrugSearchInput(query) {
-            const suggestionsBox = document.getElementById('drugSuggestions');
-            suggestionsBox.innerHTML = '';
-            
-            const filtered = db.antibiotics.filter(ab => 
-                ab.name.toLowerCase().includes(query.toLowerCase()) && !selectedAntibioticIds.includes(ab.id)
-            );
-
-            if (filtered.length === 0) {
-                suggestionsBox.classList.add('hidden');
-                return;
-            }
-
-            filtered.forEach((ab, idx) => {
+            const box = document.getElementById('drugSuggestions');
+            box.innerHTML = '';
+            const filtered = db.antibiotics.filter(ab => ab.name.toLowerCase().includes(query.toLowerCase()) && !selectedAntibioticIds.includes(ab.id));
+            if (filtered.length === 0) { box.classList.add('hidden'); return; }
+            filtered.forEach(ab => {
                 const item = document.createElement('div');
-                item.className = `p-2 font-semibold ${idx % 2 === 0 ? 'bg-white text-slate-800' : 'bg-emerald-50/65 text-emerald-950'} border-b last:border-b-0`;
-                item.innerHTML = `${ab.name} <span class="text-[10px] text-slate-400 font-normal">(${ab.group})</span>`;
+                item.className = 'p-1.5 font-semibold border-b last:border-b-0 hover:bg-emerald-50 text-slate-800';
+                item.innerHTML = `${ab.name} <span class="text-[9px] text-slate-400">(${ab.group})</span>`;
                 item.onclick = () => {
                     selectedAntibioticIds.push(ab.id);
                     document.getElementById('drugSearchInput').value = '';
-                    suggestionsBox.classList.add('hidden');
+                    box.classList.add('hidden');
                     renderSelectedTagsAndRecommendations();
                 };
-                suggestionsBox.appendChild(item);
+                box.appendChild(item);
             });
-
-            suggestionsBox.classList.remove('hidden');
+            box.classList.remove('hidden');
         }
 
-        document.addEventListener('click', function(e) {
-            const searchInput = document.getElementById('drugSearchInput');
-            const suggestionsBox = document.getElementById('drugSuggestions');
-            if (searchInput && suggestionsBox && !searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
-                suggestionsBox.classList.add('hidden');
+        document.addEventListener('click', (e) => {
+            if (!document.getElementById('drugSearchInput').contains(e.target) && !document.getElementById('drugSuggestions').contains(e.target)) {
+                document.getElementById('drugSuggestions').classList.add('hidden');
             }
         });
 
         function removeSelectedAntibiotic(id) {
-            selectedAntibioticIds = selectedAntibioticIds.filter(item => item !== id);
+            selectedAntibioticIds = selectedAntibioticIds.filter(i => i !== id);
             renderSelectedTagsAndRecommendations();
         }
 
@@ -500,17 +431,11 @@
             const tagsContainer = document.getElementById('selectedAntibioticsTags');
             const resultContainer = document.getElementById('antibioticRecommendationResult');
             const gfrVal = parseFloat(document.getElementById('gfrResultVal').innerText) || 90;
-            const age = parseInt(document.getElementById('age').value) || 65;
-            const patientType = age >= 18 ? 'adult' : 'pediatric';
+            const patientType = (parseInt(document.getElementById('age').value) || 65) >= 18 ? 'adult' : 'pediatric';
 
             if (selectedAntibioticIds.length === 0) {
-                tagsContainer.innerHTML = '<span class="text-xs text-slate-400 italic py-1 px-2">Chưa có kháng sinh nào được chọn.</span>';
-                resultContainer.innerHTML = `
-                    <div class="text-center py-6 text-slate-400 border border-dashed rounded-xl">
-                        <i class="fa-solid fa-hand-pointer text-xl mb-1"></i>
-                        <p class="text-xs">Hãy gõ hoặc chọn kháng sinh từ ô phía trên để xem liều hiệu chỉnh theo eGFR.</p>
-                    </div>
-                `;
+                tagsContainer.innerHTML = '<span class="text-slate-400 italic">Chưa chọn kháng sinh.</span>';
+                resultContainer.innerHTML = `<div class="text-center py-8 text-slate-400 border border-dashed rounded-xl"><i class="fa-solid fa-hand-pointer text-base mb-1"></i><p>Chọn kháng sinh phía trên để xem hiệu chỉnh liều, đường dùng, ADR & Tương tác chuẩn.</p></div>`;
                 return;
             }
 
@@ -518,45 +443,31 @@
             resultContainer.innerHTML = '';
 
             selectedAntibioticIds.forEach(id => {
-                const ab = db.antibiotics.find(item => item.id === id);
+                const ab = db.antibiotics.find(i => i.id === id);
                 if (!ab) return;
 
-                tagsContainer.innerHTML += `
-                    <span class="inline-flex items-center bg-emerald-100 text-emerald-900 text-xs font-bold px-2.5 py-1 rounded-lg border border-emerald-300">
-                        ${ab.name}
-                        <button onclick="removeSelectedAntibiotic('${id}')" class="ml-2 text-emerald-700 hover:text-red-600 font-extrabold px-1 text-sm">×</button>
-                    </span>
-                `;
+                tagsContainer.innerHTML += `<span class="inline-flex items-center bg-emerald-100 text-emerald-900 font-bold px-2 py-0.5 rounded border border-emerald-300">${ab.name}<button onclick="removeSelectedAntibiotic('${id}')" class="ml-1.5 text-emerald-700 hover:text-red-600 font-extrabold">×</button></span>`;
 
-                let matchedInterval = ab.intervals.find(iv => gfrVal >= iv.min && gfrVal <= iv.max);
-                if (!matchedInterval && ab.intervals.length > 0) {
-                    matchedInterval = ab.intervals[ab.intervals.length - 1];
-                }
-                let doseStr = patientType === 'pediatric' ? matchedInterval?.pedDose : matchedInterval?.adultDose;
+                let matched = ab.intervals.find(iv => gfrVal >= iv.min && gfrVal <= iv.max) || ab.intervals[ab.intervals.length - 1];
+                let doseStr = patientType === 'pediatric' ? matched?.pedDose : matched?.adultDose;
 
                 resultContainer.innerHTML += `
-                    <div class="border border-slate-300 rounded-xl p-3 bg-slate-50 space-y-2 text-xs shadow-sm">
-                        <div class="flex justify-between items-center border-b pb-1">
-                            <h3 class="font-extrabold text-slate-900 text-sm flex items-center">
-                                <i class="fa-solid fa-capsules text-emerald-600 mr-1.5 text-base"></i> ${ab.name}
-                                <span class="ml-2 text-[11px] px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full font-semibold">${ab.group}</span>
-                            </h3>
-                            <span class="font-bold px-2.5 py-0.5 bg-amber-100 text-amber-900 rounded-lg text-xs">
-                                Mốc eGFR: ${matchedInterval ? matchedInterval.label : 'Chuẩn'}
-                            </span>
+                    <div class="border border-slate-300 rounded-xl p-2.5 bg-slate-50 space-y-1.5 text-[11px] shadow-sm">
+                        <div class="flex justify-between items-center border-b pb-1 font-bold">
+                            <span class="text-slate-900 text-xs"><i class="fa-solid fa-capsules text-emerald-600 mr-1"></i>${ab.name} (${ab.group})</span>
+                            <span class="px-2 py-0.5 bg-amber-100 text-amber-900 rounded">Mốc eGFR: ≥ ${matched.min}</span>
                         </div>
-                        
-                        <div class="bg-white p-2.5 rounded-lg border-2 border-slate-200 shadow-sm">
-                            <span class="text-slate-500 block text-[11px] uppercase font-bold tracking-wider mb-0.5">Liều đề xuất (${patientType === 'pediatric' ? 'Trẻ em' : 'Người lớn'}):</span>
-                            <span class="font-black text-emerald-700 text-base md:text-lg leading-snug">${doseStr || 'Đang cập nhật'}</span>
+                        <div class="bg-white p-2 rounded border border-slate-200">
+                            <span class="text-slate-500 font-bold uppercase text-[9px] block">Liều hiệu chỉnh đề xuất (${patientType === 'pediatric' ? 'Trẻ em' : 'Người lớn'}):</span>
+                            <span class="font-black text-emerald-700 text-xs">${doseStr || 'Đang cập nhật'}</span>
                         </div>
-
-                        <div class="bg-white p-2 rounded-lg border border-slate-200">
-                            <span class="text-slate-500 block text-[11px] uppercase font-bold tracking-wider mb-0.5">Ghi chú / Lưu ý lâm sàng:</span>
-                            <span class="text-slate-800 font-semibold text-xs md:text-sm">${matchedInterval?.note || 'Không có lưu ý đặc biệt.'}</span>
+                        <div class="bg-white p-1.5 rounded border border-slate-200">
+                            <span class="text-slate-500 font-bold uppercase text-[9px]">Lưu ý lâm sàng:</span> <span class="text-slate-800 font-semibold">${matched.note}</span>
                         </div>
-
-                        <div class="text-slate-600 font-medium pt-0.5"><i class="fa-solid fa-circle-exclamation text-amber-500 mr-1"></i><b>ADR chính:</b> ${ab.adr}</div>
+                        <div class="text-amber-900 bg-amber-50 p-1.5 rounded border border-amber-200 font-medium">
+                            <i class="fa-solid fa-triangle-exclamation mr-1"></i><b>Cảnh báo Tương tác:</b> ${ab.interaction || 'Chưa ghi nhận tương tác đặc biệt.'}
+                        </div>
+                        <div class="text-slate-600"><i class="fa-solid fa-circle-exclamation text-rose-500 mr-1"></i><b>ADR chính:</b> ${ab.adr}</div>
                     </div>
                 `;
             });
@@ -566,17 +477,8 @@
             const query = document.getElementById('searchBacteria').value.toLowerCase();
             const container = document.getElementById('bacteriaContainer');
             container.innerHTML = '';
-            db.bacteria.filter(bac => bac.name.toLowerCase().includes(query)).forEach(bac => {
-                container.innerHTML += `
-                    <div class="border rounded-xl p-3 bg-slate-50 space-y-2 text-xs">
-                        <div class="flex justify-between font-bold">
-                            <span>${bac.name}</span>
-                            <span class="text-blue-600">${bac.gram}</span>
-                        </div>
-                        <p><b>Kháng sinh ưu tiên:</b> <span class="text-emerald-700">${bac.preferred}</span></p>
-                        <p class="text-slate-500"><b>Cơ chế:</b> ${bac.resistance}</p>
-                    </div>
-                `;
+            db.bacteria.filter(b => b.name.toLowerCase().includes(query)).forEach(b => {
+                container.innerHTML += `<div class="border rounded p-2 bg-slate-50 space-y-1"><div class="flex justify-between font-bold"><span>${b.name}</span><span class="text-blue-600">${b.gram}</span></div><p class="text-[10px]"><b>Ưu tiên:</b> <span class="text-emerald-700">${b.preferred}</span></p></div>`;
             });
         }
 
@@ -584,23 +486,15 @@
             const container = document.getElementById('interactionDrugSelector');
             container.innerHTML = '';
             db.antibiotics.forEach(ab => {
-                container.innerHTML += `
-                    <label class="flex items-center space-x-2 p-1.5 bg-white border rounded cursor-pointer">
-                        <input type="checkbox" value="${ab.id}" class="interaction-checkbox text-emerald-600">
-                        <span>${ab.name}</span>
-                    </label>
-                `;
+                container.innerHTML += `<label class="flex items-center space-x-2 p-1 bg-white border rounded cursor-pointer"><input type="checkbox" value="${ab.id}" class="interaction-checkbox text-emerald-600"><span>${ab.name}</span></label>`;
             });
         }
 
         function checkInteractions() {
             const selected = Array.from(document.querySelectorAll('.interaction-checkbox:checked')).map(cb => cb.value);
             const box = document.getElementById('interactionResultBox');
-            if (selected.length < 2) {
-                box.innerHTML = "Vui lòng chọn ít nhất 2 kháng sinh để kiểm tra.";
-                return;
-            }
-            box.innerHTML = `<div class="text-emerald-700 font-semibold">Không phát hiện tương tác nguy hiểm giữa các thuốc đã chọn.</div>`;
+            if (selected.length < 2) { box.innerHTML = "Vui lòng chọn ít nhất 2 kháng sinh."; return; }
+            box.innerHTML = `<div class="text-emerald-700 font-semibold">Đã kiểm tra chéo nhóm thuốc. Cần lưu ý các cảnh báo tích hợp trên từng phác đồ đơn lẻ.</div>`;
         }
 
         function renderAdminData() {
@@ -608,42 +502,18 @@
             const container = document.getElementById('adminAntibioticList');
             container.innerHTML = '';
             db.antibiotics.forEach((ab, idx) => {
-                container.innerHTML += `
-                    <div class="border p-2 rounded bg-slate-50 flex justify-between items-center">
-                        <span><b>${ab.name}</b> (${ab.group})</span>
-                        <button onclick="deleteAntibiotic(${idx})" class="text-red-600 font-bold px-2">Xóa</button>
-                    </div>
-                `;
+                container.innerHTML += `<div class="border p-1.5 rounded bg-slate-50 flex justify-between items-center"><span><b>${ab.name}</b> (${ab.group})</span><button onclick="deleteAntibiotic(${idx})" class="text-red-600 font-bold px-2">Xóa</button></div>`;
             });
         }
 
-        function deleteAntibiotic(idx) {
-            if (confirm("Xóa kháng sinh này?")) {
-                db.antibiotics.splice(idx, 1);
-                saveDB();
-                renderAdminData();
-            }
-        }
-
+        function deleteAntibiotic(idx) { if (confirm("Xóa thuốc này?")) { db.antibiotics.splice(idx, 1); saveDB(); renderAdminData(); } }
         function exportJSONData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
-            const dl = document.createElement('a');
-            dl.setAttribute("href", dataStr);
-            dl.setAttribute("download", "renal_database.json");
-            dl.click();
+            const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "renal_database.json"); dl.click();
         }
+        function resetDefaultData() { if (confirm("Khôi phục gốc?")) { db = JSON.parse(JSON.stringify(defaultDatabase)); saveDB(); alert("Đã khôi phục!"); } }
 
-        function resetDefaultData() {
-            if (confirm("Khôi phục mặc định?")) {
-                db = JSON.parse(JSON.stringify(defaultDatabase));
-                saveDB();
-                alert("Đã khôi phục!");
-            }
-        }
-
-        window.onload = function() {
-            handleAgeChange();
-        };
+        window.onload = () => { handleAgeChange(); };
     </script>
 </body>
 </html>
