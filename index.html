@@ -46,4 +46,1181 @@
                 <button onclick="switchTab('bacteria')" id="tab-bacteria" class="px-3 py-1.5 text-xs md:text-sm font-medium rounded-lg text-white hover:bg-emerald-700 transition-all mb-1 sm:mb-0">
                     <i class="fa-solid fa-bacteria mr-1"></i> Vi Khuẩn
                 </button>
-                <button onclick="switchTab('interactions')" id="tab-interactions" class="px-3 py-1.5 text-xs md
+                <button onclick="switchTab('interactions')" id="tab-interactions" class="px-3 py-1.5 text-xs md:text-sm font-medium rounded-lg text-white hover:bg-emerald-700 transition-all mb-1 sm:mb-0">
+                    <i class="fa-solid fa-shield-halved mr-1"></i> Tương tác & ADR
+                </button>
+                <button onclick="switchTab('admin')" id="tab-admin" class="px-3 py-1.5 text-xs md:text-sm font-medium rounded-lg text-white hover:bg-emerald-700 transition-all mb-1 sm:mb-0">
+                    <i class="fa-solid fa-database mr-1"></i> Quản lý Dữ liệu
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- TAB 1: TRA CỨU & TÍNH LIỀU -->
+        <div id="content-calculator" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Cột trái: Thông tin Bệnh nhân & Chức năng thận -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <h2 class="text-base font-bold text-slate-800 border-b pb-2 flex items-center">
+                        <i class="fa-solid fa-user-injured text-emerald-600 mr-2"></i> Thông tin Bệnh nhân
+                    </h2>
+                    
+                    <!-- Chọn đối tượng -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Đối tượng</label>
+                        <select id="patientType" onchange="togglePatientForm()" class="w-full p-2.5 text-sm border rounded-xl bg-slate-50 focus:ring-2 focus:ring-emerald-500">
+                            <option value="adult">Người lớn (≥ 18 tuổi)</option>
+                            <option value="pediatric">Trẻ em (< 18 tuổi)</option>
+                        </select>
+                    </div>
+
+                    <!-- Input người lớn -->
+                    <div id="adult-inputs" class="space-y-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Tuổi</label>
+                                <input type="number" id="age" value="65" class="w-full p-2 text-sm border rounded-xl">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Giới tính</label>
+                                <select id="gender" class="w-full p-2 text-sm border rounded-xl bg-slate-50">
+                                    <option value="male">Nam</option>
+                                    <option value="female">Nữ</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Cân nặng (kg)</label>
+                                <input type="number" id="weight" value="70" class="w-full p-2 text-sm border rounded-xl">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Chiều cao (cm)</label>
+                                <input type="number" id="height" value="170" class="w-full p-2 text-sm border rounded-xl">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input trẻ em -->
+                    <div id="pediatric-inputs" class="space-y-3 hidden">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Tuổi (Năm)</label>
+                            <input type="number" id="pedAge" value="8" class="w-full p-2 text-sm border rounded-xl">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Chiều cao trẻ em (cm)</label>
+                            <input type="number" id="pedHeight" value="125" class="w-full p-2 text-sm border rounded-xl">
+                        </div>
+                    </div>
+
+                    <!-- Chỉ số Creatinine -->
+                    <div class="grid grid-cols-2 gap-3 pt-2 border-t">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Creatinine Huyết thanh</label>
+                            <input type="number" id="scr" value="1.5" step="0.1" class="w-full p-2 text-sm border rounded-xl">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Đơn vị Scr</label>
+                            <select id="scrUnit" class="w-full p-2 text-sm border rounded-xl bg-slate-50">
+                                <option value="mgdl">mg/dL</option>
+                                <option value="umol">µmol/L</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Phương pháp tính -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Công thức đánh giá chức năng thận</label>
+                        <select id="calcMethod" class="w-full p-2.5 text-sm border rounded-xl bg-slate-50">
+                            <option value="ckdepi">CKD-EPI 2021 (Khuyên dùng)</option>
+                            <option value="cockcroft">Cockcroft-Gault (Tính CrCl)</option>
+                            <option value="schwartz">Bedside Schwartz (Trẻ em)</option>
+                        </select>
+                    </div>
+
+                    <!-- Trạng thái đặc biệt -->
+                    <div class="pt-2 border-t">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Trạng thái lọc máu / Đặc biệt</label>
+                        <select id="renalStatus" class="w-full p-2.5 text-sm border rounded-xl bg-slate-50">
+                            <option value="normal">Bình thường (Dựa trên eGFR/CrCl)</option>
+                            <option value="hd">Thận nhân tạo ngắt quãng (HD)</option>
+                            <option value="crrt">Lọc máu liên tục (CRRT)</option>
+                            <option value="pd">Lọc màng bụng (PD)</option>
+                        </select>
+                    </div>
+
+                    <button onclick="calculateRenal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-xl text-sm transition shadow-sm">
+                        <i class="fa-solid fa-calculator mr-2"></i> Tính toán & Đánh giá
+                    </button>
+                </div>
+
+                <!-- Cột phải: Kết quả & Gợi ý liều kháng sinh -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Khung kết quả eGFR -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div>
+                            <span class="text-xs uppercase font-bold tracking-wider text-slate-400">Kết quả đánh giá</span>
+                            <div class="flex items-baseline space-x-2 mt-1">
+                                <span id="gfrResultVal" class="text-3xl font-extrabold text-emerald-700">--</span>
+                                <span id="gfrUnitLabel" class="text-sm font-medium text-slate-500">mL/min/1.73m²</span>
+                            </div>
+                            <p id="calcNote" class="text-xs text-slate-500 mt-1">Vui lòng nhập thông số và bấm tính toán.</p>
+                        </div>
+                        <div id="ckdStageBadge" class="px-4 py-2 rounded-xl text-center border font-bold text-sm bg-slate-100 text-slate-700">
+                            Chưa phân loại
+                        </div>
+                    </div>
+
+                    <!-- Khung Tra cứu Kháng sinh -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
+                            <h2 class="text-base font-bold text-slate-800 flex items-center">
+                                <i class="fa-solid fa-syringe text-emerald-600 mr-2"></i> Đề xuất Liều Kháng sinh Theo Khoảng mốc
+                            </h2>
+                            <div class="w-full sm:w-64">
+                                <input type="text" id="searchAntibiotic" onkeyup="renderAntibioticSelector()" placeholder="Tìm kiếm kháng sinh..." class="w-full p-2 text-sm border rounded-xl">
+                            </div>
+                        </div>
+
+                        <!-- Danh sách checkbox kháng sinh -->
+                        <div id="antibioticSelectorGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-h-56 overflow-y-auto p-2 border rounded-xl bg-slate-50">
+                            <!-- Render bằng JS -->
+                        </div>
+
+                        <!-- Bảng kết quả liều chi tiết -->
+                        <div id="antibioticRecommendationResult" class="space-y-4 pt-2">
+                            <div class="text-center py-8 text-slate-400 border border-dashed rounded-xl">
+                                <i class="fa-solid fa-hand-pointer text-2xl mb-1"></i>
+                                <p class="text-sm">Hãy chọn ít nhất một kháng sinh bên trên để xem khuyến cáo liều chỉnh.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: TRA CỨU VI KHUẨN -->
+        <div id="content-bacteria" class="space-y-6 hidden">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800">Danh mục Vi khuẩn & Đặc điểm Lâm sàng</h2>
+                        <p class="text-xs text-slate-500">Tra cứu hình thái, nhóm kháng sinh nhạy cảm và cơ chế kháng thuốc.</p>
+                    </div>
+                    <div class="w-full sm:w-72">
+                        <input type="text" id="searchBacteria" onkeyup="renderBacteriaList()" placeholder="Tìm tên vi khuẩn, Gram..." class="w-full p-2.5 text-sm border rounded-xl">
+                    </div>
+                </div>
+                <div id="bacteriaContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Render bằng JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: TƯƠNG TÁC THUỐC & ADR -->
+        <div id="content-interactions" class="space-y-6 hidden">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">Kiểm tra Tương tác Thuốc & Tác dụng phụ (ADR)</h2>
+                    <p class="text-xs text-slate-500">Chọn nhiều kháng sinh để kiểm tra tương tác chéo và các độc tính quan trọng.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-2">Chọn các thuốc cần kiểm tra:</label>
+                        <div id="interactionDrugSelector" class="space-y-2 max-h-60 overflow-y-auto p-3 border rounded-xl bg-slate-50">
+                            <!-- Render bằng JS -->
+                        </div>
+                        <button onclick="checkInteractions()" class="mt-3 w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-2 rounded-xl text-sm transition">
+                            <i class="fa-solid fa-triangle-exclamation mr-2"></i> Kiểm tra Tương tác & Độc tính
+                        </button>
+                    </div>
+
+                    <div id="interactionResultBox" class="border rounded-xl p-4 bg-slate-50 flex flex-col justify-center items-center text-center text-slate-400">
+                        <i class="fa-solid fa-shield-heart text-3xl mb-2 text-slate-300"></i>
+                        <p class="text-sm">Chưa có dữ liệu kiểm tra. Vui lòng chọn thuốc và bấm nút kiểm tra.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: QUẢN LÝ DỮ LIỆU ADMIN -->
+        <div id="content-admin" class="space-y-6 hidden">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800">Quản lý Dữ liệu Dược & Vi sinh (Admin)</h2>
+                        <p class="text-xs text-slate-500">Tùy chỉnh khoảng mốc eGFR, thêm kháng sinh mới và quản lý cơ sở dữ liệu.</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="exportJSONData()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs font-medium transition shadow-sm">
+                            <i class="fa-solid fa-download mr-1"></i> Xuất JSON
+                        </button>
+                        <label class="bg-slate-700 hover:bg-slate-800 text-white px-3 py-2 rounded-xl text-xs font-medium transition cursor-pointer shadow-sm">
+                            <i class="fa-solid fa-upload mr-1"></i> Nhập JSON <input type="file" id="importFile" onchange="importJSONData(event)" class="hidden" accept=".json">
+                        </label>
+                        <button onclick="resetDefaultData()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-xl text-xs font-medium transition shadow-sm">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Khôi phục Mặc định
+                        </button>
+                    </div>
+                </div>
+
+                <div class="border-b flex space-x-4">
+                    <button onclick="switchAdminSub('antibiotics')" id="admin-sub-ab" class="pb-2 font-semibold text-sm border-b-2 border-emerald-600 text-emerald-700">Quản lý Kháng sinh & Khoảng mốc</button>
+                    <button onclick="switchAdminSub('bacteria')" id="admin-sub-bac" class="pb-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800">Quản lý Vi khuẩn</button>
+                </div>
+
+                <!-- Admin Kháng sinh -->
+                <div id="admin-section-antibiotics" class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-sm text-slate-700">Danh sách Kháng sinh cấu hình (<span id="abCount">0</span>)</h3>
+                        <button onclick="addNewAntibioticPrompt()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 px-3 py-1.5 rounded-xl text-xs font-medium transition">
+                            <i class="fa-solid fa-plus mr-1"></i> Thêm Kháng sinh mới
+                        </button>
+                    </div>
+                    <div id="adminAntibioticList" class="space-y-3 max-h-96 overflow-y-auto">
+                        <!-- Render bằng JS -->
+                    </div>
+                </div>
+
+                <!-- Admin Vi khuẩn -->
+                <div id="admin-section-bacteria" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-sm text-slate-700">Danh sách Vi khuẩn cấu hình</h3>
+                        <button onclick="addNewBacteriaPrompt()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 px-3 py-1.5 rounded-xl text-xs font-medium transition">
+                            <i class="fa-solid fa-plus mr-1"></i> Thêm Vi khuẩn mới
+                        </button>
+                    </div>
+                    <div id="adminBacteriaList" class="space-y-3 max-h-96 overflow-y-auto">
+                        <!-- Render bằng JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            RenalDose Rx Pro © 2026 — Công cụ hỗ trợ tra cứu lâm sàng. Khuyến cáo mang tính tham khảo, tuân thủ hướng dẫn điều trị của bệnh viện.
+        </div>
+    </footer>
+
+    <!-- JavaScript Xử lý Logic & Cơ sở dữ liệu 31 Kháng sinh -->
+    <script>
+        const defaultDatabase = {
+            antibiotics: [
+                // 1. Amoxicillin/Clavulanate
+                {
+                    id: "amox_clav",
+                    name: "Amoxicillin / Clavulanate",
+                    group: "Penicillin + Ức chế Beta-lactamase",
+                    adr: "Tiêu chảy, nôn mửa, phát ban, độc tính gan (vàng da ứ mật do clavulanate).",
+                    blackbox: "Thận trọng bệnh nhân tiền sử dị ứng penicillin.",
+                    interactions: [{ drug: "Allopurinol", risk: "medium", desc: "Tăng nguy cơ phát ban da." }],
+                    intervals: [
+                        { label: "> 30 mL/min", min: 30, max: 9999, adultDose: "1g (875/125) mỗi 12 giờ hoặc 625mg mỗi 8 giờ", pedDose: "25-45 mg/kg/ngày chia 2 lần", note: "Liều chuẩn." },
+                        { label: "10 - 30 mL/min", min: 10, max: 29, adultDose: "500/125mg hoặc 625mg mỗi 12 giờ", pedDose: "15 mg/kg mỗi 12 giờ", note: "Không dùng viên 875/125mg." },
+                        { label: "< 10 mL/min", min: 0, max: 9, adultDose: "500/125mg hoặc 625mg mỗi 24 giờ", pedDose: "15 mg/kg mỗi 24 giờ", note: "Thêm 1 liều bổ sung sau lọc máu." }
+                    ]
+                },
+                // 2. Piperacillin/Tazobactam
+                {
+                    id: "pip_tazo",
+                    name: "Piperacillin / Tazobactam",
+                    group: "Penicillin phổ rộng",
+                    adr: "Tiêu chảy, hạ kali máu, tăng creatinine huyết thanh khi kết hợp Vancomycin.",
+                    blackbox: "Thận trọng nguy cơ suy thận cấp tăng cao khi phối hợp Vancomycin.",
+                    interactions: [{ drug: "Vancomycin", risk: "high", desc: "Tăng tỷ lệ tổn thương thận cấp (AKI)." }],
+                    intervals: [
+                        { label: "> 50 mL/min", min: 50, max: 9999, adultDose: "4.5g mỗi 6 giờ (hoặc truyền kéo dài 4h)", pedDose: "80-100 mg/kg mỗi 6 giờ", note: "Nhiễm trùng nặng/mủ xanh." },
+                        { label: "20 - 50 mL/min", min: 20, max: 50, adultDose: "3.375g mỗi 6 giờ", pedDose: "75 mg/kg mỗi 6 giờ", note: "Hiệu chỉnh liều." },
+                        { label: "< 20 mL/min", min: 0, max: 19, adultDose: "2.25g mỗi 6-8 giờ", pedDose: "75 mg/kg mỗi 8 giờ", note: "Thêm 0.75g sau lọc máu HD." }
+                    ]
+                },
+                // 3. Cefazolin
+                {
+                    id: "cefazolin",
+                    name: "Cefazolin",
+                    group: "Cephalosporin Thế hệ 1",
+                    adr: "Phát ban, sốt do thuốc, tăng enzym gan nhẹ, viêm tĩnh mạch.",
+                    blackbox: "Giảm liều bắt buộc ở bệnh nhân suy thận.",
+                    interactions: [{ drug: "Probenecid", risk: "medium", desc: "Tăng nồng độ Cefazolin trong máu." }],
+                    intervals: [
+                        { label: "> 50 mL/min", min: 50, max: 9999, adultDose: "1g - 2g mỗi 8 giờ", pedDose: "25-50 mg/kg/ngày chia 3 lần", note: "Kháng sinh dự phòng phẫu thuật." },
+                        { label: "35 - 50 mL/min", min: 35, max: 50, adultDose: "1g - 2g mỗi 12 giờ", pedDose: "Liều chuẩn mỗi 12 giờ", note: "Giãn khoảng cách đưa thuốc." },
+                        { label: "11 - 34 mL/min", min: 11, max: 34, adultDose: "500mg - 1g mỗi 12 giờ", pedDose: "10-15 mg/kg mỗi 12 giờ", note: "Giảm 50% liều." },
+                        { label: "< 10 mL/min", min: 0, max: 10, adultDose: "500mg mỗi 18-24 giờ", pedDose: "10 mg/kg mỗi 24 giờ", note: "Thêm 500mg sau chạy thận." }
+                    ]
+                },
+                // 4. Cefadroxil
+                {
+                    id: "cefadroxil",
+                    name: "Cefadroxil",
+                    group: "Cephalosporin Thế hệ 1 (Uống)",
+                    adr: "Rối loạn tiêu hóa, nôn nao, dị ứng da.",
+                    blackbox: "Thận trọng dị ứng chéo với Penicillin.",
+                    interactions: [],
+                    intervals: [
+                        { label: "> 50 mL/min", min: 50, max: 9999, adultDose: "1g - 2g/ngày chia 1-2 lần", pedDose: "30 mg/kg/ngày chia 2 lần", note: "Dùng uống." },
+                        { label: "25 - 50 mL/min", min: 25, max: 50, adultDose: "500mg - 1g mỗi 12-24 giờ", pedDose: "15 mg/kg mỗi 12 giờ", note: "Giãn khoảng cách." },
+                        { label: "10 - 24 mL/min", min: 10, max: 24, adultDose: "500mg mỗi 24 giờ", pedDose: "15 mg/kg mỗi 24 giờ", note: "Chỉnh liều." },
+                        { label: "< 10 mL/min", min: 0, max: 9, adultDose: "500mg mỗi 36-48 giờ", pedDose: "15 mg/kg mỗi 36 giờ", note: "Uống sau lọc máu." }
+                    ]
+                },
+                // 5. Cefuroxime
+                {
+                    id: "cefuroxime",
+                    name: "Cefuroxime",
+                    group: "Cephalosporin Thế hệ 2",
+                    adr: "Tiêu chảy, tăng bạch cầu toan, đau chỗ tiêm.",
+                    blackbox: "Giảm liều khi CrCl < 20 mL/min.",
+                    interactions: [{ drug: "Thuốc giảm acid dạ dày", risk: "medium", desc: "Giảm hấp thu viên Cefuroxime axetil uống." }],
+                    intervals: [
+                        { label: "> 20 mL/min", min: 20, max: 9999, adultDose: "750mg - 1.5g IV mỗi 8h (hoặc 500mg PO mỗi 12h)", pedDose: "20-30 mg/kg mỗi 8 giờ", note: "Liều chuẩn." },
+                        { label: "10 - 20 mL/min", min: 10, max: 20, adultDose: "750mg IV mỗi 12 giờ", pedDose: "15 mg/kg mỗi 12 giờ", note: "Giảm tần suất tiêm." },
+                        { label: "< 10 mL/min", min: 0, max: 9, adultDose: "750mg IV mỗi 24 giờ", pedDose: "15 mg/kg mỗi 24 giờ", note: "Bổ sung liều sau HD." }
+                    ]
+                },
+                // 6. Cefoxitin
+                {
+                    id: "cefoxitin",
+                    name: "Cefoxitin",
+                    group: "Cephamycin (Cephalosporin Thế hệ 2)",
+                    adr: "Viêm tĩnh mạch huyết khối, dị ứng da, tiêu chảy.",
+                    blackbox: "Kháng vi khuẩn yếm khí tốt.",
+                    interactions: [],
+                    intervals: [
+                        { label: "> 50 mL/min", min: 50, max: 9999, adultDose: "1g - 2g mỗi 6-8 giờ", pedDose: "20-40 mg/kg mỗi 6 giờ", note: "Liều chuẩn." },
+                        { label: "30 - 50 mL/min", min: 30, max: 50, adultDose: "1g - 2g mỗi 8-12 giờ", pedDose: "20 mg/kg mỗi 8 giờ", note: "Giãn khoảng cách." },
+                        { label: "10 - 29 mL/min", min: 10, max: 29, adultDose: "1g - 2g mỗi 12-24 giờ", pedDose: "20 mg/kg mỗi 12 giờ", note: "Hiệu chỉnh liều." },
+                        { label: "< 10 mL/min", min: 0, max: 9, adultDose: "500mg - 1g mỗi 24-48 giờ", pedDose: "10 mg/kg mỗi 24 giờ", note: "Cho thêm sau HD." }
+                    ]
+                },
+                // 7. Cefotaxime
+                {
+                    id: "cefotaxime",
+                    name: "Cefotaxime",
+                    group: "Cephalosporin Thế hệ 3",
+                    adr: "Phát ban, loạn khuẩn ruột, đau vùng tiêm.",
+                    blackbox: "Giảm 50% liều khi CrCl < 20 mL/min.",
+                    interactions: [],
+                    intervals: [
+                        { label: "> 20 mL/min", min: 20, max: 9999, adultDose: "1g - 2g mỗi 8 giờ", pedDose: "37.5 mg/kg mỗi 6 giờ", note: "Viêm màng não dùng 2g mỗi 6h." },
+                        { label: "10 - 20 mL/min", min: 10, max: 20, adultDose: "1g - 2g mỗi 12 giờ", pedDose: "25 mg/kg mỗi 8-12 giờ", note: "Giảm 50% liều duy trì." },
+                        { label: "< 10 mL/min", min: 0, max: 9, adultDose: "1g mỗi 24 giờ", pedDose: "25 mg/kg mỗi 24 giờ", note: "Thêm 1g sau lọc máu." }
+                    ]
+                },
+                // 8. Ceftriaxone
+                {
+                    id: "ceftriaxone",
+                    name: "Ceftriaxone",
+                    group: "Cephalosporin Thế hệ 3",
+                    adr: "Bùn mật/sỏi mật giả, tiêu chảy, phát ban.",
+                    blackbox: "KHÔNG cần chỉnh liều ở bệnh nhân suy thận đơn thuần. Không dùng chung dung dịch chứa Canxi cho trẻ sơ sinh.",
+                    interactions: [{ drug: "Dung dịch chứa Canxi (Ringer Lactate)", risk: "high", desc: "Tạo kết tủa Ceftriaxone-Canxi nguy hiểm tính mạng ở trẻ sơ sinh." }],
+                    intervals: [
+                        { label: "Mọi mức eGFR (0 - 150)", min: 0, max: 9999, adultDose: "1g - 2g mỗi 24 giờ", pedDose: "50-100 mg/kg/ngày chia 1-2 lần", note: "Thải trừ kép qua thận & mật. Không cần chỉnh liều." }
+                    ]
+                },
+                // 9. Ceftazidime
+                {
+                    id: "ceftazidime",
+                    name: "Ceftazidime",
+                    group: "Cephalosporin Thế hệ 3 (Kháng Trực khuẩn mủ xanh)",
+                    adr: "Độc tính thần kinh (bệnh não, co giật khi tích lũy liều ở suy thận nặng).",
+                    blackbox: "Bắt buộc hiệu chỉnh liều theo eGFR để tránh co giật.",
+                    interactions: [],
+                    intervals: [
+                        { label: "> 50 mL/min", min: 50, max: 9999, adultDose: "1g - 2g mỗi 8 giờ", pedDose: "30-50 mg/kg mỗi 8 giờ", note: "Liều chuẩn." },
+                        { label: "31 - 50 mL/min", min: 31, max: 50, adultDose: "1g mỗi 12 giờ", pedDose: "30 mg/kg mỗi 12 giờ", note: "Chỉnh liều." },
+                        { label: "16 - 30 mL/min", min: 16, max: 30, adultDose: "1g mỗi 24 giờ", pedDose: "30 mg/kg mỗi 24 giờ", note: "Chỉnh liều." },
+                        { label: "< 15 mL/min", min: 0, max: 15, adultDose: "500mg - 1g mỗi 24-48 giờ", pedDose: "15 mg/kg mỗi 24-48 giờ", note: "Thêm 1g sau chạy thận HD." }
+                    ]
+                },
+                // 10. Cefixime
+                {
+                    id: "cefixime",
+                    name: "Cefixime",
+                    group: "Cephalosporin Thế hệ 3 (Uống)",
+                    adr: "Tiêu chảy, rối loạn tiêu hóa, đau đầu.",
+                    blackbox: "Giảm liều khi CrCl < 60 mL/min.",
+                    interactions: [],
+                    intervals: [
+                        { label: "> 60 mL/min", min: 60, max: 9999, adultDose: "400mg mỗi 24 giờ (hoặc 200mg mỗi 12h)", pedDose: "8 mg/kg/ngày chia 1-2 lần", note: "Dùng uống." },
+                        { label: "21 - 60 mL/min", min: 21, max: 60, adultDose: "300mg mỗi 24 giờ (75% liều)", pedDose: "6 mg/kg/ngày", note: "Giảm liều." },
+                        { label: "< 20 mL/min", min: 0, max: 20, adultDose: "200mg mỗi 24 giờ (50% liều)", pedDose: "4 mg/kg/ngày", note: "Không bị loại bỏ nhiều bởi lọc máu." }
+                    ]
+                },
+                // 11. Cefpodoxime
+                {
+                    id: "cefpodoxime",
+                    name: "Cefpodoxime",
+                    group: "Cephalosporin Thế hệ 3 (Uống)",
+                    adr: "Buồn nôn, tiêu chảy, phát ban.",
+                    blackbox: "Tăng khoảng cách liều thành 48h khi CrCl < 30 mL/min.",
+                    interactions: [{ drug: "Thuốc kháng acid (Antacid)", risk: "medium", desc: "Giảm hấp thu Cefpodoxime." }],
+                    intervals: [
+                        { label: "> 30 mL/min", min: 30, max: 9999, adultDose: "100mg - 400mg mỗi 12 giờ", pedDose: "5 mg/kg mỗi 12 giờ", note: "Liều chuẩn." },
+                        { label: "< 30 mL/min", min: 0, max: 29, adultDose: "100mg - 400mg mỗi 24-48 giờ", pedDose: "5 mg/kg mỗi 24-48 giờ", note: "Giãn khoảng cách đưa thuốc." }
+                    ]
+                },
+                // 12. Cefoperazone
+                {
+                    id: "cefoperazone",
+                    name: "Cefoperazone (+ Sulbactam)",
+                    group: "Cephalosporin Thế hệ 3",
+                    adr: "Phản ứng giống Disulfiram khi uống rượu, hạ prothrombin máu gây chảy máu.",
+                    blackbox: "Thải trừ chủ yếu qua mật. Chỉ chỉnh liều khi suy thận kết hợp suy gan.",
+                    interactions: [{ drug: "Rượu / Cồn", risk: "high", desc: "Gây phản ứng giống Disulfiram (nóng bừng, nôn, tụt huyết áp)." }],
+                    intervals: [
+                        { label: "> 15 mL/min", min: 15, max: 9999, adultDose: "2g - 4g/ngày chia 2 lần", pedDose: "40-80 mg/kg/ngày chia 2-4 lần", note: "Liều tính theo Cefoperazone." },
+                        { label: "< 15 mL/min", min: 0, max: 14, adultDose: "Tối đa 2g/ngày (Cefoperazone đơn độc)", pedDose: "Tối đa 50 mg/kg/ngày", note: "Thải trừ mật bù trừ." }
+                    ]
+                },
+                // 13. Cefepime
+                {
+                    id: "cefepime",
+                    name: "Cefepime",
+                    group: "Cephalosporin Thế hệ 4",
+                    adr: "Độc tính thần kinh (Neurotoxicity), rung giật cơ, mê sảng, co giật ở suy thận.",
+                    blackbox: "CẢNH BÁO ĐỘC TÍNH THẦN KINH: Phải giảm liều nghiêm ngặt khi eGFR giảm.",
+                    interactions: [],
+                    intervals: [
+                        { label: "> 60 mL/min", min: 60, max: 9999, adultDose: "1g - 2g mỗi 8-12 giờ", pedDose: "50 mg/kg mỗi 8 giờ", note: "Liều chuẩn." },
+                        { label: "30 - 60 mL/min", min: 30, max: 60, adultDose: "1g - 2g mỗi 24 giờ (hoặc 1g mỗi 12h)", pedDose: "50 mg/kg mỗi 12 giờ", note: "Chỉnh liều." },
+                        { label: "11 - 29 mL/min", min: 11, max: 29, adultDose: "500mg - 1g mỗi 24 giờ", pedDose: "50 mg/kg mỗi 24 giờ", note: "Theo dõi sát ý thức." },
+                        { label: "< 10 mL/min", min: 0, max: 10, adultDose: "500mg mỗi 24 giờ", pedDose: "25 mg/kg mỗi 24 giờ", note: "Bổ sung liều sau HD." }
+                    ]
+                },
+                // 14. Cefpirome
+                {
+                    id: "cefpirome",
+                    name: "Cefpirome",
+                    group: "Cephalosporin Thế hệ 4",
+                    adr: "Phát ban, tiêu chảy, tăng nhẹ enzym gan.",
+                    blackbox: "Giảm liều khi CrCl < 50 mL/min.",
+                    interactions: [],
+                    intervals: [
+                        { label: "> 50 mL/min", min: 50, max: 9999, adultDose: "1g - 2g mỗi 12 giờ", pedDose: "30-50 mg/kg mỗi 12 giờ", note: "Liều chuẩn." },
+                        { label: "20 - 50 mL/min", min: 20, max: 50, adultDose: "1g mỗi 12 giờ (hoặc 2g mỗi 24h)", pedDose: "25 mg/kg mỗi 12 giờ", note: "Chỉnh liều." },
+                        { label: "5 - 19 mL/min", min: 5, max: 19, adultDose: "500mg mỗi 12 giờ (hoặc 1g mỗi 24h)", pedDose: "15 mg/kg mỗi 12 giờ", note: "Hiệu chỉnh liều." },
+                        { label: "< 5 mL/min", min: 0, max: 4, adultDose: "500mg - 1g mỗi 24 giờ", pedDose: "15 mg/kg mỗi 24 giờ", note: "Bổ sung sau HD." }
+                    ]
+                },
+                // 15. Meropenem
+                {
+                    id: "meropenem",
+                    name: "Meropenem",
+                    group: "Carbapenem",
+                    adr: "Tiêu chảy, Phát ban, Co giật (hiếm, ở bệnh nhân suy thận nặng không chỉnh liều).",
+                    blackbox: "Thận trọng trên bệnh nhân có tiền sử động kinh.",
+                    interactions: [{ drug: "Valproic acid", risk: "high", desc: "Làm giảm nồng độ acid valproic trong máu, nguy cơ tái phát cơn động kinh." }],
+                    intervals: [
+                        { label: "> 50 mL/min", min: 50, max: 9999, adultDose: "1g - 2g mỗi 8 giờ (Truyền kéo dài 3h)", pedDose: "20-40 mg/kg mỗi 8 giờ", note: "Liều chuẩn." },
+                        { label: "25 - 50 mL/min", min: 25, max: 50, adultDose: "1g mỗi 8-12 giờ", pedDose: "20 mg/kg mỗi 8 giờ", note: "Giảm 50% liều hoặc giãn khoảng cách." },
+                        { label: "10 - 24 mL/min", min: 10, max: 24, adultDose: "500mg - 1g mỗi 12 giờ", pedDose: "10-20 mg/kg mỗi 12 giờ", note: "Thận trọng." },
+                        { label: "< 10 mL/min", min: 0, max: 9, adultDose: "500mg mỗi 24 giờ", pedDose: "10 mg/kg mỗi 24 giờ", note: "Bổ sung liều sau lọc máu." }
+                    ]
+                },
+                // 16. Gentamicin
+                {
+                    id: "gentamicin",
+                    name: "Gentamicin",
+                    group: "Aminoglycoside",
+                    adr: "Độc tính thận (suy thận cấp), Độc tính tai (mất thính lực không hồi phục, tiền đình).",
+                    blackbox: "CẢNH BÁO ĐỘC TÍNH TAI & THẬN: Bắt buộc theo dõi nồng độ thuốc trong máu (TDM).",
+                    interactions: [{ drug: "Vancomycin", risk: "high", desc: "Tăng độc tính thận cộng dồn." }],
+                    intervals: [
+                        { label: "> 60 mL/min", min: 60, max: 9999, adultDose: "5-7 mg/kg mỗi 24 giờ (Liều duy nhất/ngày)", pedDose: "5-7.5 mg/kg mỗi 24 giờ", note: "Theo dõi TDM đỉnh/đáy." },
+                        { label: "40 - 60 mL/min", min: 40, max: 60, adultDose: "Giữ liều mg/kg, dùng mỗi 36 giờ", pedDose: "Theo TDM", note: "Giãn khoảng cách." },
+                        { label: "20 - 39 mL/min", min: 20, max: 39, adultDose: "Giữ liều mg/kg, dùng mỗi 48 giờ", pedDose: "Theo TDM", note: "Giãn khoảng cách." },
+                        { label: "< 20 mL/min", min: 0, max: 19, adultDose: "Liều nạp 2 mg/kg, sau đó đo TDM", pedDose: "Theo TDM", note: "Cho liều sau HD." }
+                    ]
+                },
+                // 17. Netilmicin
+                {
+                    id: "netilmicin",
+                    name: "Netilmicin",
+                    group: "Aminoglycoside",
+                    adr: "Độc tính thận, Độc tính thính giác và tiền đình.",
+                    blackbox: "Ít độc tính tai hơn Gentamicin một chút nhưng vẫn cần TDM.",
+                    interactions: [{ drug: "Furosemide", risk: "high", desc: "Tăng độc tính tai." }],
+                    intervals: [
+                        { label: "> 60 mL/min", min: 60, max: 9999, adultDose: "4-6 mg/kg mỗi 24 giờ", pedDose: "6-7.5 mg/kg mỗi 24 giờ", note: "Liều duy nhất/ngày." },
+                        { label: "30 - 60 mL/min", min: 30, max: 60, adultDose: "Giữ liều, dùng mỗi 36-48 giờ", pedDose: "Theo TDM", note: "Giãn khoảng cách." },
+                        { label: "< 30 mL/min", min: 0, max: 29, adultDose: "Liều nạp 2 mg/kg, định lượng nồng độ", pedDose: "Theo TDM", note: "Chỉnh liều kỹ." }
+                    ]
+                },
+                // 18. Azithromycin
+                {
+                    id: "azithromycin",
+                    name: "Azithromycin",
+                    group: "Macrolide",
+                    adr: "Tiêu chảy, buồn nôn, kéo dài khoảng QT.",
+                    blackbox: "KHÔNG cần chỉnh liều ở suy thận nhẹ-trung bình. Thận trọng khi eGFR < 10.",
+                    interactions: [{ drug: "Amiodarone", risk: "high", desc: "Nguy cơ kéo dài khoảng QT và xoắn đỉnh." }],
+                    intervals: [
+                        { label: "Mọi mức eGFR (0 - 150)", min: 0, max: 9999, adultDose: "500mg ngày 1, sau đó 250mg/ngày (ngày 2-5)", pedDose: "10 mg/kg ngày 1, sau đó 5 mg/kg/ngày", note: "Chủ yếu thải trừ qua gan/mật." }
+                    ]
+                },
+                // 19. Clarithromycin
+                {
+                    id: "clarithromycin",
+                    name: "Clarithromycin",
+                    group: "Macrolide",
+                    adr: "Vị kim loại trong miệng, buồn nôn, kéo dài QT, độc gan.",
+                    blackbox: "Giảm 50% liều khi CrCl < 30 mL/min.",
+                    interactions: [{ drug: "Simvastatin / Lovastatin", risk: "high", desc: "Tăng nguy cơ tiêu cơ vân nghiêm trọng." }],
+                    intervals: [
+                        { label: "> 30 mL/min", min: 30, max: 9999, adultDose: "250mg - 500mg mỗi 12 giờ", pedDose: "7.5 mg/kg mỗi 12 giờ", note: "Liều chuẩn." },
+                        { label: "< 30 mL/min", min: 0, max: 29, adultDose: "250mg mỗi 12-24 giờ (Giảm 50% liều)", pedDose: "3.75 mg/kg mỗi 12 giờ", note: "Giảm một nửa liều." }
+                    ]
+                },
+                // 20. Erythromycin
+                {
+                    id: "erythromycin",
+                    name: "Erythromycin",
+                    group: "Macrolide",
+                    adr: "Co thắt dạ dày nặng, buồn nôn, nôn, điếc nồng độ cao.",
+                    blackbox: "Tối đa 2g/ngày ở bệnh nhân suy thận nặng.",
+                    interactions: [{ drug: "Theophylline", risk: "medium", desc: "Tăng nồng độ Theophylline gây độc." }],
+                    intervals: [
+                        { label: "> 10 mL/min", min: 10, max: 9999, adultDose: "250mg - 500mg mỗi 6 giờ", pedDose: "30-50 mg/kg/ngày chia 4 lần", note: "Liều chuẩn." },
+                        { label: "< 10 mL/min", min: 0, max: 9, adultDose: "250mg - 500mg mỗi 8-12 giờ (Max 2g/ngày)", pedDose: "10 mg/kg mỗi 8 giờ", note: "Giới hạn liều tối đa." }
+                    ]
+                },
+                // 21. Ciprofloxacin
+                {
+                    id: "ciprofloxacin",
+                    name: "Ciprofloxacin",
+                    group: "Fluoroquinolone",
+                    adr: "Viêm gân, đứt gân Achilles, kích thích thần kinh trung ương, kéo dài QT.",
+                    blackbox: "Cảnh báo viêm gân và đứt gân; giảm 50% liều khi CrCl < 30.",
+                    interactions: [{ drug: "Antacids / Canxi / Sắt", risk: "high", desc: "Giảm mạnh hấp thu Ciprofloxacin uống." }],
+                    intervals: [
+                        { label: "> 50 mL/min", min: 50, max: 9999, adultDose: "400mg IV c 12h (hoặc 500-750mg PO c 12h)", pedDose: "10-15 mg/kg mỗi 12 giờ", note: "Liều chuẩn." },
+                        { label: "30 - 50 mL/min", min: 30, max: 50, adultDose: "200-400mg IV c 12h (hoặc 250-500mg PO c 12h)", pedDose: "10 mg/kg mỗi 12 giờ", note: "Chỉnh nhẹ." },
+                        { label: "< 30 mL/min", min: 0, max: 29, adultDose: "200-400mg IV c 24h (hoặc 250-500mg PO c 24h)", pedDose: "10 mg/kg mỗi 24 giờ", note: "Giảm 50% liều daily." }
+                    ]
+                },
+                // 22. Levofloxacin
+                {
+                    id: "levofloxacin",
+                    name: "Levofloxacin",
+                    group: "Fluoroquinolone",
+                    adr: "Viêm gân Achilles, kéo dài khoảng QT, rối loạn đường huyết.",
+                    blackbox: "Cảnh báo bệnh gân cơ & thần kinh ngoại biên.",
+                    interactions: [{ drug: "Amiodarone", risk: "high", desc: "Tăng nguy cơ loạn nhịp thất." }],
+                    intervals: [
+                        { label: "≥ 50 mL/min", min: 50, max: 9999, adultDose: "500mg - 750mg mỗi 24 giờ", pedDose: "Hạn chế sử dụng ở trẻ em", note: "Liều chuẩn." },
+                        { label: "20 - 49 mL/min", min: 20, max: 49, adultDose: "Liều nạp 750mg, sau đó 500mg mỗi 48h", pedDose: "--", note: "Giãn khoảng cách." },
+                        { label: "< 20 mL/min", min: 0, max: 19, adultDose: "Liều nạp 750mg, sau đó 500mg mỗi 48h (hoặc 250mg c 48h)", pedDose: "--", note: "Hiệu chỉnh kỹ." }
+                    ]
+                },
+                // 23. Moxifloxacin
+                {
+                    id: "moxifloxacin",
+                    name: "Moxifloxacin",
+                    group: "Fluoroquinolone",
+                    adr: "Kéo dài khoảng QT, viêm gân, chóng mặt.",
+                    blackbox: "KHÔNG cần hiệu chỉnh liều ở bất kỳ mức suy thận nào (Chuyển hóa qua gan).",
+                    interactions: [{ drug: "Dung dịch Antacid", risk: "medium", desc: "Giảm hấp thu khi uống." }],
+                    intervals: [
+                        { label: "Mọi mức eGFR (0 - 150)", min: 0, max: 9999, adultDose: "400mg mỗi 24 giờ (Uống hoặc Tiêm)", pedDose: "Không khuyến cáo cho trẻ em", note: "Thải trừ qua gan. Không chỉnh liều." }
+                    ]
+                },
+                // 24. Doxycycline
+                {
+                    id: "doxycycline",
+                    name: "Doxycycline",
+                    group: "Tetracycline",
+                    adr: "Kích ứng thực quản, nhạy cảm ánh sáng, xỉn răng ở trẻ nhỏ.",
+                    blackbox: "An toàn cho bệnh nhân suy thận, KHÔNG cần chỉnh liều.",
+                    interactions: [{ drug: "Sắt / Canxi / Thuốc trung hòa acid", risk: "high", desc: "Giảm hấp thu Doxycycline." }],
+                    intervals: [
+                        { label: "Mọi mức eGFR (0 - 150)", min: 0, max: 9999, adultDose: "100mg mỗi 12 giờ ngày 1, sau đó 100mg/ngày", pedDose: "2-4 mg/kg/ngày", note: "Không tích lũy khi suy thận." }
+                    ]
+                },
+                // 25. Vancomycin
+                {
+                    id: "vancomycin",
+                    name: "Vancomycin",
+                    group: "Glycopeptide",
+                    adr: "Độc tính thận (Nephrotoxicity), Hội chứng người đỏ (Red man syndrome).",
+                    blackbox: "Bắt buộc theo dõi nồng độ đáy TDM (Trough: 15-20 mcg/mL).",
+                    interactions: [{ drug: "Colistin", risk: "high", desc: "Tăng nguy cơ suy thận cấp." }],
+                    intervals: [
+                        { label: "> 50 mL/min", min: 50, max: 9999, adultDose: "15-20 mg/kg mỗi 8-12 giờ", pedDose: "15 mg/kg mỗi 6 giờ", note: "Duy trì TDM." },
+                        { label: "30 - 50 mL/min", min: 30, max: 50, adultDose: "15 mg/kg mỗi 12-24 giờ", pedDose: "15 mg/kg mỗi 8-12 giờ", note: "Theo dõi TDM." },
+                        { label: "10 - 29 mL/min", min: 10, max: 29, adultDose: "15 mg/kg mỗi 24-48 giờ", pedDose: "15 mg/kg mỗi 18-24 giờ", note: "Theo dõi TDM." },
+                        { label: "< 10 mL/min", min: 0, max: 9, adultDose: "15 mg/kg liều nạp, dùng liều tiếp theo dựa trên TDM", pedDose: "15 mg/kg sau HD", note: "Bổ sung sau HD." }
+                    ]
+                },
+                // 26. Linezolid
+                {
+                    id: "linezolid",
+                    name: "Linezolid",
+                    group: "Oxazolidinone",
+                    adr: "Ức chế tủy xương (giảm tiểu cầu, thiếu máu), hội chứng Serotonin, viêm dây thần kinh thị giác.",
+                    blackbox: "KHÔNG cần chỉnh liều ở suy thận. Thận trọng nguy cơ tích lũy chất chuyển hóa khi dùng dài ngày ở suy thận nặng.",
+                    interactions: [{ drug: "SSRIs (Sertraline, Fluoxetine)", risk: "high", desc: "Tăng nguy cơ hội chứng Serotonin đe dọa tính mạng." }],
+                    intervals: [
+                        { label: "Mọi mức eGFR (0 - 150)", min: 0, max: 9999, adultDose: "600mg IV/PO mỗi 12 giờ", pedDose: "10 mg/kg mỗi 8 giờ (dưới 12t)", note: "Không cần chỉnh liều. Dùng sau lọc máu." }
+                    ]
+                },
+                // 27. Metronidazole
+                {
+                    id: "metronidazole",
+                    name: "Metronidazole",
+                    group: "Nitroimidazole",
+                    adr: "Vị kim loại, buồn nôn, phản ứng giống Disulfiram, bệnh thần kinh ngoại biên.",
+                    blackbox: "Giảm 50% liều khi CrCl < 10 mL/min.",
+                    interactions: [{ drug: "Rượu", risk: "high", desc: "Phản ứng Disulfiram (vật vã, nôn mửa, tụt áp)." }],
+                    intervals: [
+                        { label: "> 10 mL/min", min: 10, max: 9999, adultDose: "500mg IV/PO mỗi 8 giờ", pedDose: "7.5 mg/kg mỗi 8 giờ", note: "Liều chuẩn." },
+                        { label: "< 10 mL/min", min: 0, max: 9, adultDose: "250mg - 500mg mỗi 12 giờ (Giảm 50% liều)", pedDose: "7.5 mg/kg mỗi 12 giờ", note: "Bổ sung liều sau HD." }
+                    ]
+                },
+                // 28. Tinidazole
+                {
+                    id: "tinidazole",
+                    name: "Tinidazole",
+                    group: "Nitroimidazole",
+                    adr: "Vị kim loại, chán ăn, chóng mặt.",
+                    blackbox: "Tương tự Metronidazole.",
+                    interactions: [{ drug: "Rượu", risk: "high", desc: "Phản ứng giống Disulfiram." }],
+                    intervals: [
+                        { label: "> 10 mL/min", min: 10, max: 9999, adultDose: "2g/ngày uống 1 lần", pedDose: "50 mg/kg/ngày", note: "Dùng uống." },
+                        { label: "< 10 mL/min", min: 0, max: 9, adultDose: "1g/ngày (Giảm 50% liều)", pedDose: "25 mg/kg/ngày", note: "Uống sau lọc máu." }
+                    ]
+                },
+                // 29. Colistin
+                {
+                    id: "colistin",
+                    name: "Colistin (Colistimethate)",
+                    group: "Polymyxin",
+                    adr: "Độc tính thận cấp, độc tính thần kinh (tê bì, yếu cơ, ngưng thở).",
+                    blackbox: "CẢNH BÁO ĐỘC TÍNH THẬN: Bắt buộc chỉnh liều nghiêm ngặt theo eGFR.",
+                    interactions: [{ drug: "Vancomycin", risk: "high", desc: "Tăng mạnh độc tính thận." }],
+                    intervals: [
+                        { label: "> 50 mL/min", min: 50, max: 9999, adultDose: "Liều nạp 9M IU, sau đó 4.5M IU mỗi 12 giờ", pedDose: "75,000 - 150,000 IU/kg/ngày chia 3 lần", note: "Tính theo CBA." },
+                        { label: "10 - 50 mL/min", min: 10, max: 50, adultDose: "Liều nạp 9M IU, sau đó 2.5 - 3.5M IU mỗi 12 giờ", pedDose: "Giảm liều theo mốc", note: "Theo dõi Creatinine hàng ngày." },
+                        { label: "< 10 mL/min", min: 0, max: 9, adultDose: "Liều nạp 9M IU, sau đó 2M IU mỗi 24-36 giờ", pedDose: "--", note: "Bổ sung sau HD." }
+                    ]
+                },
+                // 30. Sulfamethoxazole / Trimethoprim (Cotrimoxazole)
+                {
+                    id: "cotrimoxazole",
+                    name: "Sulfamethoxazole / Trimethoprim (Co-trimoxazole)",
+                    group: "Sulfonamide + Trimethoprim",
+                    adr: "Phát ban da, hội chứng Stevens-Johnson, tăng kali máu, giảm bạch cầu.",
+                    blackbox: "Nguy cơ tăng kali máu nặng và tăng Creatinine giả (do TMP ức chế bài tiết creatinine).",
+                    interactions: [{ drug: "Spironolactone / ACEi", risk: "high", desc: "Nguy cơ tăng kali máu đe dọa tính mạng." }],
+                    intervals: [
+                        { label: "> 30 mL/min", min: 30, max: 9999, adultDose: "1-2 viên 800/160mg mỗi 12 giờ", pedDose: "4-6 mg/kg TMP mỗi 12 giờ", note: "Liều chuẩn." },
+                        { label: "15 - 30 mL/min", min: 15, max: 30, adultDose: "1 viên 800/160mg mỗi 12-24 giờ (50% liều)", pedDose: "2-3 mg/kg TMP mỗi 12 giờ", note: "Giảm 50% liều." },
+                        { label: "< 15 mL/min", min: 0, max: 14, adultDose: "Không khuyến cáo sử dụng (hoặc 50% liều mỗi 24h nếu bắt buộc)", pedDose: "--", note: "Tránh dùng nếu có thể." }
+                    ]
+                },
+                // 31. Fosfomycin
+                {
+                    id: "fosfomycin",
+                    name: "Fosfomycin",
+                    group: "Dẫn xuất Acid Phosphonic",
+                    adr: "Rối loạn tiêu hóa, nôn nao, tăng tải natri (dạng tiêm chứa nhiều Natri).",
+                    blackbox: "Fosfomycin uống (gói 3g) điều trị viêm bàng quang cấp không cần chỉnh liều.",
+                    interactions: [{ drug: "Metoclopramide", risk: "medium", desc: "Giảm nồng độ Fosfomycin trong huyết thanh." }],
+                    intervals: [
+                        { label: "> 50 mL/min", min: 50, max: 9999, adultDose: "Uống 3g liều duy nhất (Viêm bàng quang) / Tiêm IV 4g c 6h", pedDose: "100-200 mg/kg/ngày IV chia 3 lần", note: "Dạng IV dùng nhiễm trùng nặng." },
+                        { label: "20 - 50 mL/min", min: 20, max: 50, adultDose: "IV 2g - 4g mỗi 8-12 giờ", pedDose: "Chỉnh liều dạng IV", note: "Dạng uống không cần chỉnh liều." },
+                        { label: "< 20 mL/min", min: 0, max: 19, adultDose: "IV 2g mỗi 12-24 giờ", pedDose: "--", note: "Thận trọng." }
+                    ]
+                }
+            ],
+            bacteria: [
+                {
+                    id: "mrsa",
+                    name: "Staphylococcus aureus kháng Methicillin (MRSA)",
+                    gram: "Gram dương (+) - Tụ cầu khuẩn chùm",
+                    morphology: "Cầu khuẩn Gram dương xếp thành chùm nho.",
+                    classification: "Kháng nhóm Beta-lactam (Penicillin, Cephalosporin).",
+                    preferred: "Vancomycin, Linezolid, Daptomycin",
+                    alternative: "Teicoplanin, Ceftaroline, Tigecycline",
+                    resistance: "Mang gen mecA mã hóa PBP2a, kháng toàn bộ các kháng sinh nhóm beta-lactam trừ Ceftaroline."
+                },
+                {
+                    id: "paeruginosa",
+                    name: "Pseudomonas aeruginosa",
+                    gram: "Gram âm (-) - Trực khuẩn mủ xanh",
+                    morphology: "Trực khuẩn Gram âm hiếu khí tuyệt đối.",
+                    classification: "Trực khuẩn đường ruột không lên men, kháng tự nhiên nhiều kháng sinh.",
+                    preferred: "Ceftazidime, Cefepime, Piperacillin/Tazobactam, Meropenem, Ciprofloxacin",
+                    alternative: "Colistin, Aztreonam, Aminoglycoside",
+                    resistance: "Tạo màng sinh học (Biofilm), bơm tống chủ động (Efflux pump), đột biến porin OprD làm mất tác dụng Carbapenem."
+                },
+                {
+                    id: "ecoli_esbl",
+                    name: "Escherichia coli sinh men ESBL",
+                    gram: "Gram âm (-) - Trực khuẩn đường ruột",
+                    morphology: "Trực khuẩn Gram âm đường ruột hình gậy ngắn.",
+                    classification: "Enterobacteriaceae kháng Beta-lactam phổ rộng.",
+                    preferred: "Meropenem, Ertapenem, Imipenem",
+                    alternative: "Fosfomycin, Piperacillin/Tazobactam (nếu nhạy trung gian), Aminoglycoside",
+                    resistance: "Sản xuất men Beta-lactamase phổ rộng (ESBL) phân hủy penicillin, cephalosporin thế hệ mới và aztreonam."
+                }
+            ]
+        };
+
+        let db = JSON.parse(localStorage.getItem('renal_rx_db')) || defaultDatabase;
+
+        function saveDB() {
+            localStorage.setItem('renal_rx_db', JSON.stringify(db));
+        }
+
+        function switchTab(tabId) {
+            ['calculator', 'bacteria', 'interactions', 'admin'].forEach(id => {
+                document.getElementById(`content-${id}`).classList.add('hidden');
+                document.getElementById(`tab-${id}`).classList.remove('bg-white', 'text-emerald-800', 'shadow');
+                document.getElementById(`tab-${id}`).classList.add('text-white', 'hover:bg-emerald-700');
+            });
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('bg-white', 'text-emerald-800', 'shadow');
+            document.getElementById(`tab-${tabId}`).classList.remove('text-white', 'hover:bg-emerald-700');
+
+            if (tabId === 'calculator') renderAntibioticSelector();
+            if (tabId === 'bacteria') renderBacteriaList();
+            if (tabId === 'interactions') renderInteractionSelector();
+            if (tabId === 'admin') renderAdminData();
+        }
+
+        function togglePatientForm() {
+            const type = document.getElementById('patientType').value;
+            if (type === 'adult') {
+                document.getElementById('adult-inputs').classList.remove('hidden');
+                document.getElementById('pediatric-inputs').classList.add('hidden');
+                document.getElementById('calcMethod').value = 'ckdepi';
+            } else {
+                document.getElementById('adult-inputs').classList.add('hidden');
+                document.getElementById('pediatric-inputs').classList.remove('hidden');
+                document.getElementById('calcMethod').value = 'schwartz';
+            }
+        }
+
+        function calculateRenal() {
+            const type = document.getElementById('patientType').value;
+            let scr = parseFloat(document.getElementById('scr').value);
+            const scrUnit = document.getElementById('scrUnit').value;
+
+            if (scrUnit === 'umol') {
+                scr = scr / 88.4;
+            }
+
+            let gfrVal = 0;
+            let method = document.getElementById('calcMethod').value;
+            let status = document.getElementById('renalStatus').value;
+
+            if (status === 'hd') {
+                gfrVal = 8;
+            } else if (status === 'crrt') {
+                gfrVal = 15;
+            } else if (status === 'pd') {
+                gfrVal = 10;
+            } else if (type === 'adult') {
+                const age = parseInt(document.getElementById('age').value);
+                const weight = parseFloat(document.getElementById('weight').value);
+                const gender = document.getElementById('gender').value;
+
+                if (method === 'ckdepi') {
+                    let kappa = gender === 'female' ? 0.7 : 0.9;
+                    let alpha = gender === 'female' ? -0.241 : -0.302;
+                    let minScrKappa = Math.min(scr / kappa, 1);
+                    let maxScrKappa = Math.max(scr / kappa, 1);
+                    let genderFactor = gender === 'female' ? 1.012 : 1;
+                    
+                    gfrVal = 142 * Math.pow(minScrKappa, alpha) * Math.pow(maxScrKappa, -1.200) * Math.pow(0.9938, age) * genderFactor;
+                } else {
+                    let crcl = ((140 - age) * weight) / (72 * scr);
+                    if (gender === 'female') crcl *= 0.85;
+                    gfrVal = crcl;
+                }
+            } else {
+                let height = parseFloat(document.getElementById('pedHeight').value);
+                gfrVal = (0.413 * height) / scr;
+            }
+
+            gfrVal = Math.round(gfrVal * 10) / 10;
+            document.getElementById('gfrResultVal').innerText = gfrVal;
+
+            let stageText = "";
+            let badgeClass = "";
+            if (status !== 'normal') {
+                stageText = `Trạng thái đặc biệt (${status.toUpperCase()})`;
+                badgeClass = "bg-purple-100 text-purple-700 border-purple-300";
+            } else if (gfrVal >= 90) {
+                stageText = "Giai đoạn G1 (Bình thường / Tăng)";
+                badgeClass = "bg-emerald-100 text-emerald-700 border-emerald-300";
+            } else if (gfrVal >= 60) {
+                stageText = "Giai đoạn G2 (Giảm nhẹ)";
+                badgeClass = "bg-blue-100 text-blue-700 border-blue-300";
+            } else if (gfrVal >= 45) {
+                stageText = "Giai đoạn G3a (Giảm nhẹ đến trung bình)";
+                badgeClass = "bg-amber-100 text-amber-700 border-amber-300";
+            } else if (gfrVal >= 30) {
+                stageText = "Giai đoạn G3b (Giảm trung bình đến nặng)";
+                badgeClass = "bg-orange-100 text-orange-700 border-orange-300";
+            } else if (gfrVal >= 15) {
+                stageText = "Giai đoạn G4 (Giảm nặng)";
+                badgeClass = "bg-rose-100 text-rose-700 border-rose-300";
+            } else {
+                stageText = "Giai đoạn G5 (Suy thận mạn giai đoạn cuối)";
+                badgeClass = "bg-red-200 text-red-800 border-red-400";
+            }
+
+            const badge = document.getElementById('ckdStageBadge');
+            badge.innerText = stageText;
+            badge.className = `px-4 py-2 rounded-xl text-center border font-bold text-sm ${badgeClass}`;
+
+            document.getElementById('calcNote').innerText = `Tính toán thành công theo công thức ${method.toUpperCase()}.`;
+            updateAntibioticRecommendations(gfrVal, type);
+        }
+
+        function renderAntibioticSelector() {
+            const query = document.getElementById('searchAntibiotic').value.toLowerCase();
+            const container = document.getElementById('antibioticSelectorGrid');
+            container.innerHTML = '';
+
+            db.antibiotics.filter(ab => ab.name.toLowerCase().includes(query)).forEach(ab => {
+                container.innerHTML += `
+                    <label class="flex items-center space-x-2 p-2 bg-white border rounded-xl hover:bg-slate-100 cursor-pointer text-xs font-medium">
+                        <input type="checkbox" value="${ab.id}" onchange="triggerAntibioticCalculation()" class="ab-checkbox rounded text-emerald-600 focus:ring-emerald-500">
+                        <span class="truncate" title="${ab.name}">${ab.name}</span>
+                    </label>
+                `;
+            });
+        }
+
+        function triggerAntibioticCalculation() {
+            const gfrVal = parseFloat(document.getElementById('gfrResultVal').innerText) || 90;
+            const type = document.getElementById('patientType').value;
+            updateAntibioticRecommendations(gfrVal, type);
+        }
+
+        function updateAntibioticRecommendations(gfrVal, patientType) {
+            const selectedIds = Array.from(document.querySelectorAll('.ab-checkbox:checked')).map(cb => cb.value);
+            const container = document.getElementById('antibioticRecommendationResult');
+
+            if (selectedIds.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-slate-400 border border-dashed rounded-xl">
+                        <i class="fa-solid fa-hand-pointer text-2xl mb-1"></i>
+                        <p class="text-sm">Hãy chọn ít nhất một kháng sinh bên trên để xem khuyến cáo liều chỉnh.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            selectedIds.forEach(id => {
+                const ab = db.antibiotics.find(item => item.id === id);
+                if (!ab) return;
+
+                let matchedInterval = ab.intervals.find(iv => gfrVal >= iv.min && gfrVal <= iv.max);
+                if (!matchedInterval && ab.intervals.length > 0) {
+                    matchedInterval = ab.intervals[ab.intervals.length - 1];
+                }
+
+                let doseStr = patientType === 'pediatric' ? matchedInterval?.pedDose : matchedInterval?.adultDose;
+
+                container.innerHTML += `
+                    <div class="border border-slate-200 rounded-2xl p-4 bg-slate-50 space-y-2">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-sm flex items-center">
+                                    <i class="fa-solid fa-capsules text-emerald-600 mr-1.5"></i> ${ab.name}
+                                    <span class="ml-2 text-xs px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-normal">${ab.group}</span>
+                                </h3>
+                            </div>
+                            <span class="text-xs font-semibold px-2.5 py-1 bg-amber-100 text-amber-800 rounded-lg">
+                                Mốc eGFR: ${matchedInterval ? matchedInterval.label : 'Mặc định'}
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs pt-1">
+                            <div class="bg-white p-3 rounded-xl border shadow-sm">
+                                <span class="text-slate-400 block font-semibold mb-0.5">Liều khuyến cáo đề xuất (${patientType === 'pediatric' ? 'Trẻ em' : 'Người lớn'}):</span>
+                                <span class="font-bold text-emerald-700 text-sm">${doseStr || 'Đang cập nhật'}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-xl border shadow-sm">
+                                <span class="text-slate-400 block font-semibold mb-0.5">Lưu ý lâm sàng / Ghi chú:</span>
+                                <span class="text-slate-600">${matchedInterval?.note || 'Không có lưu ý đặc biệt.'}</span>
+                            </div>
+                        </div>
+                        <div class="text-xs text-slate-500 pt-1 flex items-center space-x-1">
+                            <i class="fa-solid fa-circle-exclamation text-amber-500 mr-1"></i>
+                            <span><b>ADR chính:</b> ${ab.adr}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderBacteriaList() {
+            const query = document.getElementById('searchBacteria').value.toLowerCase();
+            const container = document.getElementById('bacteriaContainer');
+            container.innerHTML = '';
+
+            db.bacteria.filter(bac => bac.name.toLowerCase().includes(query) || bac.gram.toLowerCase().includes(query)).forEach(bac => {
+                container.innerHTML += `
+                    <div class="border rounded-2xl p-4 bg-slate-50 space-y-3 hover:shadow-sm transition">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-sm text-slate-800">${bac.name}</h3>
+                            <span class="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full">${bac.gram}</span>
+                        </div>
+                        <div class="text-xs space-y-1.5 text-slate-600">
+                            <p><b>Đặc điểm hình thái:</b> ${bac.morphology}</p>
+                            <p><b>Phân loại kháng thuốc:</b> ${bac.classification}</p>
+                            <div class="p-2 bg-emerald-50 text-emerald-800 rounded-xl border border-emerald-200">
+                                <i class="fa-solid fa-check-circle mr-1 text-emerald-600"></i><b>Ưu tiên lựa chọn:</b> ${bac.preferred}
+                            </div>
+                            <p><b>Thay thế:</b> ${bac.alternative}</p>
+                            <p class="text-slate-500 italic"><b>Cơ chế kháng:</b> ${bac.resistance}</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderInteractionSelector() {
+            const container = document.getElementById('interactionDrugSelector');
+            container.innerHTML = '';
+            db.antibiotics.forEach(ab => {
+                container.innerHTML += `
+                    <label class="flex items-center space-x-2 p-2 bg-white border rounded-xl hover:bg-slate-100 cursor-pointer text-xs font-medium">
+                        <input type="checkbox" value="${ab.id}" class="interaction-checkbox rounded text-emerald-600">
+                        <span>${ab.name}</span>
+                    </label>
+                `;
+            });
+        }
+
+        function checkInteractions() {
+            const selectedIds = Array.from(document.querySelectorAll('.interaction-checkbox:checked')).map(cb => cb.value);
+            const box = document.getElementById('interactionResultBox');
+
+            if (selectedIds.length < 2) {
+                box.innerHTML = `
+                    <i class="fa-solid fa-triangle-exclamation text-3xl mb-2 text-amber-400"></i>
+                    <p class="text-sm text-slate-600 font-medium">Vui lòng chọn ít nhất 2 kháng sinh để kiểm tra tương tác chéo.</p>
+                `;
+                return;
+            }
+
+            let foundInteractions = [];
+            for (let i = 0; i < selectedIds.length; i++) {
+                const ab1 = db.antibiotics.find(a => a.id === selectedIds[i]);
+                if (!ab1 || !ab1.interactions) continue;
+
+                for (let j = i + 1; j < selectedIds.length; j++) {
+                    const ab2 = db.antibiotics.find(a => a.id === selectedIds[j]);
+                    if (!ab2) continue;
+
+                    ab1.interactions.forEach(inter => {
+                        if (ab2.name.toLowerCase().includes(inter.drug.toLowerCase()) || inter.drug.toLowerCase().includes(ab2.name.toLowerCase())) {
+                            foundInteractions.push({
+                                pair: `${ab1.name} + ${ab2.name}`,
+                                risk: inter.risk,
+                                desc: inter.desc
+                            });
+                        }
+                    });
+                }
+            }
+
+            if (foundInteractions.length === 0) {
+                box.innerHTML = `
+                    <div class="text-emerald-700 p-4 bg-emerald-50 border border-emerald-200 rounded-xl w-full text-left space-y-1">
+                        <h4 class="font-bold text-sm"><i class="fa-solid fa-circle-check mr-1"></i> An toàn</h4>
+                        <p class="text-xs">Không phát hiện tương tác thuốc nghiêm trọng giữa các kháng sinh đã chọn.</p>
+                    </div>
+                `;
+            } else {
+                box.innerHTML = `<div class="w-full space-y-2 text-left">
+                    <h4 class="font-bold text-sm text-rose-700 mb-2"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Phát hiện Tương tác Thuốc:</h4>
+                </div>`;
+                const listDiv = box.querySelector('div');
+                foundInteractions.forEach(item => {
+                    const riskBg = item.risk === 'high' ? 'bg-rose-50 border-rose-200 text-rose-800' : 'bg-amber-50 border-amber-200 text-amber-800';
+                    listDiv.innerHTML += `
+                        <div class="p-3 border rounded-xl text-xs ${riskBg} space-y-1">
+                            <span class="font-bold block">${item.pair} (${item.risk === 'high' ? 'Nghiêm trọng' : 'Thận trọng'})</span>
+                            <p>${item.desc}</p>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function switchAdminSub(sub) {
+            if (sub === 'antibiotics') {
+                document.getElementById('admin-section-antibiotics').classList.remove('hidden');
+                document.getElementById('admin-section-bacteria').classList.add('hidden');
+                document.getElementById('admin-sub-ab').className = "pb-2 font-semibold text-sm border-b-2 border-emerald-600 text-emerald-700";
+                document.getElementById('admin-sub-bac').className = "pb-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800";
+            } else {
+                document.getElementById('admin-section-antibiotics').classList.add('hidden');
+                document.getElementById('admin-section-bacteria').classList.remove('hidden');
+                document.getElementById('admin-sub-ab').className = "pb-2 font-semibold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800";
+                document.getElementById('admin-sub-bac').className = "pb-2 font-semibold text-sm border-b-2 border-emerald-600 text-emerald-700";
+            }
+        }
+
+        function renderAdminData() {
+            document.getElementById('abCount').innerText = db.antibiotics.length;
+            const abContainer = document.getElementById('adminAntibioticList');
+            abContainer.innerHTML = '';
+            db.antibiotics.forEach((ab, idx) => {
+                abContainer.innerHTML += `
+                    <div class="border rounded-xl p-3 bg-slate-50 flex justify-between items-center text-xs">
+                        <div>
+                            <span class="font-bold text-sm text-slate-800">${ab.name}</span>
+                            <span class="ml-2 px-2 py-0.5 bg-slate-200 rounded text-slate-600">${ab.group}</span>
+                            <p class="text-slate-500 mt-0.5">Số mốc eGFR: ${ab.intervals.length}</p>
+                        </div>
+                        <div class="space-x-2">
+                            <button onclick="editAntibiotic(${idx})" class="px-3 py-1 bg-white border rounded-lg hover:bg-slate-100 font-medium">Sửa</button>
+                            <button onclick="deleteAntibiotic(${idx})" class="px-3 py-1 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg hover:bg-rose-100 font-medium">Xóa</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const bacContainer = document.getElementById('adminBacteriaList');
+            bacContainer.innerHTML = '';
+            db.bacteria.forEach((bac, idx) => {
+                bacContainer.innerHTML += `
+                    <div class="border rounded-xl p-3 bg-slate-50 flex justify-between items-center text-xs">
+                        <div>
+                            <span class="font-bold text-sm text-slate-800">${bac.name}</span>
+                            <span class="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 rounded">${bac.gram}</span>
+                        </div>
+                        <div class="space-x-2">
+                            <button onclick="deleteBacteria(${idx})" class="px-3 py-1 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg hover:bg-rose-100 font-medium">Xóa</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function addNewAntibioticPrompt() {
+            let name = prompt("Nhập tên kháng sinh mới:");
+            if (!name) return;
+            let group = prompt("Nhập nhóm kháng sinh (ví dụ: Beta-lactam, Glycopeptide):") || "Khác";
+            db.antibiotics.push({
+                id: name.toLowerCase().replace(/\s+/g, '_'),
+                name: name,
+                group: group,
+                adr: "Đang cập nhật...",
+                blackbox: "Không có",
+                interactions: [],
+                intervals: [
+                    { label: "> 50 mL/min", min: 50, max: 9999, adultDose: "Liều chuẩn", pedDose: "Liều chuẩn trẻ em", note: "" },
+                    { label: "< 50 mL/min", min: 0, max: 49, adultDose: "Giảm liều theo mức lọc", pedDose: "Giảm liều theo cân nặng", note: "" }
+                ]
+            });
+            saveDB();
+            renderAdminData();
+            alert("Đã thêm kháng sinh thành công!");
+        }
+
+        function deleteAntibiotic(idx) {
+            if (confirm("Bạn có chắc chắn muốn xóa kháng sinh này?")) {
+                db.antibiotics.splice(idx, 1);
+                saveDB();
+                renderAdminData();
+            }
+        }
+
+        function editAntibiotic(idx) {
+            let ab = db.antibiotics[idx];
+            let newName = prompt("Sửa tên kháng sinh:", ab.name);
+            if (newName) ab.name = newName;
+            let newGroup = prompt("Sửa nhóm kháng sinh:", ab.group);
+            if (newGroup) ab.group = newGroup;
+            saveDB();
+            renderAdminData();
+            alert("Đã cập nhật thông tin!");
+        }
+
+        function addNewBacteriaPrompt() {
+            let name = prompt("Nhập tên vi khuẩn mới:");
+            if (!name) return;
+            db.bacteria.push({
+                id: name.toLowerCase().replace(/\s+/g, '_'),
+                name: name,
+                gram: "Gram âm/dương",
+                morphology: "Đang cập nhật",
+                classification: "Đang cập nhật",
+                preferred: "Đang cập nhật",
+                alternative: "Đang cập nhật",
+                resistance: "Đang cập nhật"
+            });
+            saveDB();
+            renderAdminData();
+            alert("Đã thêm vi khuẩn thành công!");
+        }
+
+        function deleteBacteria(idx) {
+            if (confirm("Bạn có chắc chắn muốn xóa vi khuẩn này?")) {
+                db.bacteria.splice(idx, 1);
+                saveDB();
+                renderAdminData();
+            }
+        }
+
+        function exportJSONData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", "renal_rx_database.json");
+            document.body.appendChild(dlAnchor);
+            dlAnchor.click();
+            dlAnchor.remove();
+        }
+
+        function importJSONData(event) {
+            const fileReader = new FileReader();
+            if (event.target.files[0]) {
+                fileReader.readAsText(event.target.files[0], "UTF-8");
+                fileReader.onload = e => {
+                    try {
+                        db = JSON.parse(e.target.result);
+                        saveDB();
+                        renderAdminData();
+                        alert("Nhập dữ liệu thành công!");
+                    } catch (err) {
+                        alert("Lỗi định dạng file JSON!");
+                    }
+                };
+            }
+        }
+
+        function resetDefaultData() {
+            if (confirm("Bạn có chắc chắn muốn khôi phục lại dữ liệu mặc định 31 kháng sinh ban đầu?")) {
+                db = JSON.parse(JSON.stringify(defaultDatabase));
+                saveDB();
+                renderAdminData();
+                renderAntibioticSelector();
+                alert("Đã khôi phục toàn bộ 31 kháng sinh mặc định!");
+            }
+        }
+
+        window.onload = function() {
+            renderAntibioticSelector();
+        };
+    </script>
+</body>
+</html>
