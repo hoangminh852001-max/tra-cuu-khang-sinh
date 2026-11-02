@@ -9,6 +9,9 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; }
+        /* Tùy chỉnh màu xen kẽ cho option dropdown A-Z */
+        select option:nth-child(even) { background-color: #f0fdf4; color: #166534; }
+        select option:nth-child(odd) { background-color: #ffffff; color: #1e293b; }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 h-screen flex flex-col justify-between">
@@ -24,7 +27,6 @@
                 <p class="text-[10px] text-emerald-100">Hệ thống Tra cứu Liều Kháng sinh & Vi sinh Lâm sàng</p>
             </div>
         </div>
-        <!-- Navigation Tabs -->
         <nav class="flex bg-emerald-800 p-1 rounded-lg space-x-1">
             <button onclick="switchTab('calculator')" id="tab-calculator" class="px-3 py-1 text-xs font-medium rounded bg-white text-emerald-800 shadow transition-all">
                 <i class="fa-solid fa-calculator mr-1"></i> Tính Liều
@@ -62,7 +64,6 @@
                         </select>
                     </div>
 
-                    <!-- Input người lớn -->
                     <div id="adult-inputs" class="space-y-2">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
@@ -89,7 +90,6 @@
                         </div>
                     </div>
 
-                    <!-- Input trẻ em -->
                     <div id="pediatric-inputs" class="space-y-2 hidden">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
@@ -142,47 +142,50 @@
                 </button>
             </div>
 
-            <!-- Cột phải: Kết quả eGFR & Tra cứu kháng sinh dạng Dropdown ABC -->
+            <!-- Cột phải: Kết quả eGFR & Tra cứu kháng sinh (2 cách: Gõ tra cứu + Dropdown A-Z) -->
             <div class="lg:col-span-2 flex flex-col space-y-3 overflow-hidden">
                 
-                <!-- Kết quả eGFR gọn -->
+                <!-- Kết quả eGFR (Cỡ chữ to hơn, đậm hơn theo yêu cầu) -->
                 <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center shrink-0">
                     <div>
-                        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Kết quả đánh giá chức năng thận</span>
+                        <span class="text-[11px] uppercase font-extrabold tracking-wider text-slate-500">Kết quả đánh giá chức năng thận</span>
                         <div class="flex items-baseline space-x-2 mt-0.5">
-                            <span id="gfrResultVal" class="text-2xl font-extrabold text-emerald-700">--</span>
-                            <span class="text-xs font-medium text-slate-500">mL/min/1.73m²</span>
+                            <span id="gfrResultVal" class="text-3xl font-black text-emerald-700">--</span>
+                            <span class="text-xs font-bold text-slate-600">mL/min/1.73m²</span>
                         </div>
                     </div>
-                    <div id="ckdStageBadge" class="px-3 py-1.5 rounded-lg text-center border font-bold text-xs bg-slate-100 text-slate-700">
+                    <div id="ckdStageBadge" class="px-4 py-2 rounded-xl text-center border-2 font-black text-sm bg-slate-100 text-slate-800 shadow-sm">
                         Chưa phân loại
                     </div>
                 </div>
 
-                <!-- Khung Tra cứu & Chọn Kháng sinh dạng Dropdown ABC -->
+                <!-- Khung Tra cứu & Chọn Kháng sinh -->
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex-grow flex flex-col overflow-hidden space-y-3">
-                    <div class="flex flex-col sm:flex-row justify-between items-center gap-2 shrink-0">
-                        <h2 class="text-xs font-bold text-slate-800 flex items-center uppercase tracking-wider text-emerald-700">
-                            <i class="fa-solid fa-syringe mr-1.5"></i> Chọn Kháng sinh (Sắp xếp A-Z)
-                        </h2>
-                        <!-- Dropdown chọn kháng sinh theo ABC -->
-                        <div class="w-full sm:w-72 relative">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 shrink-0">
+                        <!-- Cách 1: Ô gõ để tra cứu -->
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-600 mb-1">Cách 1: Gõ tên thuốc tra cứu</label>
+                            <input type="text" id="searchKeyword" oninput="filterAntibioticDropdown()" placeholder="Nhập tên kháng sinh (vd: Cef...)" class="w-full p-2 text-xs border rounded-lg bg-slate-50 focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        <!-- Cách 2: Nút bấm xổ danh sách A-Z (Màu xen kẽ xanh nhạt - trắng) -->
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-600 mb-1">Cách 2: Bấm chọn từ danh sách A-Z</label>
                             <select id="antibioticDropdown" onchange="addSelectedAntibiotic(this)" class="w-full p-2 text-xs border rounded-lg bg-emerald-50 text-emerald-900 font-semibold focus:ring-2 focus:ring-emerald-500 cursor-pointer">
                                 <option value="">-- Bấm để chọn kháng sinh (A-Z) --</option>
                             </select>
                         </div>
                     </div>
 
-                    <!-- Danh sách các thuốc đã chọn hiển thị dạng tag/chip -->
+                    <!-- Tag các thuốc đã chọn -->
                     <div id="selectedAntibioticsTags" class="flex flex-wrap gap-1.5 max-h-16 overflow-y-auto p-1.5 bg-slate-50 border rounded-lg shrink-0">
-                        <span class="text-xs text-slate-400 italic py-1 px-2">Chưa có kháng sinh nào được chọn. Hãy chọn từ danh sách trên.</span>
+                        <span class="text-xs text-slate-400 italic py-1 px-2">Chưa có kháng sinh nào được chọn.</span>
                     </div>
 
-                    <!-- Bảng kết quả liều chi tiết (Có thanh cuộn riêng nếu dài) -->
+                    <!-- Bảng kết quả liều chi tiết (Liều và Ghi chú tách 2 dòng, Liều cỡ chữ to) -->
                     <div id="antibioticRecommendationResult" class="space-y-3 overflow-y-auto flex-grow pr-1">
                         <div class="text-center py-6 text-slate-400 border border-dashed rounded-xl">
                             <i class="fa-solid fa-hand-pointer text-xl mb-1"></i>
-                            <p class="text-xs">Hãy chọn kháng sinh từ menu thả xuống phía trên để xem liều hiệu chỉnh theo eGFR.</p>
+                            <p class="text-xs">Hãy chọn hoặc tra cứu kháng sinh để xem liều hiệu chỉnh theo eGFR.</p>
                         </div>
                     </div>
                 </div>
@@ -239,37 +242,37 @@
     <script>
         const defaultDatabase = {
             antibiotics: [
-                { id: "amox_clav", name: "Amoxicillin / Clavulanate", group: "Penicillin + Ức chế", adr: "Tiêu chảy, phát ban, tăng men gan.", intervals: [{ min: 30, max: 9999, adultDose: "1g mỗi 12h", pedDose: "25-45 mg/kg/ngày", note: "Liều chuẩn" }, { min: 10, max: 29, adultDose: "500/125mg mỗi 12h", pedDose: "15 mg/kg mỗi 12h", note: "Giảm liều" }, { min: 0, max: 9, adultDose: "500/125mg mỗi 24h", pedDose: "15 mg/kg mỗi 24h", note: "Sau lọc máu" }] },
-                { id: "azithromycin", name: "Azithromycin", group: "Macrolide", adr: "Tiêu chảy, kéo dài QT.", intervals: [{ min: 0, max: 9999, adultDose: "500mg ngày 1, sau đó 250mg/ngày", pedDose: "10 mg/kg ngày 1, sau đó 5mg/kg", note: "Thải trừ qua gan" }] },
-                { id: "cefadroxil", name: "Cefadroxil", group: "Cephalosporin G1", adr: "Rối loạn tiêu hóa.", intervals: [{ min: 50, max: 9999, adultDose: "1-2g/ngày", pedDose: "30 mg/kg/ngày", note: "Liều chuẩn" }, { min: 25, max: 50, adultDose: "500mg-1g mỗi 12h", pedDose: "15 mg/kg mỗi 12h", note: "Giãn cách" }, { min: 0, max: 24, adultDose: "500mg mỗi 24-36h", pedDose: "15 mg/kg mỗi 24h", note: "Thận trọng" }] },
-                { id: "cefazolin", name: "Cefazolin", group: "Cephalosporin G1", adr: "Phát ban, tăng enzym gan.", intervals: [{ min: 50, max: 9999, adultDose: "1-2g mỗi 8h", pedDose: "25-50 mg/kg mỗi 8h", note: "Liều chuẩn" }, { min: 35, max: 50, adultDose: "1-2g mỗi 12h", pedDose: "Liều chuẩn mỗi 12h", note: "Giãn cách" }, { min: 11, max: 34, adultDose: "500mg-1g mỗi 12h", pedDose: "10-15 mg/kg mỗi 12h", note: "Giảm 50%" }, { min: 0, max: 10, adultDose: "500mg mỗi 24h", pedDose: "10 mg/kg mỗi 24h", note: "Sau HD" }] },
-                { id: "cefepime", name: "Cefepime", group: "Cephalosporin G4", adr: "Độc tính thần kinh, co giật ở suy thận.", intervals: [{ min: 60, max: 9999, adultDose: "1-2g mỗi 8-12h", pedDose: "50 mg/kg mỗi 8h", note: "Liều chuẩn" }, { min: 30, max: 60, adultDose: "1-2g mỗi 24h", pedDose: "50 mg/kg mỗi 12h", note: "Chỉnh liều" }, { min: 11, max: 29, adultDose: "500mg-1g mỗi 24h", pedDose: "50 mg/kg mỗi 24h", note: "Theo dõi ý thức" }, { min: 0, max: 10, adultDose: "500mg mỗi 24h", pedDose: "25 mg/kg mỗi 24h", note: "Sau HD" }] },
-                { id: "cefixime", name: "Cefixime", group: "Cephalosporin G3", adr: "Tiêu chảy.", intervals: [{ min: 60, max: 9999, adultDose: "400mg mỗi 24h", pedDose: "8 mg/kg/ngày", note: "Liều chuẩn" }, { min: 21, max: 60, adultDose: "300mg mỗi 24h", pedDose: "6 mg/kg/ngày", note: "Giảm liều" }, { min: 0, max: 20, adultDose: "200mg mỗi 24h", pedDose: "4 mg/kg/ngày", note: "Ít lọc qua thận" }] },
-                { id: "cefoperazone", name: "Cefoperazone", group: "Cephalosporin G3", adr: "Hạ prothrombin, phản ứng rượu.", intervals: [{ min: 15, max: 9999, adultDose: "2-4g/ngày", pedDose: "40-80 mg/kg/ngày", note: "Thải trừ mật" }, { min: 0, max: 14, adultDose: "Tối đa 2g/ngày", pedDose: "Tối đa 50 mg/kg", note: "Thận trọng suy gan" }] },
-                { id: "cefotaxime", name: "Cefotaxime", group: "Cephalosporin G3", adr: "Phát ban, tiêu chảy.", intervals: [{ min: 20, max: 9999, adultDose: "1-2g mỗi 8h", pedDose: "37.5 mg/kg mỗi 6h", note: "Liều chuẩn" }, { min: 10, max: 20, adultDose: "1-2g mỗi 12h", pedDose: "25 mg/kg mỗi 8-12h", note: "Giảm 50%" }, { min: 0, max: 9, adultDose: "1g mỗi 24h", pedDose: "25 mg/kg mỗi 24h", note: "Sau HD" }] },
-                { id: "cefpirome", name: "Cefpirome", group: "Cephalosporin G4", adr: "Tăng men gan nhẹ.", intervals: [{ min: 50, max: 9999, adultDose: "1-2g mỗi 12h", pedDose: "30-50 mg/kg mỗi 12h", note: "Liều chuẩn" }, { min: 20, max: 50, adultDose: "1g mỗi 12h", pedDose: "25 mg/kg mỗi 12h", note: "Chỉnh liều" }, { min: 0, max: 19, adultDose: "500mg-1g mỗi 24h", pedDose: "15 mg/kg mỗi 24h", note: "Sau HD" }] },
-                { id: "cefpodoxime", name: "Cefpodoxime", group: "Cephalosporin G3", adr: "Buồn nôn, tiêu chảy.", intervals: [{ min: 30, max: 9999, adultDose: "100-400mg mỗi 12h", pedDose: "5 mg/kg mỗi 12h", note: "Liều chuẩn" }, { min: 0, max: 29, adultDose: "100-400mg mỗi 24-48h", pedDose: "5 mg/kg mỗi 24h", note: "Giãn khoảng cách" }] },
-                { id: "cefoxitin", name: "Cefoxitin", group: "Cephamycin", adr: "Viêm tĩnh mạch, dị ứng.", intervals: [{ min: 50, max: 9999, adultDose: "1-2g mỗi 6-8h", pedDose: "20-40 mg/kg mỗi 6h", note: "Liều chuẩn" }, { min: 10, max: 49, adultDose: "1-2g mỗi 8-12h", pedDose: "20 mg/kg mỗi 8-12h", note: "Giãn cách" }, { min: 0, max: 9, adultDose: "500mg-1g mỗi 24h", pedDose: "10 mg/kg mỗi 24h", note: "Sau HD" }] },
-                { id: "ceftazidime", name: "Ceftazidime", group: "Cephalosporin G3", adr: "Độc tính thần kinh ở suy thận.", intervals: [{ min: 50, max: 9999, adultDose: "1-2g mỗi 8h", pedDose: "30-50 mg/kg mỗi 8h", note: "Liều chuẩn" }, { min: 31, max: 50, adultDose: "1g mỗi 12h", pedDose: "30 mg/kg mỗi 12h", note: "Chỉnh liều" }, { min: 16, max: 30, adultDose: "1g mỗi 24h", pedDose: "30 mg/kg mỗi 24h", note: "Chỉnh liều" }, { min: 0, max: 15, adultDose: "500mg-1g mỗi 24-48h", pedDose: "15 mg/kg mỗi 24h", note: "Sau HD" }] },
-                { id: "ceftriaxone", name: "Ceftriaxone", group: "Cephalosporin G3", adr: "Bùn mật, kết tủa canxi.", intervals: [{ min: 0, max: 9999, adultDose: "1-2g mỗi 24h", pedDose: "50-100 mg/kg/ngày", note: "Thải trừ kép gan/thận. Không cần chỉnh liều." }] },
-                { id: "cefuroxime", name: "Cefuroxime", group: "Cephalosporin G2", adr: "Tiêu chảy, tăng bạch cầu.", intervals: [{ min: 20, max: 9999, adultDose: "750mg-1.5g mỗi 8h", pedDose: "20-30 mg/kg mỗi 8h", note: "Liều chuẩn" }, { min: 10, max: 20, adultDose: "750mg mỗi 12h", pedDose: "15 mg/kg mỗi 12h", note: "Giảm tần suất" }, { min: 0, max: 9, adultDose: "750mg mỗi 24h", pedDose: "15 mg/kg mỗi 24h", note: "Sau HD" }] },
-                { id: "ciprofloxacin", name: "Ciprofloxacin", group: "Fluoroquinolone", adr: "Viêm đứt gân Achilles, kéo dài QT.", intervals: [{ min: 50, max: 9999, adultDose: "400mg IV c 12h", pedDose: "10-15 mg/kg mỗi 12h", note: "Liều chuẩn" }, { min: 30, max: 50, adultDose: "200-400mg mỗi 12h", pedDose: "10 mg/kg mỗi 12h", note: "Chỉnh nhẹ" }, { min: 0, max: 29, adultDose: "200-400mg mỗi 24h", pedDose: "10 mg/kg mỗi 24h", note: "Giảm 50%" }] },
-                { id: "clarithromycin", name: "Clarithromycin", group: "Macrolide", adr: "Vị kim loại, kéo dài QT.", intervals: [{ min: 30, max: 9999, adultDose: "250-500mg mỗi 12h", pedDose: "7.5 mg/kg mỗi 12h", note: "Liều chuẩn" }, { min: 0, max: 29, adultDose: "250mg mỗi 12-24h", pedDose: "3.75 mg/kg mỗi 12h", note: "Giảm 50%" }] },
-                { id: "colistin", name: "Colistin", group: "Polymyxin", adr: "Độc thận cấp, độc thần kinh.", intervals: [{ min: 50, max: 9999, adultDose: "Liều nạp 9M IU, sau đó 4.5M IU mỗi 12h", pedDose: "75k-150k IU/kg/ngày", note: "Tính theo CBA" }, { min: 10, max: 50, adultDose: "Liều nạp 9M IU, sau đó 2.5-3.5M IU mỗi 12h", pedDose: "Giảm theo cân nặng", note: "Theo dõi sát" }, { min: 0, max: 9, adultDose: "Liều nạp 9M IU, sau đó 2M IU mỗi 24h", pedDose: "Theo y lệnh", note: "Sau HD" }] },
-                { id: "cotrimoxazole", name: "Cotrimoxazole", group: "Sulfonamide + TMP", adr: "Phát ban, tăng kali máu.", intervals: [{ min: 30, max: 9999, adultDose: "1-2 viên 960mg mỗi 12h", pedDose: "4-6 mg/kg TMP mỗi 12h", note: "Liều chuẩn" }, { min: 15, max: 30, adultDose: "1 viên 960mg mỗi 12-24h", pedDose: "2-3 mg/kg TMP", note: "Giảm 50%" }, { min: 0, max: 14, adultDose: "Không khuyến cáo", pedDose: "Thận trọng", note: "Tránh dùng nếu có thể" }] },
-                { id: "doxycycline", name: "Doxycycline", group: "Tetracycline", adr: "Kích ứng thực quản, nhạy cảm ánh sáng.", intervals: [{ min: 0, max: 9999, adultDose: "100mg mỗi 12h ngày 1, sau đó 100mg/ngày", pedDose: "2-4 mg/kg/ngày", note: "Không cần chỉnh liều suy thận." }] },
-                { id: "erythromycin", name: "Erythromycin", group: "Macrolide", adr: "Co thắt dạ dày, buồn nôn.", intervals: [{ min: 10, max: 9999, adultDose: "250-500mg mỗi 6h", pedDose: "30-50 mg/kg/ngày", note: "Liều chuẩn" }, { min: 0, max: 9, adultDose: "250-500mg mỗi 8-12h (Max 2g/d)", pedDose: "10 mg/kg mỗi 8h", note: "Giới hạn liều" }] },
-                { id: "fosfomycin", name: "Fosfomycin", group: "Acid Phosphonic", adr: "Rối loạn tiêu hóa, tăng natri máu.", intervals: [{ min: 50, max: 9999, adultDose: "Uống 3g liều duy nhất / IV 4g c 6h", pedDose: "100-200 mg/kg/ngày", note: "Dạng uống không chỉnh liều" }, { min: 0, max: 49, adultDose: "IV 2g-4g mỗi 8-12h", pedDose: "Chỉnh theo IV", note: "Thận trọng" }] },
-                { id: "gentamicin", name: "Gentamicin", group: "Aminoglycoside", adr: "Độc thận, độc tai không hồi phục.", intervals: [{ min: 60, max: 9999, adultDose: "5-7 mg/kg mỗi 24h", pedDose: "5-7.5 mg/kg mỗi 24h", note: "Theo dõi TDM" }, { min: 40, max: 60, adultDose: "Giữ liều, dùng mỗi 36h", pedDose: "Theo TDM", note: "Giãn cách" }, { min: 20, max: 39, adultDose: "Giữ liều, dùng mỗi 48h", pedDose: "Theo TDM", note: "Giãn cách" }, { min: 0, max: 19, adultDose: "Liều nạp 2mg/kg, đo TDM", pedDose: "Theo TDM", note: "Sau HD" }] },
-                { id: "levofloxacin", name: "Levofloxacin", group: "Fluoroquinolone", adr: "Viêm gân, kéo dài QT.", intervals: [{ min: 50, max: 9999, adultDose: "500-750mg mỗi 24h", pedDose: "Hạn chế trẻ em", note: "Liều chuẩn" }, { min: 20, max: 49, adultDose: "Nạp 750mg, sau đó 500mg mỗi 48h", pedDose: "--", note: "Giãn cách" }, { min: 0, max: 19, adultDose: "Nạp 750mg, sau đó 250-500mg mỗi 48h", pedDose: "--", note: "Chỉnh kỹ" }] },
-                { id: "linezolid", name: "Linezolid", group: "Oxazolidinone", adr: "Ức chế tủy xương, hội chứng Serotonin.", intervals: [{ min: 0, max: 9999, adultDose: "600mg mỗi 12h", pedDose: "10 mg/kg mỗi 8h", note: "Không cần chỉnh liều suy thận." }] },
-                { id: "meropenem", name: "Meropenem", group: "Carbapenem", adr: "Tiêu chảy, co giật hiếm gặp.", intervals: [{ min: 50, max: 9999, adultDose: "1-2g mỗi 8h (Truyền kéo dài 3h)", pedDose: "20-40 mg/kg mỗi 8h", note: "Liều chuẩn nặng" }, { min: 25, max: 50, adultDose: "1g mỗi 8-12h", pedDose: "20 mg/kg mỗi 8h", note: "Giảm 50%" }, { min: 10, max: 24, adultDose: "500mg-1g mỗi 12h", pedDose: "10-20 mg/kg mỗi 12h", note: "Thận trọng" }, { min: 0, max: 9, adultDose: "500mg mỗi 24h", pedDose: "10 mg/kg mỗi 24h", note: "Sau lọc máu" }] },
-                { id: "metronidazole", name: "Metronidazole", group: "Nitroimidazole", adr: "Vị kim loại, phản ứng rượu.", intervals: [{ min: 10, max: 9999, adultDose: "500mg mỗi 8h", pedDose: "7.5 mg/kg mỗi 8h", note: "Liều chuẩn" }, { min: 0, max: 9, adultDose: "250-500mg mỗi 12h", pedDose: "7.5 mg/kg mỗi 12h", note: "Sau HD" }] },
-                { id: "moxifloxacin", name: "Moxifloxacin", group: "Fluoroquinolone", adr: "Kéo dài QT.", intervals: [{ min: 0, max: 9999, adultDose: "400mg mỗi 24h", pedDose: "Không dùng trẻ em", note: "Chuyển hóa qua gan. Không chỉnh liều." }] },
-                { id: "netilmicin", name: "Netilmicin", group: "Aminoglycoside", adr: "Độc thận, độc tai.", intervals: [{ min: 60, max: 9999, adultDose: "4-6 mg/kg mỗi 24h", pedDose: "6-7.5 mg/kg mỗi 24h", note: "Liều chuẩn" }, { min: 30, max: 60, adultDose: "Dùng mỗi 36-48h", pedDose: "Theo TDM", note: "Giãn cách" }, { min: 0, max: 29, adultDose: "Nạp 2mg/kg, theo dõi nồng độ", pedDose: "Theo TDM", note: "Chỉnh kỹ" }] },
-                { id: "pip_tazo", name: "Piperacillin / Tazobactam", group: "Penicillin phổ rộng", adr: "Tăng nguy cơ AKI khi kèm Vancomycin.", intervals: [{ min: 50, max: 9999, adultDose: "4.5g mỗi 6h (Truyền kéo dài)", pedDose: "80-100 mg/kg mỗi 6h", note: "Mủ xanh nặng" }, { min: 20, max: 50, adultDose: "3.375g mỗi 6h", pedDose: "75 mg/kg mỗi 6h", note: "Chỉnh liều" }, { min: 0, max: 19, adultDose: "2.25g mỗi 6-8h", pedDose: "75 mg/kg mỗi 8h", note: "Sau HD HD" }] },
-                { id: "tinidazole", name: "Tinidazole", group: "Nitroimidazole", adr: "Vị kim loại, chóng mặt.", intervals: [{ min: 10, max: 9999, adultDose: "2g uống liều duy nhất", pedDose: "50 mg/kg", note: "Liều chuẩn" }, { min: 0, max: 9, adultDose: "1g uống liều duy nhất", pedDose: "25 mg/kg", note: "Sau HD" }] },
-                { id: "vanco", name: "Vancomycin", group: "Glycopeptide", adr: "Độc thận, hội chứng người đỏ.", intervals: [{ min: 50, max: 9999, adultDose: "15-20 mg/kg mỗi 8-12h", pedDose: "15 mg/kg mỗi 6h", note: "Duy trì TDM 15-20" }, { min: 30, max: 50, adultDose: "15 mg/kg mỗi 12-24h", pedDose: "15 mg/kg mỗi 8-12h", note: "Theo dõi TDM" }, { min: 10, max: 29, adultDose: "15 mg/kg mỗi 24-48h", pedDose: "15 mg/kg mỗi 18-24h", note: "Theo dõi sát" }, { min: 0, max: 9, adultDose: "15 mg/kg nạp, chỉnh theo TDM", pedDose: "Sau HD", note: "Bổ sung sau HD" }] }
+                { id: "amox_clav", name: "Amoxicillin / Clavulanate", group: "Penicillin + Ức chế", adr: "Tiêu chảy, phát ban, tăng men gan.", intervals: [{ min: 30, max: 9999, adultDose: "1g mỗi 12h (Uống)", pedDose: "25-45 mg/kg/ngày (Uống)", note: "Liều chuẩn" }, { min: 10, max: 29, adultDose: "500/125mg mỗi 12h (Uống)", pedDose: "15 mg/kg mỗi 12h (Uống)", note: "Giảm liều" }, { min: 0, max: 9, adultDose: "500/125mg mỗi 24h (Uống)", pedDose: "15 mg/kg mỗi 24h (Uống)", note: "Sau lọc máu" }] },
+                { id: "azithromycin", name: "Azithromycin", group: "Macrolide", adr: "Tiêu chảy, kéo dài QT.", intervals: [{ min: 0, max: 9999, adultDose: "500mg ngày 1, sau đó 250mg/ngày (Uống/IV)", pedDose: "10 mg/kg ngày 1, sau đó 5mg/kg", note: "Thải trừ qua gan" }] },
+                { id: "cefadroxil", name: "Cefadroxil", group: "Cephalosporin G1", adr: "Rối loạn tiêu hóa.", intervals: [{ min: 50, max: 9999, adultDose: "1-2g/ngày (Uống)", pedDose: "30 mg/kg/ngày", note: "Liều chuẩn" }, { min: 25, max: 50, adultDose: "500mg-1g mỗi 12h (Uống)", pedDose: "15 mg/kg mỗi 12h", note: "Giãn cách" }, { min: 0, max: 24, adultDose: "500mg mỗi 24-36h (Uống)", pedDose: "15 mg/kg mỗi 24h", note: "Thận trọng" }] },
+                { id: "cefazolin", name: "Cefazolin", group: "Cephalosporin G1", adr: "Phát ban, tăng enzym gan.", intervals: [{ min: 50, max: 9999, adultDose: "1-2g mỗi 8h (Tiêm tĩnh mạch)", pedDose: "25-50 mg/kg mỗi 8h", note: "Liều chuẩn" }, { min: 35, max: 50, adultDose: "1-2g mỗi 12h (Tiêm tĩnh mạch)", pedDose: "Liều chuẩn mỗi 12h", note: "Giãn cách" }, { min: 11, max: 34, adultDose: "500mg-1g mỗi 12h (Tiêm tĩnh mạch)", pedDose: "10-15 mg/kg mỗi 12h", note: "Giảm 50%" }, { min: 0, max: 10, adultDose: "500mg mỗi 24h (Tiêm tĩnh mạch)", pedDose: "10 mg/kg mỗi 24h", note: "Sau HD" }] },
+                { id: "cefepime", name: "Cefepime", group: "Cephalosporin G4", adr: "Độc tính thần kinh, co giật ở suy thận.", intervals: [{ min: 60, max: 9999, adultDose: "1-2g mỗi 8-12h (Tiêm tĩnh mạch)", pedDose: "50 mg/kg mỗi 8h", note: "Liều chuẩn" }, { min: 30, max: 60, adultDose: "1-2g mỗi 24h (Tiêm tĩnh mạch)", pedDose: "50 mg/kg mỗi 12h", note: "Chỉnh liều" }, { min: 11, max: 29, adultDose: "500mg-1g mỗi 24h (Tiêm tĩnh mạch)", pedDose: "50 mg/kg mỗi 24h", note: "Theo dõi ý thức" }, { min: 0, max: 10, adultDose: "500mg mỗi 24h (Tiêm tĩnh mạch)", pedDose: "25 mg/kg mỗi 24h", note: "Sau HD" }] },
+                { id: "cefixime", name: "Cefixime", group: "Cephalosporin G3", adr: "Tiêu chảy.", intervals: [{ min: 60, max: 9999, adultDose: "400mg mỗi 24h (Uống)", pedDose: "8 mg/kg/ngày", note: "Liều chuẩn" }, { min: 21, max: 60, adultDose: "300mg mỗi 24h (Uống)", pedDose: "6 mg/kg/ngày", note: "Giảm liều" }, { min: 0, max: 20, adultDose: "200mg mỗi 24h (Uống)", pedDose: "4 mg/kg/ngày", note: "Ít lọc qua thận" }] },
+                { id: "cefoperazone", name: "Cefoperazone", group: "Cephalosporin G3", adr: "Hạ prothrombin, phản ứng rượu.", intervals: [{ min: 15, max: 9999, adultDose: "2-4g/ngày (Tiêm tĩnh mạch)", pedDose: "40-80 mg/kg/ngày", note: "Thải trừ mật" }, { min: 0, max: 14, adultDose: "Tối đa 2g/ngày (Tiêm tĩnh mạch)", pedDose: "Tối đa 50 mg/kg", note: "Thận trọng suy gan" }] },
+                { id: "cefotaxime", name: "Cefotaxime", group: "Cephalosporin G3", adr: "Phát ban, tiêu chảy.", intervals: [{ min: 20, max: 9999, adultDose: "1-2g mỗi 8h (Tiêm tĩnh mạch)", pedDose: "37.5 mg/kg mỗi 6h", note: "Liều chuẩn" }, { min: 10, max: 20, adultDose: "1-2g mỗi 12h (Tiêm tĩnh mạch)", pedDose: "25 mg/kg mỗi 8-12h", note: "Giảm 50%" }, { min: 0, max: 9, adultDose: "1g mỗi 24h (Tiêm tĩnh mạch)", pedDose: "25 mg/kg mỗi 24h", note: "Sau HD" }] },
+                { id: "cefpirome", name: "Cefpirome", group: "Cephalosporin G4", adr: "Tăng men gan nhẹ.", intervals: [{ min: 50, max: 9999, adultDose: "1-2g mỗi 12h (Tiêm tĩnh mạch)", pedDose: "30-50 mg/kg mỗi 12h", note: "Liều chuẩn" }, { min: 20, max: 50, adultDose: "1g mỗi 12h (Tiêm tĩnh mạch)", pedDose: "25 mg/kg mỗi 12h", note: "Chỉnh liều" }, { min: 0, max: 19, adultDose: "500mg-1g mỗi 24h (Tiêm tĩnh mạch)", pedDose: "15 mg/kg mỗi 24h", note: "Sau HD" }] },
+                { id: "cefpodoxime", name: "Cefpodoxime", group: "Cephalosporin G3", adr: "Buồn nôn, tiêu chảy.", intervals: [{ min: 30, max: 9999, adultDose: "100-400mg mỗi 12h (Uống)", pedDose: "5 mg/kg mỗi 12h", note: "Liều chuẩn" }, { min: 0, max: 29, adultDose: "100-400mg mỗi 24-48h (Uống)", pedDose: "5 mg/kg mỗi 24h", note: "Giãn khoảng cách" }] },
+                { id: "cefoxitin", name: "Cefoxitin", group: "Cephamycin", adr: "Viêm tĩnh mạch, dị ứng.", intervals: [{ min: 50, max: 9999, adultDose: "1-2g mỗi 6-8h (Tiêm tĩnh mạch)", pedDose: "20-40 mg/kg mỗi 6h", note: "Liều chuẩn" }, { min: 10, max: 49, adultDose: "1-2g mỗi 8-12h (Tiêm tĩnh mạch)", pedDose: "20 mg/kg mỗi 8-12h", note: "Giãn cách" }, { min: 0, max: 9, adultDose: "500mg-1g mỗi 24h (Tiêm tĩnh mạch)", pedDose: "10 mg/kg mỗi 24h", note: "Sau HD" }] },
+                { id: "ceftazidime", name: "Ceftazidime", group: "Cephalosporin G3", adr: "Độc tính thần kinh ở suy thận.", intervals: [{ min: 50, max: 9999, adultDose: "1-2g mỗi 8h (Tiêm tĩnh mạch)", pedDose: "30-50 mg/kg mỗi 8h", note: "Liều chuẩn" }, { min: 31, max: 50, adultDose: "1g mỗi 12h (Tiêm tĩnh mạch)", pedDose: "30 mg/kg mỗi 12h", note: "Chỉnh liều" }, { min: 16, max: 30, adultDose: "1g mỗi 24h (Tiêm tĩnh mạch)", pedDose: "30 mg/kg mỗi 24h", note: "Chỉnh liều" }, { min: 0, max: 15, adultDose: "500mg-1g mỗi 24-48h (Tiêm tĩnh mạch)", pedDose: "15 mg/kg mỗi 24h", note: "Sau HD" }] },
+                { id: "ceftriaxone", name: "Ceftriaxone", group: "Cephalosporin G3", adr: "Bùn mật, kết tủa canxi.", intervals: [{ min: 0, max: 9999, adultDose: "1-2g mỗi 24h (Tiêm tĩnh mạch/bắp)", pedDose: "50-100 mg/kg/ngày", note: "Thải trừ kép gan/thận. Không cần chỉnh liều." }] },
+                { id: "cefuroxime", name: "Cefuroxime", group: "Cephalosporin G2", adr: "Tiêu chảy, tăng bạch cầu.", intervals: [{ min: 20, max: 9999, adultDose: "750mg-1.5g mỗi 8h (Tiêm tĩnh mạch)", pedDose: "20-30 mg/kg mỗi 8h", note: "Liều chuẩn" }, { min: 10, max: 20, adultDose: "750mg mỗi 12h (Tiêm tĩnh mạch)", pedDose: "15 mg/kg mỗi 12h", note: "Giảm tần suất" }, { min: 0, max: 9, adultDose: "750mg mỗi 24h (Tiêm tĩnh mạch)", pedDose: "15 mg/kg mỗi 24h", note: "Sau HD" }] },
+                { id: "ciprofloxacin", name: "Ciprofloxacin", group: "Fluoroquinolone", adr: "Viêm đứt gân Achilles, kéo dài QT.", intervals: [{ min: 50, max: 9999, adultDose: "400mg mỗi 12h (Tiêm tĩnh mạch)", pedDose: "10-15 mg/kg mỗi 12h", note: "Liều chuẩn" }, { min: 30, max: 50, adultDose: "200-400mg mỗi 12h (Tiêm tĩnh mạch)", pedDose: "10 mg/kg mỗi 12h", note: "Chỉnh nhẹ" }, { min: 0, max: 29, adultDose: "200-400mg mỗi 24h (Tiêm tĩnh mạch)", pedDose: "10 mg/kg mỗi 24h", note: "Giảm 50%" }] },
+                { id: "clarithromycin", name: "Clarithromycin", group: "Macrolide", adr: "Vị kim loại, kéo dài QT.", intervals: [{ min: 30, max: 9999, adultDose: "250-500mg mỗi 12h (Uống)", pedDose: "7.5 mg/kg mỗi 12h", note: "Liều chuẩn" }, { min: 0, max: 29, adultDose: "250mg mỗi 12-24h (Uống)", pedDose: "3.75 mg/kg mỗi 12h", note: "Giảm 50%" }] },
+                { id: "colistin", name: "Colistin", group: "Polymyxin", adr: "Độc thận cấp, độc thần kinh.", intervals: [{ min: 50, max: 9999, adultDose: "Liều nạp 9M IU, sau đó 4.5M IU mỗi 12h (Tiêm tĩnh mạch)", pedDose: "75k-150k IU/kg/ngày", note: "Tính theo CBA" }, { min: 10, max: 50, adultDose: "Liều nạp 9M IU, sau đó 2.5-3.5M IU mỗi 12h (Tiêm tĩnh mạch)", pedDose: "Giảm theo cân nặng", note: "Theo dõi sát" }, { min: 0, max: 9, adultDose: "Liều nạp 9M IU, sau đó 2M IU mỗi 24h (Tiêm tĩnh mạch)", pedDose: "Theo y lệnh", note: "Sau HD" }] },
+                { id: "cotrimoxazole", name: "Cotrimoxazole", group: "Sulfonamide + TMP", adr: "Phát ban, tăng kali máu.", intervals: [{ min: 30, max: 9999, adultDose: "1-2 viên 960mg mỗi 12h (Uống/IV)", pedDose: "4-6 mg/kg TMP mỗi 12h", note: "Liều chuẩn" }, { min: 15, max: 30, adultDose: "1 viên 960mg mỗi 12-24h (Uống/IV)", pedDose: "2-3 mg/kg TMP", note: "Giảm 50%" }, { min: 0, max: 14, adultDose: "Không khuyến cáo", pedDose: "Thận trọng", note: "Tránh dùng nếu có thể" }] },
+                { id: "doxycycline", name: "Doxycycline", group: "Tetracycline", adr: "Kích ứng thực quản, nhạy cảm ánh sáng.", intervals: [{ min: 0, max: 9999, adultDose: "100mg mỗi 12h ngày 1, sau đó 100mg/ngày (Uống)", pedDose: "2-4 mg/kg/ngày", note: "Không cần chỉnh liều suy thận." }] },
+                { id: "erythromycin", name: "Erythromycin", group: "Macrolide", adr: "Co thắt dạ dày, buồn nôn.", intervals: [{ min: 10, max: 9999, adultDose: "250-500mg mỗi 6h (Uống/IV)", pedDose: "30-50 mg/kg/ngày", note: "Liều chuẩn" }, { min: 0, max: 9, adultDose: "250-500mg mỗi 8-12h [Max 2g/d] (Uống/IV)", pedDose: "10 mg/kg mỗi 8h", note: "Giới hạn liều" }] },
+                { id: "fosfomycin", name: "Fosfomycin", group: "Acid Phosphonic", adr: "Rối loạn tiêu hóa, tăng natri máu.", intervals: [{ min: 50, max: 9999, adultDose: "Uống 3g liều duy nhất / IV 4g mỗi 6h", pedDose: "100-200 mg/kg/ngày", note: "Dạng uống không chỉnh liều" }, { min: 0, max: 49, adultDose: "IV 2g-4g mỗi 8-12h (Tiêm tĩnh mạch)", pedDose: "Chỉnh theo IV", note: "Thận trọng" }] },
+                { id: "gentamicin", name: "Gentamicin", group: "Aminoglycoside", adr: "Độc thận, độc tai không hồi phục.", intervals: [{ min: 60, max: 9999, adultDose: "5-7 mg/kg mỗi 24h (Tiêm tĩnh mạch/bắp)", pedDose: "5-7.5 mg/kg mỗi 24h", note: "Theo dõi TDM" }, { min: 40, max: 60, adultDose: "Giữ liều, dùng mỗi 36h (Tiêm tĩnh mạch/bắp)", pedDose: "Theo TDM", note: "Giãn cách" }, { min: 20, max: 39, adultDose: "Giữ liều, dùng mỗi 48h (Tiêm tĩnh mạch/bắp)", pedDose: "Theo TDM", note: "Giãn cách" }, { min: 0, max: 19, adultDose: "Liều nạp 2mg/kg, đo TDM (Tiêm tĩnh mạch/bắp)", pedDose: "Theo TDM", note: "Sau HD" }] },
+                { id: "levofloxacin", name: "Levofloxacin", group: "Fluoroquinolone", adr: "Viêm gân, kéo dài QT.", intervals: [{ min: 50, max: 9999, adultDose: "500-750mg mỗi 24h (Uống/IV)", pedDose: "Hạn chế trẻ em", note: "Liều chuẩn" }, { min: 20, max: 49, adultDose: "Nạp 750mg, sau đó 500mg mỗi 48h (Uống/IV)", pedDose: "--", note: "Giãn cách" }, { min: 0, max: 19, adultDose: "Nạp 750mg, sau đó 250-500mg mỗi 48h (Uống/IV)", pedDose: "--", note: "Chỉnh kỹ" }] },
+                { id: "linezolid", name: "Linezolid", group: "Oxazolidinone", adr: "Ức chế tủy xương, hội chứng Serotonin.", intervals: [{ min: 0, max: 9999, adultDose: "600mg mỗi 12h (Uống/IV)", pedDose: "10 mg/kg mỗi 8h", note: "Không cần chỉnh liều suy thận." }] },
+                { id: "meropenem", name: "Meropenem", group: "Carbapenem", adr: "Tiêu chảy, co giật hiếm gặp.", intervals: [{ min: 50, max: 9999, adultDose: "1-2g mỗi 8h [Truyền kéo dài 3h] (Tiêm tĩnh mạch)", pedDose: "20-40 mg/kg mỗi 8h", note: "Liều chuẩn nặng" }, { min: 25, max: 50, adultDose: "1g mỗi 8-12h (Tiêm tĩnh mạch)", pedDose: "20 mg/kg mỗi 8h", note: "Giảm 50%" }, { min: 10, max: 24, adultDose: "500mg-1g mỗi 12h (Tiêm tĩnh mạch)", pedDose: "10-20 mg/kg mỗi 12h", note: "Thận trọng" }, { min: 0, max: 9, adultDose: "500mg mỗi 24h (Tiêm tĩnh mạch)", pedDose: "10 mg/kg mỗi 24h", note: "Sau lọc máu" }] },
+                { id: "metronidazole", name: "Metronidazole", group: "Nitroimidazole", adr: "Vị kim loại, phản ứng rượu.", intervals: [{ min: 10, max: 9999, adultDose: "500mg mỗi 8h (Uống/IV)", pedDose: "7.5 mg/kg mỗi 8h", note: "Liều chuẩn" }, { min: 0, max: 9, adultDose: "250-500mg mỗi 12h (Uống/IV)", pedDose: "7.5 mg/kg mỗi 12h", note: "Sau HD" }] },
+                { id: "moxifloxacin", name: "Moxifloxacin", group: "Fluoroquinolone", adr: "Kéo dài QT.", intervals: [{ min: 0, max: 9999, adultDose: "400mg mỗi 24h (Uống/IV)", pedDose: "Không dùng trẻ em", note: "Chuyển hóa qua gan. Không chỉnh liều." }] },
+                { id: "netilmicin", name: "Netilmicin", group: "Aminoglycoside", adr: "Độc thận, độc tai.", intervals: [{ min: 60, max: 9999, adultDose: "4-6 mg/kg mỗi 24h (Tiêm tĩnh mạch/bắp)", pedDose: "6-7.5 mg/kg mỗi 24h", note: "Liều chuẩn" }, { min: 30, max: 60, adultDose: "Dùng mỗi 36-48h (Tiêm tĩnh mạch/bắp)", pedDose: "Theo TDM", note: "Giãn cách" }, { min: 0, max: 29, adultDose: "Nạp 2mg/kg, theo dõi nồng độ (Tiêm tĩnh mạch/bắp)", pedDose: "Theo TDM", note: "Chỉnh kỹ" }] },
+                { id: "pip_tazo", name: "Piperacillin / Tazobactam", group: "Penicillin phổ rộng", adr: "Tăng nguy cơ AKI khi kèm Vancomycin.", intervals: [{ min: 50, max: 9999, adultDose: "4.5g mỗi 6h [Truyền kéo dài] (Tiêm tĩnh mạch)", pedDose: "80-100 mg/kg mỗi 6h", note: "Mủ xanh nặng" }, { min: 20, max: 50, adultDose: "3.375g mỗi 6h (Tiêm tĩnh mạch)", pedDose: "75 mg/kg mỗi 6h", note: "Chỉnh liều" }, { min: 0, max: 19, adultDose: "2.25g mỗi 6-8h (Tiêm tĩnh mạch)", pedDose: "75 mg/kg mỗi 8h", note: "Sau HD" }] },
+                { id: "tinidazole", name: "Tinidazole", group: "Nitroimidazole", adr: "Vị kim loại, chóng mặt.", intervals: [{ min: 10, max: 9999, adultDose: "2g uống liều duy nhất (Uống)", pedDose: "50 mg/kg", note: "Liều chuẩn" }, { min: 0, max: 9, adultDose: "1g uống liều duy nhất (Uống)", pedDose: "25 mg/kg", note: "Sau HD" }] },
+                { id: "vanco", name: "Vancomycin", group: "Glycopeptide", adr: "Độc thận, hội chứng người đỏ.", intervals: [{ min: 50, max: 9999, adultDose: "15-20 mg/kg mỗi 8-12h (Tiêm tĩnh mạch truyền chậm)", pedDose: "15 mg/kg mỗi 6h", note: "Duy trì TDM 15-20" }, { min: 30, max: 50, adultDose: "15 mg/kg mỗi 12-24h (Tiêm tĩnh mạch truyền chậm)", pedDose: "15 mg/kg mỗi 8-12h", note: "Theo dõi TDM" }, { min: 10, max: 29, adultDose: "15 mg/kg mỗi 24-48h (Tiêm tĩnh mạch truyền chậm)", pedDose: "15 mg/kg mỗi 18-24h", note: "Theo dõi sát" }, { min: 0, max: 9, adultDose: "15 mg/kg nạp, chỉnh theo TDM (Tiêm tĩnh mạch truyền chậm)", pedDose: "Sau HD", note: "Bổ sung sau HD" }] }
             ],
             bacteria: [
                 { id: "mrsa", name: "MRSA", gram: "Gram (+)", morphology: "Cầu khuẩn chùm", classification: "Kháng Beta-lactam", preferred: "Vancomycin, Linezolid", alternative: "Teicoplanin", resistance: "Gen mecA" },
@@ -359,41 +362,49 @@
             let stageText = "";
             let badgeClass = "";
             if (status !== 'normal') {
-                stageText = `Đặc biệt (${status.toUpperCase()})`;
-                badgeClass = "bg-purple-100 text-purple-700 border-purple-300";
+                stageText = `ĐẶC BIỆT (${status.toUpperCase()})`;
+                badgeClass = "bg-purple-100 text-purple-800 border-purple-400";
             } else if (gfrVal >= 90) {
-                stageText = "G1 (Bình thường)";
-                badgeClass = "bg-emerald-100 text-emerald-700 border-emerald-300";
+                stageText = "G1 (BÌNH THƯỜNG)";
+                badgeClass = "bg-emerald-100 text-emerald-800 border-emerald-400";
             } else if (gfrVal >= 60) {
-                stageText = "G2 (Giảm nhẹ)";
-                badgeClass = "bg-blue-100 text-blue-700 border-blue-300";
+                stageText = "G2 (GIẢM NHẸ)";
+                badgeClass = "bg-blue-100 text-blue-800 border-blue-400";
             } else if (gfrVal >= 30) {
-                stageText = "G3 (Trung bình)";
-                badgeClass = "bg-amber-100 text-amber-700 border-amber-300";
+                stageText = "G3 (TRUNG BÌNH)";
+                badgeClass = "bg-amber-100 text-amber-800 border-amber-400";
             } else if (gfrVal >= 15) {
-                stageText = "G4 (Nặng)";
-                badgeClass = "bg-rose-100 text-rose-700 border-rose-300";
+                stageText = "G4 (NẶNG)";
+                badgeClass = "bg-rose-100 text-rose-800 border-rose-400";
             } else {
-                stageText = "G5 (Cuối)";
-                badgeClass = "bg-red-200 text-red-800 border-red-400";
+                stageText = "G5 (SUY THẬN CUỐI)";
+                badgeClass = "bg-red-200 text-red-900 border-red-500";
             }
 
             const badge = document.getElementById('ckdStageBadge');
             badge.innerText = stageText;
-            badge.className = `px-3 py-1.5 rounded-lg text-center border font-bold text-xs ${badgeClass}`;
+            badge.className = `px-4 py-2 rounded-xl text-center border-2 font-black text-sm shadow-sm ${badgeClass}`;
 
             updateAntibioticRecommendations(gfrVal, type);
         }
 
-        function populateAntibioticDropdown() {
+        function populateAntibioticDropdown(filterText = '') {
             sortAntibioticsAlphabetically();
             const dropdown = document.getElementById('antibioticDropdown');
             dropdown.innerHTML = '<option value="">-- Bấm để chọn kháng sinh (A-Z) --</option>';
+            
             db.antibiotics.forEach(ab => {
                 if (!selectedAntibioticIds.includes(ab.id)) {
-                    dropdown.innerHTML += `<option value="${ab.id}">${ab.name} (${ab.group})</option>`;
+                    if (!filterText || ab.name.toLowerCase().includes(filterText.toLowerCase())) {
+                        dropdown.innerHTML += `<option value="${ab.id}">${ab.name} (${ab.group})</option>`;
+                    }
                 }
             });
+        }
+
+        function filterAntibioticDropdown() {
+            const keyword = document.getElementById('searchKeyword').value;
+            populateAntibioticDropdown(keyword);
         }
 
         function addSelectedAntibiotic(selectEl) {
@@ -403,6 +414,7 @@
                 selectedAntibioticIds.push(val);
             }
             selectEl.value = "";
+            document.getElementById('searchKeyword').value = "";
             populateAntibioticDropdown();
             renderSelectedTagsAndRecommendations();
         }
@@ -420,11 +432,11 @@
             const patientType = document.getElementById('patientType').value;
 
             if (selectedAntibioticIds.length === 0) {
-                tagsContainer.innerHTML = '<span class="text-xs text-slate-400 italic py-1 px-2">Chưa có kháng sinh nào được chọn. Hãy chọn từ danh sách trên.</span>';
+                tagsContainer.innerHTML = '<span class="text-xs text-slate-400 italic py-1 px-2">Chưa có kháng sinh nào được chọn.</span>';
                 resultContainer.innerHTML = `
                     <div class="text-center py-6 text-slate-400 border border-dashed rounded-xl">
                         <i class="fa-solid fa-hand-pointer text-xl mb-1"></i>
-                        <p class="text-xs">Hãy chọn kháng sinh từ menu thả xuống phía trên để xem liều hiệu chỉnh theo eGFR.</p>
+                        <p class="text-xs">Hãy chọn hoặc tra cứu kháng sinh để xem liều hiệu chỉnh theo eGFR.</p>
                     </div>
                 `;
                 return;
@@ -450,10 +462,11 @@
                 }
                 let doseStr = patientType === 'pediatric' ? matchedInterval?.pedDose : matchedInterval?.adultDose;
 
+                // Tách biệt Liều đề xuất và Ghi chú thành 2 dòng riêng biệt, Liều cỡ chữ to hơn
                 resultContainer.innerHTML += `
-                    <div class="border border-slate-200 rounded-xl p-3 bg-slate-50 space-y-1.5 text-xs">
-                        <div class="flex justify-between items-center">
-                            <h3 class="font-bold text-slate-800 flex items-center">
+                    <div class="border border-slate-200 rounded-xl p-3 bg-slate-50 space-y-2 text-xs shadow-sm">
+                        <div class="flex justify-between items-center border-b pb-1">
+                            <h3 class="font-bold text-slate-800 text-sm flex items-center">
                                 <i class="fa-solid fa-capsules text-emerald-600 mr-1.5"></i> ${ab.name}
                                 <span class="ml-2 text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-normal">${ab.group}</span>
                             </h3>
@@ -461,16 +474,19 @@
                                 Mốc eGFR: ${matchedInterval ? matchedInterval.label : 'Chuẩn'}
                             </span>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1">
-                            <div class="bg-white p-2 rounded-lg border">
-                                <span class="text-slate-400 block font-medium">Liều đề xuất (${patientType === 'pediatric' ? 'Trẻ em' : 'Người lớn'}):</span>
-                                <span class="font-bold text-emerald-700 text-sm">${doseStr || 'Đang cập nhật'}</span>
-                            </div>
-                            <div class="bg-white p-2 rounded-lg border">
-                                <span class="text-slate-400 block font-medium">Ghi chú / Lưu ý:</span>
-                                <span class="text-slate-600">${matchedInterval?.note || 'Không có lưu ý đặc biệt.'}</span>
-                            </div>
+                        
+                        <!-- Dòng 1: Liều đề xuất (Cỡ chữ to, nổi bật) -->
+                        <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold tracking-wider mb-0.5">Liều đề xuất (${patientType === 'pediatric' ? 'Trẻ em' : 'Người lớn'}):</span>
+                            <span class="font-black text-emerald-700 text-base leading-snug">${doseStr || 'Đang cập nhật'}</span>
                         </div>
+
+                        <!-- Dòng 2: Ghi chú / Lưu ý -->
+                        <div class="bg-white p-2 rounded-lg border border-slate-200">
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold tracking-wider mb-0.5">Ghi chú / Lưu ý:</span>
+                            <span class="text-slate-700 font-medium">${matchedInterval?.note || 'Không có lưu ý đặc biệt.'}</span>
+                        </div>
+
                         <div class="text-slate-500 pt-0.5"><i class="fa-solid fa-circle-exclamation text-amber-500 mr-1"></i><b>ADR:</b> ${ab.adr}</div>
                     </div>
                 `;
