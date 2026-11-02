@@ -14,7 +14,7 @@
             padding: 0;
             width: 100%;
             height: 100vh;
-            overflow: hidden; /* Cố định tuyệt đối, không xuất hiện thanh cuộn ngang dọc */
+            overflow: hidden;
             background-color: #f8fafc;
             font-family: 'Inter', sans-serif;
         }
@@ -50,7 +50,7 @@
         </nav>
     </header>
 
-    <!-- Main Container Full màn hình -->
+    <!-- Main Container -->
     <main class="p-4 flex-grow w-full overflow-hidden flex flex-col justify-between">
 
         <!-- TAB 1: TÍNH LIỀU & TRA CỨU -->
@@ -148,9 +148,9 @@
                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex-grow flex flex-col overflow-hidden space-y-3 relative">
                     <div class="shrink-0 relative">
                         <label class="block text-xs font-extrabold text-slate-700 mb-1.5">
-                            <i class="fa-solid fa-search mr-1.5 text-emerald-600"></i> Gõ tên kháng sinh cần tra cứu:
+                            <i class="fa-solid fa-search mr-1.5 text-emerald-600"></i> Gõ tên kháng sinh cần tra cứu (đầy đủ 31 thuốc):
                         </label>
-                        <input type="text" id="drugSearchInput" oninput="handleDrugSearchInput(this.value)" placeholder="-- Ví dụ: Cefuroxim, Vancomycin, Meropenem... --" class="w-full p-2.5 text-sm border-2 border-emerald-500 rounded-xl bg-emerald-50/50 font-bold focus:outline-none">
+                        <input type="text" id="drugSearchInput" oninput="handleDrugSearchInput(this.value)" placeholder="-- Nhập tên kháng sinh (vd: Vancomycin, Cefuroxime, Colistin...) --" class="w-full p-2.5 text-sm border-2 border-emerald-500 rounded-xl bg-emerald-50/50 font-bold focus:outline-none">
                         <div id="drugSuggestions" class="hidden absolute left-0 right-0 z-50 mt-1 bg-white border-2 border-emerald-500 rounded-xl shadow-2xl max-h-48 overflow-y-auto"></div>
                     </div>
 
@@ -163,7 +163,7 @@
                     <div id="antibioticRecommendationResult" class="space-y-3 overflow-y-auto flex-grow pr-1">
                         <div class="text-center py-12 text-slate-400 border-2 border-dashed rounded-2xl">
                             <i class="fa-solid fa-hand-pointer text-xl mb-2"></i>
-                            <p class="text-sm font-semibold">Chọn kháng sinh phía trên để xem hiệu chỉnh liều, đường dùng, ADR & Tương tác chuẩn.</p>
+                            <p class="text-sm font-semibold">Chọn kháng sinh phía trên để xem hiệu chỉnh liều, đường dùng, ADR & Tương tác chuẩn[cite: 1].</p>
                         </div>
                     </div>
                 </div>
@@ -229,77 +229,316 @@
         RenalDose Rx Pro © 2026 — Dựa trên Cơ sở dữ liệu eMed Bệnh viện Bệnh Nhiệt Đới[cite: 1].
     </footer>
 
-    <!-- JavaScript Xử lý Dữ liệu Chuẩn eMed & Giao diện Full màn hình -->
+    <!-- JavaScript Database Đầy đủ 31 Kháng sinh -->
     <script>
         const defaultDatabase = {
             antibiotics: [
                 { 
-                    id: "cefuroxim", 
-                    name: "Cefuroxim (Uống & Tiêm)", 
-                    group: "Cephalosporin G2", 
+                    id: "amoxicillin_clav", name: "Amoxicillin/Clavulanate", group: "Penicillin phối hợp", 
+                    adr: "Tiêu chảy, buồn nôn, phát ban da, viêm đại tràng giả mạc, tăng men gan.", 
+                    interaction: "Làm giảm hiệu quả của thuốc tránh thai đường uống, tăng nguy cơ phát ban khi dùng chung với Allopurinol.",
+                    intervals: [
+                        { min: 30, max: 9999, adultDose: "1g - 2g mỗi 8-12h (Uống hoặc Tiêm)", pedDose: "80-90 mg/kg/ngày chia 2-3 lần", note: "Liều chuẩn thông thường." },
+                        { min: 10, max: 29, adultDose: "500mg - 1g mỗi 12h", pedDose: "40-45 mg/kg/ngày chia 2 lần", note: "Suy thận trung bình." },
+                        { min: 0, max: 9, adultDose: "500mg mỗi 24h", pedDose: "20-25 mg/kg mỗi 24h", note: "Suy thận nặng / Lọc máu." }
+                    ]
+                },
+                { 
+                    id: "piperacillin_tazo", name: "Piperacillin/Tazobactam", group: "Penicillin phổ rộng + ức chế", 
+                    adr: "Tiêu chảy, buồn nôn, phát ban, tăng men gan, ức chế tiểu cầu nhẹ.", 
+                    interaction: "TĂNG ĐÁNG KỂ NGUY CƠ TỔN THƯƠNG THẬN CẤP (AKI) KHI KẾT HỢP VỚI VANCOMYCIN.",
+                    intervals: [
+                        { min: 50, max: 9999, adultDose: "4.5g mỗi 6h (Truyền kéo dài 3-4 giờ)", pedDose: "80-100 mg/kg mỗi 6-8h", note: "Liều chuẩn nhiễm trùng nặng / Pseudomonas." },
+                        { min: 20, max: 49, adultDose: "3.375g mỗi 6h hoặc 4.5g mỗi 8h", pedDose: "70 mg/kg mỗi 8h", note: "Suy thận trung bình." },
+                        { min: 10, max: 19, adultDose: "2.25g mỗi 6h hoặc 3.375g mỗi 8h", pedDose: "45 mg/kg mỗi 8h", note: "Suy thận nặng." },
+                        { min: 0, max: 9, adultDose: "2.25g mỗi 8h (Bổ sung sau lọc máu)", pedDose: "45 mg/kg mỗi 12h", note: "Thận nhân tạo." }
+                    ]
+                },
+                { 
+                    id: "cefazolin", name: "Cefazolin", group: "Cephalosporin G1", 
+                    adr: "Phản ứng quá mẫn, buồn nôn, tiêu chảy, tăng men gan nhẹ.", 
+                    interaction: "Tăng độc tính trên thận khi dùng chung với Aminoglycoside liều cao.",
+                    intervals: [
+                        { min: 50, max: 9999, adultDose: "1g - 2g mỗi 8h (Tiêm tĩnh mạch)", pedDose: "50-100 mg/kg/ngày chia 3-4 lần", note: "Liều chuẩn." },
+                        { min: 35, max: 49, adultDose: "1g mỗi 8h", pedDose: "Giữ liều, kéo dài khoảng cách", note: "Chỉnh liều nhẹ." },
+                        { min: 11, max: 34, adultDose: "1g mỗi 12h", pedDose: "50 mg/kg mỗi 12h", note: "Suy thận trung bình." },
+                        { min: 0, max: 10, adultDose: "1g mỗi 24h (Bổ sung sau lọc máu)", pedDose: "25 mg/kg mỗi 24h", note: "Suy thận nặng." }
+                    ]
+                },
+                { 
+                    id: "cefadroxil", name: "Cefadroxil", group: "Cephalosporin G1 (Uống)", 
+                    adr: "Tiêu chảy, buồn nôn, phát ban ngứa.", 
+                    interaction: "Thức ăn ít ảnh hưởng đến sự hấp thu thuốc.",
+                    intervals: [
+                        { min: 50, max: 9999, adultDose: "1g - 2g mỗi 12h (Uống)", pedDose: "30 mg/kg/ngày chia 2 lần", note: "Liều chuẩn uống." },
+                        { min: 25, max: 49, adultDose: "1g mỗi 12h", pedDose: "Giãn khoảng cách", note: "Suy thận nhẹ." },
+                        { min: 10, max: 24, adultDose: "1g mỗi 24h", pedDose: "50% liều", note: "Suy thận trung bình." },
+                        { min: 0, max: 9, adultDose: "500mg mỗi 24h", pedDose: "Liều thấp", note: "Suy thận nặng." }
+                    ]
+                },
+                { 
+                    id: "cefuroxime", name: "Cefuroxime", group: "Cephalosporin G2 (Uống & Tiêm)", 
                     adr: "Tiêu chảy, buồn nôn, tăng men gan tạm thời, phản ứng quá mẫn.", 
-                    interaction: "Làm giảm tác dụng của vaccine BCG, BCG bladder instillation, Sodium picosulfate. Tránh dùng chung thuốc kháng acid làm giảm hấp thu dạng uống.",
+                    interaction: "Làm giảm tác dụng của vaccine BCG. Tránh dùng chung thuốc kháng acid làm giảm hấp thu dạng uống.",
                     intervals: [
-                        { min: 50, max: 9999, adultDose: "Uống: 250-500mg mỗi 12h | Tiêm: 750mg-1.5g mỗi 8h", pedDose: "Uống: 20-30 mg/kg/ngày chia 2 lần | Tiêm: 50-100 mg/kg/ngày chia 3-4 lần", note: "Liều chuẩn bình thường." },
-                        { min: 20, max: 49, adultDose: "Tiêm: 750mg mỗi 12h (Uống giữ liều, giãn khoảng cách)", pedDose: "Giảm 30-50% tổng liều hoặc giãn cách mỗi 12h", note: "Giảm tần suất / Chỉnh liều nhẹ." },
-                        { min: 10, max: 19, adultDose: "Tiêm: 750mg mỗi 12-24h", pedDose: "Theo dõi sát lâm sàng, dùng mỗi 12-24h", note: "Suy thận trung bình." },
-                        { min: 0, max: 9, adultDose: "Tiêm: 750mg mỗi 24h (Bổ sung sau lọc máu)", pedDose: "Liều thấp theo y lệnh chuyên khoa", note: "Suy thận nặng / Thận nhân tạo." }
+                        { min: 50, max: 9999, adultDose: "Uống: 250-500mg mỗi 12h | Tiêm: 750mg-1.5g mỗi 8h", pedDose: "Uống: 20-30 mg/kg/ngày chia 2 lần | Tiêm: 50-100 mg/kg/ngày", note: "Liều chuẩn." },
+                        { min: 20, max: 49, adultDose: "Tiêm: 750mg mỗi 12h", pedDose: "Giảm 30-50% tổng liều", note: "Giảm tần suất / Chỉnh liều nhẹ." },
+                        { min: 10, max: 19, adultDose: "Tiêm: 750mg mỗi 12-24h", pedDose: "Dùng mỗi 12-24h", note: "Suy thận trung bình." },
+                        { min: 0, max: 9, adultDose: "Tiêm: 750mg mỗi 24h (Bổ sung sau lọc máu)", pedDose: "Liều thấp theo chuyên khoa", note: "Suy thận nặng / Thận nhân tạo." }
                     ] 
                 },
                 { 
-                    id: "vanco", 
-                    name: "Vancomycin", 
-                    group: "Glycopeptide", 
-                    adr: "Hội chứng người đỏ (Red man syndrome), độc thận cấp, độc tai.", 
-                    interaction: "TĂNG NGUY CƠ TỔN THƯƠNG THẬN CẤP (AKI) KHI DÙNG CHUNG VỚI PIPERACILLIN/TAZOBACTAM hoặc Aminoglycoside, Colistin.",
+                    id: "cefoxitin", name: "Cefoxitin", group: "Cephamycin (G2 đặc biệt)", 
+                    adr: "Tiêu chảy, đau tại chỗ tiêm, tăng men gan, phản ứng dị ứng.", 
+                    interaction: "Kháng bền vững với nhiều loại beta-lactamase.",
                     intervals: [
-                        { min: 50, max: 9999, adultDose: "15-20 mg/kg mỗi 8-12h (Truyền tĩnh mạch chậm)", pedDose: "15 mg/kg mỗi 6-8h", note: "Duy trì TDM mục tiêu 15-20 mcg/mL." },
-                        { min: 30, max: 50, adultDose: "15 mg/kg mỗi 12-24h", pedDose: "15 mg/kg mỗi 8-12h", note: "Hiệu chỉnh theo nồng độ đáy (TDM)." },
-                        { min: 10, max: 29, adultDose: "15 mg/kg mỗi 24-48h", pedDose: "15 mg/kg mỗi 18-24h", note: "Theo dõi sát nồng độ thuốc trong máu." },
-                        { min: 0, max: 9, adultDose: "15 mg/kg liều nạp, định lượng TDM trước liều tiếp theo", pedDose: "Bổ sung sau mỗi kỳ lọc máu", note: "Suy thận nặng / Thận nhân tạo." }
-                    ] 
+                        { min: 50, max: 9999, adultDose: "1g - 2g mỗi 6-8h (Tiêm tĩnh mạch)", pedDose: "80-160 mg/kg/ngày chia 4 lần", note: "Liều chuẩn." },
+                        { min: 30, max: 49, adultDose: "1g - 2g mỗi 8-12h", pedDose: "Giãn khoảng cách", note: "Suy thận trung bình." },
+                        { min: 10, max: 29, adultDose: "1g - 2g mỗi 12-24h", pedDose: "Giảm liều", note: "Suy thận nặng." },
+                        { min: 0, max: 9, adultDose: "1g mỗi 24-48h", pedDose: "Liều duy trì sau lọc máu", note: "Thận nhân tạo." }
+                    ]
                 },
                 { 
-                    id: "meropenem", 
-                    name: "Meropenem", 
-                    group: "Carbapenem", 
+                    id: "cefotaxime", name: "Cefotaxime", group: "Cephalosporin G3", 
+                    adr: "Phản ứng dị ứng, tiêu chảy, đau tại vị trí tiêm.", 
+                    interaction: "Không trộn lẫn trực tiếp với dung dịch Aminoglycoside trong cùng bơm tiêm.",
+                    intervals: [
+                        { min: 50, max: 9999, adultDose: "1g - 2g mỗi 6-8h (Tiêm tĩnh mạch)", pedDose: "100-150 mg/kg/ngày chia 3-4 lần", note: "Liều chuẩn." },
+                        { min: 20, max: 49, adultDose: "1g - 2g mỗi 8-12h", pedDose: "Giảm 30% tổng liều", note: "Suy thận trung bình." },
+                        { min: 0, max: 19, adultDose: "1g mỗi 12h", pedDose: "50% liều chuẩn", note: "Suy thận nặng." }
+                    ]
+                },
+                { 
+                    id: "ceftriaxone", name: "Ceftriaxone", group: "Cephalosporin G3", 
+                    adr: "Tiêu chảy, bùn giả túi mật (do kết tủa calci), tăng men gan.", 
+                    interaction: "TUYỆT ĐỐI KHÔNG TRỘN LẪN HOẶC DÙNG CHUNG DUNG DỊCH CÓ CALCI (như Ringer Lactat) ở trẻ sơ sinh.",
+                    intervals: [
+                        { min: 0, max: 9999, adultDose: "1g - 2g mỗi 24h (Tiêm bắp hoặc IV)", pedDose: "50-100 mg/kg mỗi 24h", note: "Không cần chỉnh liều theo thận (trừ suy thận kết hợp suy gan nặng)." }
+                    ]
+                },
+                { 
+                    id: "ceftazidime", name: "Ceftazidime", group: "Cephalosporin G3 (Kháng Mủ xanh)", 
+                    adr: "Tiêu chảy, phát ban ngứa, tăng men gan, viêm tĩnh mạch huyết khối.", 
+                    interaction: "Tăng độc tính thận khi phối hợp với thuốc lợi tiểu mạnh hoặc aminoglycoside.",
+                    intervals: [
+                        { min: 50, max: 9999, adultDose: "1g - 2g mỗi 8h (Tiêm tĩnh mạch)", pedDose: "100-150 mg/kg/ngày chia 3 lần", note: "Liều chuẩn." },
+                        { min: 31, max: 50, adultDose: "1g mỗi 12h", pedDose: "Giãn khoảng cách", note: "Chỉnh liều." },
+                        { min: 16, max: 30, adultDose: "1g mỗi 24h", pedDose: "50% liều chuẩn", note: "Suy thận trung bình." },
+                        { min: 0, max: 15, adultDose: "500mg - 1g mỗi 48h", pedDose: "Bổ sung sau lọc máu", note: "Suy thận nặng / Lọc máu." }
+                    ]
+                },
+                { 
+                    id: "cefixime", name: "Cefixime", group: "Cephalosporin G3 (Uống)", 
+                    adr: "Tiêu chảy, phân lỏng, đau bụng, buồn nôn, nhức đầu.", 
+                    interaction: "Có thể làm tăng nồng độ Carbamazepine trong máu khi dùng chung.",
+                    intervals: [
+                        { min: 60, max: 9999, adultDose: "200 - 400mg mỗi 12-24h (Uống)", pedDose: "8 mg/kg/ngày chia 1-2 lần", note: "Liều chuẩn uống." },
+                        { min: 21, max: 59, adultDose: "300mg mỗi 24h", pedDose: "75% liều chuẩn", note: "Suy thận trung bình." },
+                        { min: 0, max: 20, adultDose: "200mg mỗi 24h", pedDose: "50% liều chuẩn", note: "Suy thận nặng." }
+                    ]
+                },
+                { 
+                    id: "cefpodoxime", name: "Cefpodoxime", group: "Cephalosporin G3 (Uống)", 
+                    adr: "Tiêu chảy, buồn nôn, nhức đầu, đau bụng.", 
+                    interaction: "Thuốc kháng acid hoặc kháng thụ thể H2 làm giảm sinh khả dụng của cefpodoxime.",
+                    intervals: [
+                        { min: 50, max: 9999, adultDose: "100 - 400mg mỗi 12h (Uống)", pedDose: "10 mg/kg/ngày chia 2 lần", note: "Liều chuẩn." },
+                        { min: 10, max: 49, adultDose: "100 - 200mg mỗi 24h", pedDose: "Giãn cách mỗi 24h", note: "Suy thận trung bình." },
+                        { min: 0, max: 9, adultDose: "100 - 200mg mỗi 48h", pedDose: "Liều thấp", note: "Suy thận nặng." }
+                    ]
+                },
+                { 
+                    id: "cefoperazone", name: "Cefoperazone", group: "Cephalosporin G3 (Kháng Mủ xanh)", 
+                    adr: "Tiêu chảy, chảy máu do thiếu hụt vitamin K, phản ứng kiểu disulfiram với rượu.", 
+                    interaction: "Tránh uống rượu trong thời gian dùng thuốc và vài ngày sau khi ngưng.",
+                    intervals: [
+                        { min: 0, max: 9999, adultDose: "2g - 4g mỗi 12h (Tiêm tĩnh mạch)", pedDose: "100-150 mg/kg/ngày chia 2 lần", note: "Bài tiết chủ yếu qua mật, ít cần chỉnh liều trừ khi suy gan kèm theo." }
+                    ]
+                },
+                { 
+                    id: "cefepime", name: "Cefepime", group: "Cephalosporin G4", 
+                    adr: "Tiêu chảy, phát ban, hội chứng não do thuốc (co giật, lú lẫn ở bệnh nhân suy thận không chỉnh liều).", 
+                    interaction: "Thận trọng khi phối hợp với thuốc lợi tiểu quai hoặc aminoglycoside.",
+                    intervals: [
+                        { min: 50, max: 9999, adultDose: "1g - 2g mỗi 8-12h (Truyền kéo dài)", pedDose: "50 mg/kg mỗi 8h", note: "Liều chuẩn nhiễm trùng nặng / Trực khuẩn mủ xanh." },
+                        { min: 30, max: 49, adultDose: "1g - 2g mỗi 12h", pedDose: "50 mg/kg mỗi 12h", note: "Suy thận nhẹ đến trung bình." },
+                        { min: 11, max: 29, adultDose: "1g - 2g mỗi 24h", pedDose: "25-50 mg/kg mỗi 24h", note: "Suy thận nặng." },
+                        { min: 0, max: 10, adultDose: "500mg - 1g mỗi 24h (Bổ sung sau lọc máu)", pedDose: "25 mg/kg mỗi 24h", note: "Thận nhân tạo." }
+                    ]
+                },
+                { 
+                    id: "cefpirome", name: "Cefpirome", group: "Cephalosporin G4", 
+                    adr: "Rối loạn tiêu hóa, phát ban, tăng men gan tạm thời.", 
+                    interaction: "Tương tự các cephalosporin thế hệ cao khác.",
+                    intervals: [
+                        { min: 50, max: 9999, adultDose: "1g - 2g mỗi 12h (Tiêm tĩnh mạch)", pedDose: "Theo chỉ định chuyên khoa", note: "Liều chuẩn." },
+                        { min: 20, max: 49, adultDose: "500mg - 1g mỗi 12h", pedDose: "Giảm 50% liều", note: "Suy thận trung bình." },
+                        { min: 0, max: 19, adultDose: "500mg - 1g mỗi 24h", pedDose: "Liều thấp", note: "Suy thận nặng." }
+                    ]
+                },
+                { 
+                    id: "meropenem", name: "Meropenem", group: "Carbapenem", 
                     adr: "Tiêu chảy, phát ban, hiếm gặp co giật ở bệnh nhân suy thận nặng.", 
                     interaction: "Làm giảm nồng độ Acid Valproic trong máu, nguy cơ tái phát cơn động kinh.",
                     intervals: [
-                        { min: 50, max: 9999, adultDose: "1-2g mỗi 8h (Truyền kéo dài 3 giờ)", pedDose: "20-40 mg/kg mỗi 8h", note: "Liều chuẩn nhiễm trùng nặng/Mủ xanh." },
-                        { min: 26, max: 50, adultDose: "1g mỗi 8-12h (Tiêm tĩnh mạch)", pedDose: "20 mg/kg mỗi 8h", note: "Giảm liều theo mức lọc cầu thận." },
-                        { min: 10, max: 25, adultDose: "500mg-1g mỗi 12h", pedDose: "10-20 mg/kg mỗi 12h", note: "Suy thận trung bình đến nặng." },
+                        { min: 50, max: 9999, adultDose: "1g - 2g mỗi 8h (Truyền kéo dài 3 giờ)", pedDose: "20-40 mg/kg mỗi 8h", note: "Liều chuẩn nhiễm trùng nặng/Mủ xanh." },
+                        { min: 26, max: 50, adultDose: "1g mỗi 8-12h", pedDose: "20 mg/kg mỗi 8h", note: "Giảm liều theo mức lọc cầu thận." },
+                        { min: 10, max: 25, adultDose: "500mg - 1g mỗi 12h", pedDose: "10-20 mg/kg mỗi 12h", note: "Suy thận trung bình đến nặng." },
                         { min: 0, max: 9, adultDose: "500mg mỗi 24h", pedDose: "10 mg/kg mỗi 24h", note: "Sau lọc máu ngắt quãng." }
                     ] 
                 },
                 { 
-                    id: "colistin", 
-                    name: "Colistin (Colistimethate Sodium)", 
-                    group: "Polymyxin", 
-                    adr: "Độc thận cấp, độc tính thần kinh (dị cảm, chóng mặt, yếu cơ).", 
-                    interaction: "Tăng đáng kể độc tính trên thận và thần kinh khi kết hợp với thuốc giãn cơ, aminoglycoside.",
+                    id: "gentamicin", name: "Gentamicin", group: "Aminoglycoside", 
+                    adr: "Độc thận cấp, độc tai (giảm thính lực, chóng mặt), phong bế thần kinh cơ.", 
+                    interaction: "Tăng độc tính trên thận và tai khi dùng chung với Vancomycin, Colistin, Furosemide.",
                     intervals: [
-                        { min: 50, max: 9999, adultDose: "Liều nạp 9 triệu IU, sau đó 4.5 triệu IU mỗi 12h", pedDose: "75.000 - 150.000 IU/kg/ngày chia 3 lần", note: "Tính theo hàm lượng CBA." },
-                        { min: 10, max: 49, adultDose: "Liều nạp 9 triệu IU, sau đó 2.5 - 3.5 triệu IU mỗi 12h", pedDose: "Hiệu chỉnh theo cân nặng & chức năng thận", note: "Thận trọng theo dõi sát creatinin máu." },
-                        { min: 0, max: 9, adultDose: "Liều nạp 9 triệu IU, sau đó 2 triệu IU mỗi 24h", pedDose: "Theo chỉ định chuyên khoa thận", note: "Bổ sung sau lọc máu." }
-                    ] 
+                        { min: 50, max: 9999, adultDose: "5-7 mg/kg mỗi 24h (Liều đơn mỗi ngày) hoặc 1.5-2 mg/kg mỗi 8h", pedDose: "2.5 mg/kg mỗi 8h", note: "Theo dõi sát nồng độ đỉnh và đáy (TDM)." },
+                        { min: 30, max: 49, adultDose: "Giãn khoảng cách dùng mỗi 24-36h", pedDose: "Giãn khoảng cách", note: "Suy thận trung bình." },
+                        { min: 10, max: 29, adultDose: "Giãn khoảng cách dùng mỗi 48h hoặc định lượng TDM", pedDose: "Giãn cách 48h", note: "Suy thận nặng." },
+                        { min: 0, max: 9, adultDose: "1.5-2 mg/kg sau mỗi kỳ lọc máu", pedDose: "Theo y lệnh", note: "Thận nhân tạo." }
+                    ]
                 },
                 { 
-                    id: "ciprofloxacin", 
-                    name: "Ciprofloxacin", 
-                    group: "Fluoroquinolone", 
-                    adr: "Viêm đứt gân Achilles, kéo dài khoảng QT, rối loạn tiêu hóa.", 
+                    id: "netilmicin", name: "Netilmicin", group: "Aminoglycoside", 
+                    adr: "Độc thận và độc tai ít hơn gentamicin một chút, chóng mặt.", 
+                    interaction: "Tăng độc tính khi phối hợp với các thuốc độc thận khác.",
+                    intervals: [
+                        { min: 50, max: 9999, adultDose: "4 - 6 mg/kg mỗi 24h (Truyền tĩnh mạch)", pedDose: "5-6 mg/kg/ngày chia 2-3 lần", note: "Liều chuẩn." },
+                        { min: 30, max: 49, adultDose: "3 - 4 mg/kg mỗi 24h", pedDose: "Giảm liều", note: "Suy thận trung bình." },
+                        { min: 10, max: 29, adultDose: "2 - 3 mg/kg mỗi 48h", pedDose: "Giãn khoảng cách", note: "Suy thận nặng." },
+                        { min: 0, max: 9, adultDose: "2 mg/kg sau lọc máu", pedDose: "Liều bổ sung", note: "Thận nhân tạo." }
+                    ]
+                },
+                { 
+                    id: "azithromycin", name: "Azithromycin", group: "Macrolide", 
+                    adr: "Rối loạn tiêu hóa (buồn nôn, đau bụng), kéo dài khoảng QT, tăng men gan.", 
+                    interaction: "Kéo dài khoảng QT khi dùng chung với thuốc chống loạn nhịp, fluoroquinolone.",
+                    intervals: [
+                        { min: 0, max: 9999, adultDose: "500mg mỗi 24h (Uống hoặc Truyền tĩnh mạch)", pedDose: "10 mg/kg/ngày (ngày đầu), sau đó 5 mg/kg/ngày", note: "Không cần chỉnh liều theo chức năng thận." }
+                    ]
+                },
+                { 
+                    id: "clarithromycin", name: "Clarithromycin", group: "Macrolide", 
+                    adr: "Rối loạn vị giác, buồn nôn, tiêu chảy, đau đầu, kéo dài khoảng QT.", 
+                    interaction: "Ức chế mạnh CYP3A4, làm tăng nồng độ của Statins, Digoxin, Carbamazepine.",
+                    intervals: [
+                        { min: 30, max: 9999, adultDose: "250mg - 500mg mỗi 12h (Uống)", pedDose: "15 mg/kg/ngày chia 2 lần", note: "Liều chuẩn." },
+                        { min: 0, max: 29, adultDose: "Giảm 50% liều (250mg mỗi 12h hoặc 500mg mỗi 24h)", pedDose: "Giảm nửa liều", note: "Suy thận nặng (CrCl < 30 mL/min)." }
+                    ]
+                },
+                { 
+                    id: "erythromycin", name: "Erythromycin", group: "Macrolide", 
+                    adr: "Đau co thắt bụng, buồn nôn, nôn (kích thích nhu động ruột), điếc thoáng qua, kéo dài QT.", 
+                    interaction: "Ức chế enzyme gan CYP3A4, tương tác mạnh với nhiều thuốc chuyển hóa qua gan.",
+                    intervals: [
+                        { min: 0, max: 9999, adultDose: "250mg - 500mg mỗi 6h (Uống hoặc IV)", pedDose: "30-50 mg/kg/ngày chia 4 lần", note: "Không cần chỉnh liều theo chức năng thận." }
+                    ]
+                },
+                { 
+                    id: "ciprofloxacin", name: "Ciprofloxacin", group: "Fluoroquinolone", 
+                    adr: "Viêm đứt gân Achilles, kéo dài khoảng QT, rối loạn tiêu hóa, chóng mặt.", 
                     interaction: "Tránh dùng chung với thuốc chống loạn nhịp nhóm IA, III, kháng acid chứa Magie/Nhôm làm giảm hấp thu.",
                     intervals: [
                         { min: 50, max: 9999, adultDose: "400mg mỗi 12h (IV) hoặc 500mg mỗi 12h (Uống)", pedDose: "10-15 mg/kg mỗi 12h", note: "Liều chuẩn." },
                         { min: 30, max: 49, adultDose: "200-400mg mỗi 12h (IV) hoặc 500mg mỗi 12h (Uống)", pedDose: "10 mg/kg mỗi 12h", note: "Chỉnh nhẹ liều." },
                         { min: 0, max: 29, adultDose: "200-400mg mỗi 24h (IV) hoặc 500mg mỗi 24h (Uống)", pedDose: "10 mg/kg mỗi 24h", note: "Giảm 50% liều." }
                     ] 
+                },
+                { 
+                    id: "levofloxacin", name: "Levofloxacin", group: "Fluoroquinolone", 
+                    adr: "Buồn nôn, nhức đầu, tiêu chảy, viêm đứt gân, kéo dài khoảng QT.", 
+                    interaction: "Tương tác với kháng acid chứa nhôm/magie làm giảm hấp thu dạng uống.",
+                    intervals: [
+                        { min: 50, max: 9999, adultDose: "500mg - 750mg mỗi 24h (Uống hoặc IV)", pedDose: "10 mg/kg mỗi 12h", note: "Liều chuẩn." },
+                        { min: 20, max: 49, adultDose: "500mg ban đầu sau đó 250mg mỗi 24h (hoặc 750mg mỗi 48h)", pedDose: "Giãn khoảng cách", note: "Suy thận trung bình." },
+                        { min: 0, max: 19, adultDose: "500mg ban đầu sau đó 250mg mỗi 48h", pedDose: "Suy thận nặng", note: "Thận nhân tạo / CRRT." }
+                    ]
+                },
+                { 
+                    id: "moxifloxacin", name: "Moxifloxacin", group: "Fluoroquinolone", 
+                    adr: "Buồn nôn, tiêu chảy, chóng mặt, kéo dài khoảng QT đáng kể, viêm gân.", 
+                    interaction: "Tránh dùng chung với thuốc làm kéo dài khoảng QT hoặc thuốc chống loạn nhịp.",
+                    intervals: [
+                        { min: 0, max: 9999, adultDose: "400mg mỗi 24h (Uống hoặc IV)", pedDose: "Theo chỉ định chuyên khoa", note: "Không cần chỉnh liều ở mọi mức suy thận và lọc máu." }
+                    ]
+                },
+                { 
+                    id: "doxycycline", name: "Doxycycline", group: "Tetracycline", 
+                    adr: "Buồn nôn, nhạy cảm ánh sáng, loét thực quản (nếu uống không đủ nước), đổi màu răng trẻ em.", 
+                    interaction: "Giảm hấp thu khi dùng chung với các chế phẩm chứa Sắt, Calci, Magie, Nhôm.",
+                    intervals: [
+                        { min: 0, max: 9999, adultDose: "100mg mỗi 12h hoặc mỗi 24h (Uống hoặc IV)", pedDose: "2-4 mg/kg/ngày chia 1-2 lần (trẻ > 8 tuổi)", note: "Không cần chỉnh liều theo chức năng thận." }
+                    ]
+                },
+                { 
+                    id: "vancomycin", name: "Vancomycin", group: "Glycopeptide", 
+                    adr: "Hội chứng người đỏ (Red man syndrome), độc thận cấp, độc tai.", 
+                    interaction: "TĂNG NGUY CƠ TỔN THƯƠNG THẬN CẤP (AKI) KHI DÙNG CHUNG VỚI PIPERACILLIN/TAZOBACTAM hoặc Aminoglycoside, Colistin.",
+                    intervals: [
+                        { min: 50, max: 9999, adultDose: "15-20 mg/kg mỗi 8-12h (Truyền tĩnh mạch chậm)", pedDose: "15 mg/kg mỗi 6-8h", note: "Duy trì TDM mục tiêu 15-20 mcg/mL." },
+                        { min: 30, max: 50, adultDose: "15 mg/kg mỗi 12-24h", pedDose: "15 mg/kg mỗi 8-12h", note: "Hiệu chỉnh theo nồng độ đáy (TDM)." },
+                        { min: 10, max: 29, adultDose: "15 mg/kg mỗi 24-48h", pedDose: "15 mg/kg mỗi 18-24h", note: "Theo dõi sát nồng độ thuốc trong máu." },
+                        { min: 0, max: 9, adultDose: "15 mg/kg liều nạp, định lượng TDM", pedDose: "Bổ sung sau lọc máu", note: "Suy thận nặng / Thận nhân tạo." }
+                    ] 
+                },
+                { 
+                    id: "linezolid", name: "Linezolid", group: "Oxazolidinone", 
+                    adr: "Ức chế tủy xương (giảm tiểu cầu khi dùng dài ngày), tiêu chảy, nhức đầu, hội chứng Serotonin.", 
+                    interaction: "Nguy cơ tăng huyết áp nặng khi dùng chung với thuốc cường giao cảm hoặc thực phẩm giàu tyramine.",
+                    intervals: [
+                        { min: 0, max: 9999, adultDose: "600mg mỗi 12h (Uống hoặc Truyền tĩnh mạch)", pedDose: "10 mg/kg mỗi 8h", note: "Không cần chỉnh liều theo chức năng thận." }
+                    ]
+                },
+                { 
+                    id: "metronidazole", name: "Metronidazole", group: "Nitroimidazole", 
+                    adr: "Vị kim loại trong miệng, buồn nôn, nhức đầu, nước tiểu sẫm màu, phản ứng kiểu Disulfiram với rượu.", 
+                    interaction: "Làm tăng tác dụng của thuốc kháng đông đường uống (Warfarin).",
+                    intervals: [
+                        { min: 0, max: 9999, adultDose: "500mg mỗi 8h (Uống hoặc Truyền tĩnh mạch)", pedDose: "7.5 mg/kg mỗi 8h", note: "Không cần chỉnh liều theo thận (thận trọng ở suy thận nặng)." }
+                    ]
+                },
+                { 
+                    id: "tinidazole", name: "Tinidazole", group: "Nitroimidazole", 
+                    adr: "Buồn nôn, đắng miệng, chán ăn, mệt mỏi, nước tiểu sẫm màu.", 
+                    interaction: "Tránh uống rượu giống như metronidazole.",
+                    intervals: [
+                        { min: 0, max: 9999, adultDose: "2g mỗi 24h (Uống)", pedDose: "50 mg/kg liều duy nhất", note: "Không cần chỉnh liều phức tạp ở người suy thận." }
+                    ]
+                },
+                { 
+                    id: "colistin", name: "Colistin (Colistimethate Sodium)", group: "Polymyxin", 
+                    adr: "Độc thận cấp, độc tính thần kinh (dị cảm, chóng mặt, yếu cơ).", 
+                    interaction: "Tăng đáng kể độc tính trên thận và thần kinh khi kết hợp với thuốc giãn cơ, aminoglycoside.",
+                    intervals: [
+                        { min: 50, max: 9999, adultDose: "Liều nạp 9 triệu IU, sau đó 4.5 triệu IU mỗi 12h", pedDose: "75.000 - 150.000 IU/kg/ngày chia 3 lần", note: "Tính theo hàm lượng CBA." },
+                        { min: 10, max: 49, adultDose: "Liều nạp 9 triệu IU, sau đó 2.5 - 3.5 triệu IU mỗi 12h", pedDose: "Hiệu chỉnh theo cân nặng", note: "Thận trọng theo dõi sát creatinin máu." },
+                        { min: 0, max: 9, adultDose: "Liều nạp 9 triệu IU, sau đó 2 triệu IU mỗi 24h", pedDose: "Theo chỉ định chuyên khoa", note: "Bổ sung sau lọc máu." }
+                    ] 
+                },
+                { 
+                    id: "cotrimoxazole", name: "Sulfamethoxazole/Trimethoprim (Cotrimoxazole)", group: "Sulfonamide", 
+                    adr: "Phát ban da, hội chứng Stevens-Johnson, tăng kali máu, suy thận cấp, ức chế tủy xương.", 
+                    interaction: "Tăng tác dụng của thuốc hạ đường huyết uống và thuốc kháng đông warfarin.",
+                    intervals: [
+                        { min: 30, max: 9999, adultDose: "160/800mg - 320/1600mg mỗi 12h (Uống hoặc IV tính theo TMP)", pedDose: "8-12 mg/kg/ngày (tính theo TMP) chia 2 lần", note: "Liều chuẩn (tính theo hàm lượng Trimethoprim)." },
+                        { min: 15, max: 29, adultDose: "160/800mg mỗi 24h", pedDose: "50% liều chuẩn", note: "Suy thận trung bình." },
+                        { min: 0, max: 14, adultDose: "Không khuyến cáo hoặc dùng 160/800mg mỗi 48h", pedDose: "Thận trọng đặc biệt", note: "Suy thận nặng." }
+                    ]
+                },
+                { 
+                    id: "fosfomycin", name: "Fosfomycin", group: "Fosfomycin", 
+                    adr: "Tiêu chảy, buồn nôn, viêm âm đạo, nhức đầu.", 
+                    interaction: "Metoclopramide làm giảm nồng độ fosfomycin trong máu và nước tiểu do tăng nhu động ruột.",
+                    intervals: [
+                        { min: 0, max: 9999, adultDose: "3g uống liều duy nhất (đối với Viêm bàng quang cấp) hoặc 4-8g mỗi 8-12h (IV cho nhiễm trùng nặng)", pedDose: "100-200 mg/kg/ngày chia 2-3 lần (đường tĩnh mạch)", note: "Dạng uống thải trừ chủ yếu qua thận, chỉnh liều theo eGFR khi dùng đường tĩnh mạch." }
+                    ]
                 }
             ],
             bacteria: [
-                { id: "mrsa", name: "MRSA", gram: "Gram (+)", preferred: "Vancomycin, Linezolid", resistance: "Gen mecA (Kháng toàn bộ Beta-lactam)" },
-                { id: "paeruginosa", name: "Pseudomonas aeruginosa", gram: "Gram (-)", preferred: "Ceftazidime, Meropenem, Piperacillin/Tazobactam", resistance: "Tạo Biofilm, bơm tống xuất (Efflux pump)" }
+                { id: "mrsa", name: "MRSA", gram: "Gram (+)", preferred: "Vancomycin, Linezolid, Teicoplanin", resistance: "Gen mecA (Kháng toàn bộ Beta-lactam)" },
+                { id: "paeruginosa", name: "Pseudomonas aeruginosa", gram: "Gram (-)", preferred: "Ceftazidime, Meropenem, Piperacillin/Tazobactam, Cefepim, Colistin", resistance: "Tạo Biofilm, bơm tống xuất (Efflux pump)" },
+                { id: "acinetobacter", name: "Acinetobacter baumannii", gram: "Gram (-)", preferred: "Colistin, Ampicillin/Sulbactam liều cao, Tigecyclin", resistance: "Đa kháng (MDR) và Toàn kháng (XDR)" },
+                { id: "esbl", name: "Enterobacteriaceae sinh ESBL", gram: "Gram (-)", preferred: "Carbapenem (Meropenem), Piperacillin/Tazobactam", resistance: "Thủy phân phổ rộng Penicillin và Cephalosporin" }
             ]
         };
 
