@@ -232,7 +232,7 @@
 
     <!-- Footer siêu gọn -->
     <footer class="bg-white border-t py-2 px-4 text-center text-[10px] text-slate-500 shrink-0">
-        RenalDose Rx Pro &copy; 2026 — Công cụ hỗ trợ tra cứu lâm sàng theo eGFR.
+        RenalDose Rx Pro © 2026 — Công cụ hỗ trợ tra cứu lâm sàng theo eGFR.
     </footer>
 
     <!-- JavaScript Xử lý -->
@@ -285,7 +285,6 @@
             localStorage.setItem('renal_rx_db', JSON.stringify(db));
         }
 
-        // Sắp xếp danh sách kháng sinh theo thứ tự ABC (A-Z)
         function sortAntibioticsAlphabetically() {
             db.antibiotics.sort((a, b) => a.name.localeCompare(b.name, 'vi', { sensitivity: 'base' }));
         }
@@ -386,13 +385,11 @@
             updateAntibioticRecommendations(gfrVal, type);
         }
 
-        // Đổ dữ liệu vào Dropdown theo thứ tự ABC
         function populateAntibioticDropdown() {
             sortAntibioticsAlphabetically();
             const dropdown = document.getElementById('antibioticDropdown');
             dropdown.innerHTML = '<option value="">-- Bấm để chọn kháng sinh (A-Z) --</option>';
             db.antibiotics.forEach(ab => {
-                // Không hiển thị các thuốc đã được chọn rồi trong dropdown
                 if (!selectedAntibioticIds.includes(ab.id)) {
                     dropdown.innerHTML += `<option value="${ab.id}">${ab.name} (${ab.group})</option>`;
                 }
@@ -440,22 +437,19 @@
                 const ab = db.antibiotics.find(item => item.id === id);
                 if (!ab) return;
 
-                // Render Tag nhỏ gọn
                 tagsContainer.innerHTML += `
                     <span class="inline-flex items-center bg-emerald-100 text-emerald-800 text-[11px] font-semibold px-2 py-1 rounded-lg border border-emerald-300">
                         ${ab.name}
-                        <button onclick="removeSelectedAntibiotic('${id}')" class="ml-1.5 text-emerald-600 hover:text-red-600 font-bold px-1">&times;</button>
+                        <button onclick="removeSelectedAntibiotic('${id}')" class="ml-1.5 text-emerald-600 hover:text-red-600 font-bold px-1">×</button>
                     </span>
                 `;
 
-                // Khớp khoảng mốc eGFR
                 let matchedInterval = ab.intervals.find(iv => gfrVal >= iv.min && gfrVal <= iv.max);
                 if (!matchedInterval && ab.intervals.length > 0) {
                     matchedInterval = ab.intervals[ab.intervals.length - 1];
                 }
                 let doseStr = patientType === 'pediatric' ? matchedInterval?.pedDose : matchedInterval?.adultDose;
 
-                // Render Khung kết quả chi tiết
                 resultContainer.innerHTML += `
                     <div class="border border-slate-200 rounded-xl p-3 bg-slate-50 space-y-1.5 text-xs">
                         <div class="flex justify-between items-center">
