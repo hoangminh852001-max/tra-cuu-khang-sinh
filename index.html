@@ -8,47 +8,58 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; }
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Cấu hình tối ưu trên màn hình lớn PC/Laptop */
+        @media (min-width: 1024px) {
+            body { overflow: hidden; height: 100vh; }
+        }
+
+        /* Styling gợi ý thuốc tra cứu */
         #drugSuggestions div:hover { background-color: #f0fdf4; color: #166534; cursor: pointer; }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-900 h-screen flex flex-col justify-between text-xs">
+<body class="bg-slate-100 text-slate-900 min-h-screen lg:h-screen flex flex-col justify-between text-xs">
 
-    <!-- Header -->
-    <header class="bg-emerald-700 text-white shadow px-4 py-2 flex justify-between items-center shrink-0">
-        <div class="flex items-center space-x-2">
-            <div class="bg-white text-emerald-700 p-1.5 rounded-lg shadow text-sm">
-                <i class="fa-solid fa-pills"></i>
-            </div>
-            <div>
-                <h1 class="text-sm font-bold tracking-tight">RenalDose Rx Pro</h1>
-                <p class="text-[10px] text-emerald-100">Hệ thống Tra cứu Liều Kháng sinh & Vi sinh Lâm sàng</p>
+    <!-- Header (Tự co giãn Responsive) -->
+    <header class="bg-emerald-700 text-white shadow px-3 md:px-4 py-2 flex flex-col sm:flex-row justify-between items-center shrink-0 gap-2 sm:gap-0">
+        <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-start">
+            <div class="flex items-center space-x-2">
+                <div class="bg-white text-emerald-700 p-1.5 rounded-lg shadow text-sm">
+                    <i class="fa-solid fa-pills"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm font-bold tracking-tight">RenalDose Rx Pro</h1>
+                    <p class="text-[10px] text-emerald-100">Tra cứu Liều Kháng sinh & Vi sinh Lâm sàng</p>
+                </div>
             </div>
         </div>
-        <nav class="flex bg-emerald-800 p-1 rounded-lg space-x-1 text-xs">
-            <button onclick="switchTab('calculator')" id="tab-calculator" class="px-3 py-1 font-semibold rounded bg-white text-emerald-800 shadow transition-all">
+        
+        <!-- Navigation Tabs -->
+        <nav class="flex bg-emerald-800 p-1 rounded-lg space-x-1 text-xs w-full sm:w-auto justify-around sm:justify-end">
+            <button onclick="switchTab('calculator')" id="tab-calculator" class="px-2.5 sm:px-3 py-1 font-semibold rounded bg-white text-emerald-800 shadow transition-all">
                 <i class="fa-solid fa-calculator mr-1"></i> Tính Liều
             </button>
-            <button onclick="switchTab('bacteria')" id="tab-bacteria" class="px-3 py-1 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
+            <button onclick="switchTab('bacteria')" id="tab-bacteria" class="px-2.5 sm:px-3 py-1 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
                 <i class="fa-solid fa-bacteria mr-1"></i> Vi Khuẩn
             </button>
-            <button onclick="switchTab('interactions')" id="tab-interactions" class="px-3 py-1 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
+            <button onclick="switchTab('interactions')" id="tab-interactions" class="px-2.5 sm:px-3 py-1 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
                 <i class="fa-solid fa-shield-halved mr-1"></i> Tương tác
             </button>
-            <button onclick="openAdminAuthModal()" id="tab-admin" class="px-3 py-1 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
+            <button onclick="openAdminAuthModal()" id="tab-admin" class="px-2.5 sm:px-3 py-1 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
                 <i class="fa-solid fa-lock mr-1"></i> Admin
             </button>
         </nav>
     </header>
 
     <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 py-2.5 flex-grow w-full overflow-hidden flex flex-col">
+    <main class="max-w-7xl mx-auto px-2.5 md:px-4 py-2.5 flex-grow w-full overflow-y-auto lg:overflow-hidden flex flex-col">
 
         <!-- TAB 1: TÍNH LIỀU & TRA CỨU -->
-        <div id="content-calculator" class="grid grid-cols-1 lg:grid-cols-3 gap-3 h-full overflow-hidden">
+        <div id="content-calculator" class="grid grid-cols-1 lg:grid-cols-3 gap-3 h-full overflow-y-auto lg:overflow-hidden">
             
             <!-- Cột trái: Thông số Bệnh nhân & Thận -->
-            <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-2">
+            <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-2 shrink-0">
                 <h2 class="text-xs font-bold text-slate-700 border-b pb-1.5 flex items-center uppercase tracking-wider">
                     <i class="fa-solid fa-user-injured mr-1.5 text-emerald-600"></i> Thông số Bệnh nhân & Thận
                 </h2>
@@ -58,11 +69,11 @@
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block font-bold text-slate-700 mb-0.5">Tuổi <span id="patientAgeBadge" class="text-[10px] text-emerald-600 font-normal">(Người lớn)</span></label>
-                            <input type="number" id="age" value="65" oninput="handleAgeChange()" class="w-full p-1.5 border-2 rounded-lg font-medium">
+                            <input type="number" id="age" value="65" oninput="handleAgeChange()" class="w-full p-2 lg:p-1.5 border-2 rounded-lg font-medium">
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-0.5">Giới tính</label>
-                            <select id="gender" class="w-full p-1.5 border-2 rounded-lg bg-slate-50 font-medium">
+                            <select id="gender" class="w-full p-2 lg:p-1.5 border-2 rounded-lg bg-slate-50 font-medium">
                                 <option value="male">Nam</option>
                                 <option value="female">Nữ</option>
                             </select>
@@ -73,23 +84,23 @@
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block font-bold text-slate-700 mb-0.5">Cân nặng (kg)</label>
-                            <input type="number" id="weight" value="70" class="w-full p-1.5 border-2 rounded-lg font-medium">
+                            <input type="number" id="weight" value="70" class="w-full p-2 lg:p-1.5 border-2 rounded-lg font-medium">
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-0.5">Chiều cao (cm)</label>
-                            <input type="number" id="height" value="170" class="w-full p-1.5 border-2 rounded-lg font-medium">
+                            <input type="number" id="height" value="170" class="w-full p-2 lg:p-1.5 border-2 rounded-lg font-medium">
                         </div>
                     </div>
 
-                    <!-- Creatinine máu & Đơn vị (Mặc định µmol/L) -->
+                    <!-- Creatinine máu & Đơn vị (Mặc định umol/L) -->
                     <div class="grid grid-cols-2 gap-2 pt-1 border-t">
                         <div>
                             <label class="block font-bold text-slate-700 mb-0.5">Creatinine máu</label>
-                            <input type="number" id="scr" value="100" step="1" class="w-full p-1.5 border-2 rounded-lg font-medium">
+                            <input type="number" id="scr" value="100" step="1" class="w-full p-2 lg:p-1.5 border-2 rounded-lg font-medium">
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-0.5">Đơn vị</label>
-                            <select id="scrUnit" class="w-full p-1.5 border-2 rounded-lg bg-slate-50 font-medium">
+                            <select id="scrUnit" class="w-full p-2 lg:p-1.5 border-2 rounded-lg bg-slate-50 font-medium">
                                 <option value="umol" selected>µmol/L</option>
                                 <option value="mgdl">mg/dL</option>
                             </select>
@@ -99,7 +110,7 @@
                     <!-- Công thức tính -->
                     <div>
                         <label class="block font-bold text-slate-700 mb-0.5">Công thức tính</label>
-                        <select id="calcMethod" class="w-full p-1.5 border-2 rounded-lg bg-slate-50 font-medium">
+                        <select id="calcMethod" class="w-full p-2 lg:p-1.5 border-2 rounded-lg bg-slate-50 font-medium">
                             <option value="ckdepi">CKD-EPI 2021 (Khuyên dùng)</option>
                             <option value="cockcroft">Cockcroft-Gault (CrCl)</option>
                             <option value="schwartz">Bedside Schwartz (Trẻ em)</option>
@@ -109,7 +120,7 @@
                     <!-- Trạng thái lọc máu -->
                     <div>
                         <label class="block font-bold text-slate-700 mb-0.5">Trạng thái lọc máu</label>
-                        <select id="renalStatus" class="w-full p-1.5 border-2 rounded-lg bg-slate-50 font-medium">
+                        <select id="renalStatus" class="w-full p-2 lg:p-1.5 border-2 rounded-lg bg-slate-50 font-medium">
                             <option value="normal">Bình thường (eGFR/CrCl)</option>
                             <option value="hd">Thận nhân tạo ngắt quãng (HD)</option>
                             <option value="crrt">Lọc máu liên tục (CRRT)</option>
@@ -118,7 +129,7 @@
                     </div>
                 </div>
 
-                <button onclick="calculateRenal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs transition shadow-md shrink-0">
+                <button onclick="calculateRenal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 lg:py-2 rounded-lg text-xs transition shadow-md shrink-0 mt-2">
                     <i class="fa-solid fa-calculator mr-1"></i> Tính toán Thận
                 </button>
             </div>
@@ -136,7 +147,7 @@
                                 <span class="text-xs font-bold text-slate-600">mL/min/1.73m²</span>
                             </div>
                         </div>
-                        <div id="ckdStageBadge" class="px-4 py-2 rounded-xl text-center border-2 font-extrabold text-xs bg-slate-100 text-slate-800 shadow-sm">
+                        <div id="ckdStageBadge" class="px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-center border-2 font-extrabold text-xs bg-slate-100 text-slate-800 shadow-sm">
                             Chưa phân loại
                         </div>
                     </div>
@@ -191,9 +202,9 @@
         <!-- TAB 2: VI KHUẨN -->
         <div id="content-bacteria" class="space-y-4 h-full overflow-y-auto hidden">
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                <div class="flex justify-between items-center mb-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
                     <h2 class="text-sm font-bold text-slate-800">Danh mục Vi khuẩn & Đặc điểm Lâm sàng</h2>
-                    <input type="text" id="searchBacteria" onkeyup="renderBacteriaList()" placeholder="Tìm kiếm vi khuẩn..." class="p-2 text-xs border rounded-lg w-64">
+                    <input type="text" id="searchBacteria" onkeyup="renderBacteriaList()" placeholder="Tìm kiếm vi khuẩn..." class="p-2 text-xs border rounded-lg w-full sm:w-64">
                 </div>
                 <div id="bacteriaContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
             </div>
@@ -207,16 +218,16 @@
                     <div id="interactionDrugSelector" class="space-y-1.5 max-h-72 overflow-y-auto p-2 border rounded-lg bg-slate-50 text-xs"></div>
                     <button onclick="checkInteractions()" class="mt-3 w-full bg-slate-800 text-white py-2 rounded-lg text-xs font-medium">Kiểm tra Tương tác</button>
                 </div>
-                <div id="interactionResultBox" class="border rounded-lg p-4 bg-slate-50 flex items-center justify-center text-center text-slate-400 text-xs">
+                <div id="interactionResultBox" class="border rounded-lg p-4 bg-slate-50 flex items-center justify-center text-center text-slate-400 text-xs min-h-[100px]">
                     Chưa có kết quả kiểm tra.
                 </div>
             </div>
         </div>
 
-        <!-- TAB 4: ADMIN (Chỉ xem được khi đã xác thực mật khẩu) -->
+        <!-- TAB 4: ADMIN (Có Modal bảo vệ) -->
         <div id="content-admin" class="space-y-4 h-full overflow-y-auto hidden">
             <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-4">
-                <div class="flex justify-between items-center">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                     <h2 class="text-sm font-bold text-slate-800">Quản lý Dữ liệu (Admin) - Tổng: <span id="abCount">0</span> thuốc</h2>
                     <div class="space-x-2">
                         <button onclick="exportJSONData()" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Xuất JSON</button>
@@ -229,7 +240,7 @@
 
     </main>
 
-    <!-- Hộp thoại nhập Mật khẩu Admin (Modal) -->
+    <!-- Hộp thoại Modal Nhập Mật Khẩu Admin -->
     <div id="adminModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl border max-w-sm w-full p-5 space-y-4">
             <div class="flex items-center space-x-3 text-emerald-700">
@@ -436,9 +447,9 @@
 
             const badge = document.getElementById('ckdStageBadge');
             badge.innerText = stageText;
-            badge.className = `px-4 py-1.5 rounded-xl text-center border-2 font-extrabold text-xs shadow-sm ${badgeClass}`;
+            badge.className = `px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-center border-2 font-extrabold text-xs shadow-sm ${badgeClass}`;
 
-            updateAntibioticRecommendations(gfrVal, isAdult ? 'adult' : 'pediatric');
+            renderSelectedTagsAndRecommendations();
         }
 
         sortAntibioticsAlphabetically();
