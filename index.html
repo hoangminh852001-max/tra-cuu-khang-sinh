@@ -9,126 +9,108 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; }
-        /* Tùy chỉnh màu xen kẽ cho option A-Z: xanh nhạt và trắng */
-        select option:nth-child(even) { background-color: #f0fdf4; color: #166534; }
-        select option:nth-child(odd) { background-color: #ffffff; color: #1e293b; }
+        /* Tùy chỉnh danh sách gợi ý thuốc */
+        #drugSuggestions div:hover { background-color: #f0fdf4; color: #166534; cursor: pointer; }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-900 h-screen flex flex-col justify-between text-sm">
+<body class="bg-slate-100 text-slate-900 h-screen flex flex-col justify-between text-xs">
 
     <!-- Header -->
-    <header class="bg-emerald-700 text-white shadow px-4 py-2.5 flex justify-between items-center shrink-0">
-        <div class="flex items-center space-x-2.5">
-            <div class="bg-white text-emerald-700 p-2 rounded-lg shadow text-base">
+    <header class="bg-emerald-700 text-white shadow px-4 py-2 flex justify-between items-center shrink-0">
+        <div class="flex items-center space-x-2">
+            <div class="bg-white text-emerald-700 p-1.5 rounded-lg shadow text-sm">
                 <i class="fa-solid fa-pills"></i>
             </div>
             <div>
-                <h1 class="text-base font-bold tracking-tight">RenalDose Rx Pro</h1>
-                <p class="text-xs text-emerald-100">Hệ thống Tra cứu Liều Kháng sinh & Vi sinh Lâm sàng</p>
+                <h1 class="text-sm font-bold tracking-tight">RenalDose Rx Pro</h1>
+                <p class="text-[10px] text-emerald-100">Hệ thống Tra cứu Liều Kháng sinh & Vi sinh Lâm sàng</p>
             </div>
         </div>
         <nav class="flex bg-emerald-800 p-1 rounded-lg space-x-1 text-xs">
-            <button onclick="switchTab('calculator')" id="tab-calculator" class="px-3.5 py-1.5 font-semibold rounded bg-white text-emerald-800 shadow transition-all">
+            <button onclick="switchTab('calculator')" id="tab-calculator" class="px-3 py-1 font-semibold rounded bg-white text-emerald-800 shadow transition-all">
                 <i class="fa-solid fa-calculator mr-1"></i> Tính Liều
             </button>
-            <button onclick="switchTab('bacteria')" id="tab-bacteria" class="px-3.5 py-1.5 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
+            <button onclick="switchTab('bacteria')" id="tab-bacteria" class="px-3 py-1 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
                 <i class="fa-solid fa-bacteria mr-1"></i> Vi Khuẩn
             </button>
-            <button onclick="switchTab('interactions')" id="tab-interactions" class="px-3.5 py-1.5 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
+            <button onclick="switchTab('interactions')" id="tab-interactions" class="px-3 py-1 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
                 <i class="fa-solid fa-shield-halved mr-1"></i> Tương tác
             </button>
-            <button onclick="switchTab('admin')" id="tab-admin" class="px-3.5 py-1.5 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
+            <button onclick="switchTab('admin')" id="tab-admin" class="px-3 py-1 font-semibold rounded text-white hover:bg-emerald-700 transition-all">
                 <i class="fa-solid fa-database mr-1"></i> Admin
             </button>
         </nav>
     </header>
 
     <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 py-3 flex-grow w-full overflow-hidden flex flex-col">
+    <main class="max-w-7xl mx-auto px-4 py-2.5 flex-grow w-full overflow-hidden flex flex-col">
 
         <!-- TAB 1: TÍNH LIỀU & TRA CỨU -->
-        <div id="content-calculator" class="grid grid-cols-1 lg:grid-cols-3 gap-4 h-full overflow-hidden">
+        <div id="content-calculator" class="grid grid-cols-1 lg:grid-cols-3 gap-3 h-full overflow-hidden">
             
-            <!-- Cột trái: Thông số Bệnh nhân & Thận -->
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-3 overflow-y-auto">
-                <h2 class="text-xs font-bold text-slate-700 border-b pb-2 flex items-center uppercase tracking-wider">
+            <!-- Cột trái: Thông số Bệnh nhân & Thận (Đã bỏ thanh cuốn, thu gọn khoảng cách) -->
+            <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between space-y-2">
+                <h2 class="text-xs font-bold text-slate-700 border-b pb-1.5 flex items-center uppercase tracking-wider">
                     <i class="fa-solid fa-user-injured mr-1.5 text-emerald-600"></i> Thông số Bệnh nhân & Thận
                 </h2>
                 
-                <div class="space-y-3 text-xs">
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Đối tượng</label>
-                        <select id="patientType" onchange="togglePatientForm()" class="w-full p-2 border-2 rounded-lg bg-slate-50 font-medium text-slate-800">
-                            <option value="adult">Người lớn (≥ 18 tuổi)</option>
-                            <option value="pediatric">Trẻ em (< 18 tuổi)</option>
-                        </select>
-                    </div>
-
-                    <div id="adult-inputs" class="space-y-2">
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block font-bold text-slate-700 mb-1">Tuổi</label>
-                                <input type="number" id="age" value="65" class="w-full p-2 border-2 rounded-lg font-medium">
-                            </div>
-                            <div>
-                                <label class="block font-bold text-slate-700 mb-1">Giới tính</label>
-                                <select id="gender" class="w-full p-2 border-2 rounded-lg bg-slate-50 font-medium">
-                                    <option value="male">Nam</option>
-                                    <option value="female">Nữ</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block font-bold text-slate-700 mb-1">Cân nặng (kg)</label>
-                                <input type="number" id="weight" value="70" class="w-full p-2 border-2 rounded-lg font-medium">
-                            </div>
-                            <div>
-                                <label class="block font-bold text-slate-700 mb-1">Chiều cao (cm)</label>
-                                <input type="number" id="height" value="170" class="w-full p-2 border-2 rounded-lg font-medium">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="pediatric-inputs" class="space-y-2 hidden">
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block font-bold text-slate-700 mb-1">Tuổi (Năm)</label>
-                                <input type="number" id="pedAge" value="8" class="w-full p-2 border-2 rounded-lg font-medium">
-                            </div>
-                            <div>
-                                <label class="block font-bold text-slate-700 mb-1">Chiều cao (cm)</label>
-                                <input type="number" id="pedHeight" value="125" class="w-full p-2 border-2 rounded-lg font-medium">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-2 pt-2 border-t">
+                <div class="space-y-2 text-xs">
+                    <!-- Tuổi (Tự nhận diện người lớn/trẻ em) -->
+                    <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block font-bold text-slate-700 mb-1">Creatinine máu</label>
-                            <input type="number" id="scr" value="1.5" step="0.1" class="w-full p-2 border-2 rounded-lg font-medium">
+                            <label class="block font-bold text-slate-700 mb-0.5">Tuổi <span id="patientAgeBadge" class="text-[10px] text-emerald-600 font-normal">(Người lớn)</span></label>
+                            <input type="number" id="age" value="65" oninput="handleAgeChange()" class="w-full p-1.5 border-2 rounded-lg font-medium">
                         </div>
                         <div>
-                            <label class="block font-bold text-slate-700 mb-1">Đơn vị</label>
-                            <select id="scrUnit" class="w-full p-2 border-2 rounded-lg bg-slate-50 font-medium">
+                            <label class="block font-bold text-slate-700 mb-0.5">Giới tính</label>
+                            <select id="gender" class="w-full p-1.5 border-2 rounded-lg bg-slate-50 font-medium">
+                                <option value="male">Nam</option>
+                                <option value="female">Nữ</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Cân nặng & Chiều cao (Đổi linh hoạt nếu là trẻ em) -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label id="weightHeightLabel1" class="block font-bold text-slate-700 mb-0.5">Cân nặng (kg)</label>
+                            <input type="number" id="weight" value="70" class="w-full p-1.5 border-2 rounded-lg font-medium">
+                        </div>
+                        <div>
+                            <label id="weightHeightLabel2" class="block font-bold text-slate-700 mb-0.5">Chiều cao (cm)</label>
+                            <input type="number" id="height" value="170" class="w-full p-1.5 border-2 rounded-lg font-medium">
+                        </div>
+                    </div>
+
+                    <!-- Creatinine & Đơn vị -->
+                    <div class="grid grid-cols-2 gap-2 pt-1 border-t">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-0.5">Creatinine máu</label>
+                            <input type="number" id="scr" value="1.5" step="0.1" class="w-full p-1.5 border-2 rounded-lg font-medium">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-0.5">Đơn vị</label>
+                            <select id="scrUnit" class="w-full p-1.5 border-2 rounded-lg bg-slate-50 font-medium">
                                 <option value="mgdl">mg/dL</option>
                                 <option value="umol">µmol/L</option>
                             </select>
                         </div>
                     </div>
 
+                    <!-- Công thức tính (Tự động chuyển CKD-EPI hoặc Schwartz) -->
                     <div>
-                        <label class="block font-bold text-slate-700 mb-1">Công thức tính</label>
-                        <select id="calcMethod" class="w-full p-2 border-2 rounded-lg bg-slate-50 font-medium">
+                        <label class="block font-bold text-slate-700 mb-0.5">Công thức tính</label>
+                        <select id="calcMethod" class="w-full p-1.5 border-2 rounded-lg bg-slate-50 font-medium">
                             <option value="ckdepi">CKD-EPI 2021 (Khuyên dùng)</option>
                             <option value="cockcroft">Cockcroft-Gault (CrCl)</option>
                             <option value="schwartz">Bedside Schwartz (Trẻ em)</option>
                         </select>
                     </div>
 
+                    <!-- Trạng thái lọc máu -->
                     <div>
-                        <label class="block font-bold text-slate-700 mb-1">Trạng thái lọc máu</label>
-                        <select id="renalStatus" class="w-full p-2 border-2 rounded-lg bg-slate-50 font-medium">
+                        <label class="block font-bold text-slate-700 mb-0.5">Trạng thái lọc máu</label>
+                        <select id="renalStatus" class="w-full p-1.5 border-2 rounded-lg bg-slate-50 font-medium">
                             <option value="normal">Bình thường (eGFR/CrCl)</option>
                             <option value="hd">Thận nhân tạo ngắt quãng (HD)</option>
                             <option value="crrt">Lọc máu liên tục (CRRT)</option>
@@ -137,7 +119,7 @@
                     </div>
                 </div>
 
-                <button onclick="calculateRenal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-xs transition shadow-md shrink-0">
+                <button onclick="calculateRenal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs transition shadow-md shrink-0">
                     <i class="fa-solid fa-calculator mr-1"></i> Tính toán Thận
                 </button>
             </div>
@@ -145,11 +127,11 @@
             <!-- Cột phải: Kết quả eGFR & Tra cứu kháng sinh tích hợp -->
             <div class="lg:col-span-2 flex flex-col space-y-3 overflow-hidden">
                 
-                <!-- Kết quả eGFR (Nổi bật, bấm vào để bật/tắt bảng phân độ CKD) -->
-                <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200 flex flex-col shrink-0">
+                <!-- Kết quả eGFR -->
+                <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 flex flex-col shrink-0">
                     <div class="flex justify-between items-center cursor-pointer" onclick="toggleCKDGuide()" title="Bấm để xem/ẩn bảng phân độ CKD">
                         <div>
-                            <span class="text-xs uppercase font-bold text-slate-500 tracking-wide">Kết quả đánh giá chức năng thận (Bấm xem phân độ)</span>
+                            <span class="text-[11px] uppercase font-bold text-slate-500 tracking-wide">Kết quả đánh giá chức năng thận (Bấm xem phân độ)</span>
                             <div class="flex items-baseline space-x-2 mt-0.5">
                                 <span id="gfrResultVal" class="text-3xl font-extrabold text-emerald-700">--</span>
                                 <span class="text-xs font-bold text-slate-600">mL/min/1.73m²</span>
@@ -160,8 +142,8 @@
                         </div>
                     </div>
 
-                    <!-- Bảng phân độ CKD ẩn/hiện tương tác -->
-                    <div id="ckdGuideBox" class="hidden mt-3 pt-3 border-t text-xs space-y-1 bg-slate-50 p-2.5 rounded-lg">
+                    <!-- Bảng phân độ CKD -->
+                    <div id="ckdGuideBox" class="hidden mt-2 pt-2 border-t text-xs space-y-1 bg-slate-50 p-2 rounded-lg">
                         <p class="font-bold text-slate-700 mb-1"><i class="fa-solid fa-circle-info text-emerald-600 mr-1"></i> Bảng phân loại Giai đoạn Bệnh thận mạn (KDIGO):</p>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-slate-600">
                             <div>• <b>G1 (≥ 90):</b> Bình thường hoặc tăng</div>
@@ -174,28 +156,34 @@
                     </div>
                 </div>
 
-                <!-- Khung Tra cứu & Chọn Kháng sinh Tích hợp (1 ô duy nhất) -->
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex-grow flex flex-col overflow-hidden space-y-3">
-                    <div class="shrink-0 space-y-1">
-                        <label class="block text-xs font-bold text-slate-700">
-                            <i class="fa-solid fa-search mr-1 text-emerald-600"></i> Tra cứu & Chọn Kháng sinh (Gõ 1-2 chữ cái hoặc bấm chọn A-Z):
+                <!-- Khung Tra cứu & Chọn Kháng sinh Tích hợp (1 ô thông minh) -->
+                <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200 flex-grow flex flex-col overflow-hidden space-y-2.5">
+                    <div class="shrink-0 relative">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">
+                            <i class="fa-solid fa-search mr-1 text-emerald-600"></i> Tra cứu & Chọn Kháng sinh:
                         </label>
-                        <!-- Ô tra cứu tích hợp thông minh -->
-                        <select id="unifiedAntibioticSelect" onchange="addSelectedAntibiotic(this)" class="w-full p-2.5 text-xs border-2 border-emerald-500 rounded-lg bg-emerald-50 text-emerald-950 font-bold focus:ring-2 focus:ring-emerald-600 cursor-pointer shadow-sm">
-                            <option value="">-- Gõ tên để lọc hoặc bấm xem danh sách A-Z --</option>
-                        </select>
+                        <!-- Ô input gõ tên thuốc chuẩn (có style chữ nghiêng xám mờ mượt mà) -->
+                        <div class="relative">
+                            <input type="text" id="drugSearchInput" oninput="handleDrugSearchInput(this.value)" placeholder="-- Gõ tên thuốc để lọc hoặc bấm xem danh sách A-Z --" class="w-full p-2.5 text-xs border-2 border-emerald-500 rounded-lg bg-emerald-50/50 text-slate-900 font-semibold focus:ring-2 focus:ring-emerald-600 placeholder:italic placeholder:text-slate-400">
+                            <div class="absolute right-3 top-3 text-emerald-700 pointer-events-none">
+                                <i class="fa-solid fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+
+                        <!-- Khung danh sách gợi ý thả xuống -->
+                        <div id="drugSuggestions" class="hidden absolute left-0 right-0 z-50 mt-1 bg-white border-2 border-emerald-500 rounded-lg shadow-xl max-h-56 overflow-y-auto text-xs"></div>
                     </div>
 
                     <!-- Tag các thuốc đã chọn -->
-                    <div id="selectedAntibioticsTags" class="flex flex-wrap gap-1.5 max-h-16 overflow-y-auto p-1.5 bg-slate-50 border rounded-lg shrink-0">
+                    <div id="selectedAntibioticsTags" class="flex flex-wrap gap-1.5 max-h-14 overflow-y-auto p-1 bg-slate-50 border rounded-lg shrink-0">
                         <span class="text-xs text-slate-400 italic py-1 px-2">Chưa có kháng sinh nào được chọn.</span>
                     </div>
 
-                    <!-- Bảng kết quả liều chi tiết (Liều to, rõ, tách biệt 2 dòng) -->
+                    <!-- Bảng kết quả liều chi tiết -->
                     <div id="antibioticRecommendationResult" class="space-y-3 overflow-y-auto flex-grow pr-1">
                         <div class="text-center py-6 text-slate-400 border border-dashed rounded-xl">
                             <i class="fa-solid fa-hand-pointer text-xl mb-1"></i>
-                            <p class="text-xs">Hãy chọn kháng sinh từ ô phía trên để xem liều hiệu chỉnh theo eGFR.</p>
+                            <p class="text-xs">Hãy gõ hoặc chọn kháng sinh từ ô phía trên để xem liều hiệu chỉnh theo eGFR.</p>
                         </div>
                     </div>
                 </div>
@@ -244,7 +232,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t py-2 px-4 text-center text-xs text-slate-500 shrink-0">
+    <footer class="bg-white border-t py-1.5 px-4 text-center text-xs text-slate-500 shrink-0">
         RenalDose Rx Pro © 2026 — Công cụ hỗ trợ tra cứu lâm sàng theo eGFR.
     </footer>
 
@@ -312,22 +300,24 @@
             document.getElementById(`tab-${tabId}`).classList.add('bg-white', 'text-emerald-800', 'shadow');
             document.getElementById(`tab-${tabId}`).classList.remove('text-white', 'hover:bg-emerald-700');
 
-            if (tabId === 'calculator') populateUnifiedSelect();
+            if (tabId === 'calculator') handleAgeChange();
             if (tabId === 'bacteria') renderBacteriaList();
             if (tabId === 'interactions') renderInteractionSelector();
             if (tabId === 'admin') renderAdminData();
         }
 
-        function togglePatientForm() {
-            const type = document.getElementById('patientType').value;
-            if (type === 'adult') {
-                document.getElementById('adult-inputs').classList.remove('hidden');
-                document.getElementById('pediatric-inputs').classList.add('hidden');
-                document.getElementById('calcMethod').value = 'ckdepi';
+        // Tự động nhận diện Người lớn hay Trẻ em dựa vào số tuổi nhập vào
+        function handleAgeChange() {
+            const age = parseInt(document.getElementById('age').value) || 0;
+            const badge = document.getElementById('patientAgeBadge');
+            const calcMethod = document.getElementById('calcMethod');
+            
+            if (age < 18) {
+                badge.innerText = "(Trẻ em)";
+                calcMethod.value = "schwartz";
             } else {
-                document.getElementById('adult-inputs').classList.add('hidden');
-                document.getElementById('pediatric-inputs').classList.remove('hidden');
-                document.getElementById('calcMethod').value = 'schwartz';
+                badge.innerText = "(Người lớn)";
+                if(calcMethod.value === "schwartz") calcMethod.value = "ckdepi";
             }
         }
 
@@ -337,7 +327,8 @@
         }
 
         function calculateRenal() {
-            const type = document.getElementById('patientType').value;
+            const age = parseInt(document.getElementById('age').value) || 0;
+            const isAdult = age >= 18;
             let scr = parseFloat(document.getElementById('scr').value);
             const scrUnit = document.getElementById('scrUnit').value;
             if (scrUnit === 'umol') scr = scr / 88.4;
@@ -349,8 +340,7 @@
             if (status === 'hd') gfrVal = 8;
             else if (status === 'crrt') gfrVal = 15;
             else if (status === 'pd') gfrVal = 10;
-            else if (type === 'adult') {
-                const age = parseInt(document.getElementById('age').value);
+            else if (isAdult) {
                 const weight = parseFloat(document.getElementById('weight').value);
                 const gender = document.getElementById('gender').value;
 
@@ -367,7 +357,7 @@
                     gfrVal = crcl;
                 }
             } else {
-                let height = parseFloat(document.getElementById('pedHeight').value);
+                let height = parseFloat(document.getElementById('height').value);
                 gfrVal = (0.413 * height) / scr;
             }
 
@@ -398,38 +388,54 @@
 
             const badge = document.getElementById('ckdStageBadge');
             badge.innerText = stageText;
-            badge.className = `px-4 py-2 rounded-xl text-center border-2 font-black text-xs shadow-sm ${badgeClass}`;
+            badge.className = `px-4 py-1.5 rounded-xl text-center border-2 font-extrabold text-xs shadow-sm ${badgeClass}`;
 
-            updateAntibioticRecommendations(gfrVal, type);
+            updateAntibioticRecommendations(gfrVal, isAdult ? 'adult' : 'pediatric');
         }
 
-        // Tích hợp ô tra cứu: tự động sắp xếp ABC và lọc linh hoạt
-        function populateUnifiedSelect() {
-            sortAntibioticsAlphabetically();
-            const selectEl = document.getElementById('unifiedAntibioticSelect');
-            selectEl.innerHTML = '<option value="">-- Gõ tên thuốc để lọc hoặc bấm xem danh sách A-Z --</option>';
+        // Xử lý tra cứu & chọn kháng sinh thông minh qua 1 ô input
+        sortAntibioticsAlphabetically();
+
+        function handleDrugSearchInput(query) {
+            const suggestionsBox = document.getElementById('drugSuggestions');
+            suggestionsBox.innerHTML = '';
             
-            db.antibiotics.forEach(ab => {
-                if (!selectedAntibioticIds.includes(ab.id)) {
-                    selectEl.innerHTML += `<option value="${ab.id}">${ab.name} (${ab.group})</option>`;
-                }
+            const filtered = db.antibiotics.filter(ab => 
+                ab.name.toLowerCase().includes(query.toLowerCase()) && !selectedAntibioticIds.includes(ab.id)
+            );
+
+            if (filtered.length === 0) {
+                suggestionsBox.classList.add('hidden');
+                return;
+            }
+
+            filtered.forEach((ab, idx) => {
+                const item = document.createElement('div');
+                item.className = `p-2 font-semibold ${idx % 2 === 0 ? 'bg-white text-slate-800' : 'bg-emerald-50/65 text-emerald-950'} border-b last:border-b-0`;
+                item.innerHTML = `${ab.name} <span class="text-[10px] text-slate-400 font-normal">(${ab.group})</span>`;
+                item.onclick = () => {
+                    selectedAntibioticIds.push(ab.id);
+                    document.getElementById('drugSearchInput').value = '';
+                    suggestionsBox.classList.add('hidden');
+                    renderSelectedTagsAndRecommendations();
+                };
+                suggestionsBox.appendChild(item);
             });
+
+            suggestionsBox.classList.remove('hidden');
         }
 
-        function addSelectedAntibiotic(selectEl) {
-            const val = selectEl.value;
-            if (!val) return;
-            if (!selectedAntibioticIds.includes(val)) {
-                selectedAntibioticIds.push(val);
+        // Đóng gợi ý khi click ra ngoài
+        document.addEventListener('click', function(e) {
+            const searchInput = document.getElementById('drugSearchInput');
+            const suggestionsBox = document.getElementById('drugSuggestions');
+            if (searchInput && suggestionsBox && !searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+                suggestionsBox.classList.add('hidden');
             }
-            selectEl.value = "";
-            populateUnifiedSelect();
-            renderSelectedTagsAndRecommendations();
-        }
+        });
 
         function removeSelectedAntibiotic(id) {
             selectedAntibioticIds = selectedAntibioticIds.filter(item => item !== id);
-            populateUnifiedSelect();
             renderSelectedTagsAndRecommendations();
         }
 
@@ -437,14 +443,15 @@
             const tagsContainer = document.getElementById('selectedAntibioticsTags');
             const resultContainer = document.getElementById('antibioticRecommendationResult');
             const gfrVal = parseFloat(document.getElementById('gfrResultVal').innerText) || 90;
-            const patientType = document.getElementById('patientType').value;
+            const age = parseInt(document.getElementById('age').value) || 65;
+            const patientType = age >= 18 ? 'adult' : 'pediatric';
 
             if (selectedAntibioticIds.length === 0) {
                 tagsContainer.innerHTML = '<span class="text-xs text-slate-400 italic py-1 px-2">Chưa có kháng sinh nào được chọn.</span>';
                 resultContainer.innerHTML = `
                     <div class="text-center py-6 text-slate-400 border border-dashed rounded-xl">
                         <i class="fa-solid fa-hand-pointer text-xl mb-1"></i>
-                        <p class="text-xs">Hãy chọn kháng sinh từ ô phía trên để xem liều hiệu chỉnh theo eGFR.</p>
+                        <p class="text-xs">Hãy gõ hoặc chọn kháng sinh từ ô phía trên để xem liều hiệu chỉnh theo eGFR.</p>
                     </div>
                 `;
                 return;
@@ -470,27 +477,24 @@
                 }
                 let doseStr = patientType === 'pediatric' ? matchedInterval?.pedDose : matchedInterval?.adultDose;
 
-                // Font chữ to, rõ ràng, tách biệt 2 dòng Liều và Ghi chú
                 resultContainer.innerHTML += `
-                    <div class="border border-slate-300 rounded-xl p-3.5 bg-slate-50 space-y-2.5 text-xs shadow-sm">
-                        <div class="flex justify-between items-center border-b pb-1.5">
+                    <div class="border border-slate-300 rounded-xl p-3 bg-slate-50 space-y-2 text-xs shadow-sm">
+                        <div class="flex justify-between items-center border-b pb-1">
                             <h3 class="font-extrabold text-slate-900 text-sm flex items-center">
                                 <i class="fa-solid fa-capsules text-emerald-600 mr-1.5 text-base"></i> ${ab.name}
-                                <span class="ml-2 text-[11px] px-2.5 py-0.5 bg-emerald-100 text-emerald-800 rounded-full font-semibold">${ab.group}</span>
+                                <span class="ml-2 text-[11px] px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full font-semibold">${ab.group}</span>
                             </h3>
-                            <span class="font-bold px-2.5 py-1 bg-amber-100 text-amber-900 rounded-lg text-xs">
+                            <span class="font-bold px-2.5 py-0.5 bg-amber-100 text-amber-900 rounded-lg text-xs">
                                 Mốc eGFR: ${matchedInterval ? matchedInterval.label : 'Chuẩn'}
                             </span>
                         </div>
                         
-                        <!-- Dòng 1: Liều đề xuất (Cỡ chữ lớn, đậm nét, nổi bật) -->
-                        <div class="bg-white p-3 rounded-lg border-2 border-slate-200 shadow-sm">
-                            <span class="text-slate-500 block text-[11px] uppercase font-bold tracking-wider mb-1">Liều đề xuất (${patientType === 'pediatric' ? 'Trẻ em' : 'Người lớn'}):</span>
+                        <div class="bg-white p-2.5 rounded-lg border-2 border-slate-200 shadow-sm">
+                            <span class="text-slate-500 block text-[11px] uppercase font-bold tracking-wider mb-0.5">Liều đề xuất (${patientType === 'pediatric' ? 'Trẻ em' : 'Người lớn'}):</span>
                             <span class="font-black text-emerald-700 text-base md:text-lg leading-snug">${doseStr || 'Đang cập nhật'}</span>
                         </div>
 
-                        <!-- Dòng 2: Ghi chú / Lưu ý -->
-                        <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                        <div class="bg-white p-2 rounded-lg border border-slate-200">
                             <span class="text-slate-500 block text-[11px] uppercase font-bold tracking-wider mb-0.5">Ghi chú / Lưu ý lâm sàng:</span>
                             <span class="text-slate-800 font-semibold text-xs md:text-sm">${matchedInterval?.note || 'Không có lưu ý đặc biệt.'}</span>
                         </div>
@@ -576,13 +580,12 @@
             if (confirm("Khôi phục mặc định?")) {
                 db = JSON.parse(JSON.stringify(defaultDatabase));
                 saveDB();
-                populateUnifiedSelect();
                 alert("Đã khôi phục!");
             }
         }
 
         window.onload = function() {
-            populateUnifiedSelect();
+            handleAgeChange();
         };
     </script>
 </body>
